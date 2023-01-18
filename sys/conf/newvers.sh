@@ -6,18 +6,32 @@
 #
 #	@(#)newvers.sh	1.5 (Berkeley) 6/8/85
 #
-if [ ! -r version ]; then echo 0 > version; fi
-touch version
-echo `cat version` ${USER-root} `pwd` `date` `hostname` | \
+CV=`cat .compileversion`
+CV=`expr $CV + 1`
+OV=`cat .oldversion`
+GITREV=`git rev-list HEAD --count`
+
+if [ "x$GITREV" = "x" ]
+then
+    GITREV="Untracked"
+fi
+
+if [ "x$GITREV" != "x$OV" ]
+then
+    CV=1
+fi
+echo $CV >.compileversion
+echo $GITREV >.oldversion
+
+echo $GITREV ${USER-root} `pwd` `date +'%Y-%m-%d'` `hostname` $CV| \
 awk ' {
-	version = $1 + 1; user = $2; host = $10; dir = $3; \
-	date = $4 " " $5 " " $6 " " $7 " " $8 " " $9;
-}\
-END {
-	printf "char sccs[] = \"@(#)2.10 BSD #%d: %s (%s@%s:%s)\\n\";\n",\
-		version, date, user, host, dir ;\
-	printf "char version[] = \"2.10 BSD UNIX #%d: %s\\n", \
-		version, date; \
-	printf "    %s@%s:%s\\n\";\n", user, host, dir;
-	printf "%d\n", version > "version";
-}' > vers.c
+    version = $1;
+    user = $2;
+    dir = $3;
+    date = $4;
+    host = $5;
+    cv = $6;
+    printf "const char version[] = \"2.10 BSD Unix for ARM, revision G%s build %d:\\n", version, cv;
+    printf "     Compiled %s by %s@%s:\\n", date, user, host;
+    printf "     %s\\n\";\n", dir;
+}'
