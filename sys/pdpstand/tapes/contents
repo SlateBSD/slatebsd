@@ -1,0 +1,23 @@
+Contents of the distribution tapes:
+
+TAPE #1:
+--------
+File 0:	2 copies of magtape bootstrap - mtboot or tsboot (2 blocks total).
+	The stand alone bootstrap program (/boot).
+
+File 1:	A stand alone version of the mkfs program.
+
+File 2:	A stand alone version of the icheck program.
+
+File 3:	A stand alone version of the restor program.
+
+File 4:	A full dump of a root file system.
+
+File 5:	A tar format dump of /usr excepting /usr/src.
+
+File 6:	A tar format copy of /usr/src/include and /usr/src/sys.
+
+TAPE #2:
+--------
+File 0:	A tar format dump of /usr/src excepting /usr/src/include and
+	/usr/src/sys.

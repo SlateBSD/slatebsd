@@ -1,0 +1,108 @@
+Article 555 of net.sources.bugs:
+Relay-Version: version B 2.10.3 4.3bsd 1/17/86; site rdlvax.UUCP
+Path: rdlvax!psivax!sdcrdcf!lwall
+From: lwall@sdcrdcf.UUCP (Larry Wall)
+Newsgroups: net.sources.bugs,net.bugs.4bsd,net.news.b
+Subject: rn 4.3 patch #31
+Message-ID: <2995@sdcrdcf.UUCP>
+Date: 9 Sep 86 23:32:42 GMT
+References: <1460@tektools.UUCP>
+Reply-To: lwall@sdcrdcf.UUCP (Larry Wall)
+Distribution: world
+Organization: System Development Corporation R&D, Santa Monica
+Lines: 91
+Xref: rdlvax net.sources.bugs:555 net.bugs.4bsd:658 net.news.b:275
+
+System: rn version 4.3
+Patch #: 31
+Priority: LOW
+Subject: Number of new articles arriving is miscalculated
+From: tonyb@tektools.UUCP (Tony Birnseth) [sort of]
+
+Description:
+	When new articles arrive, rn prints a message telling the user how
+	many new articles have arrived.  ("nn new articles have arrived!")
+	The count is incorrect.
+
+Repeat by:
+	Wait till this event occurs and the number of new articles reported
+	will be the sum of the old number of articles + the new ones that
+	have arrived instead of the difference between the new count and
+	the last know high numbered article.
+
+Fix:	First of all, if you applied the patch Tony sent out, unapply it.
+	patch -R should do what you want.  Then apply the following patch.
+
+	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 30
+1c1
+< Patch #: 30
+---
+> Patch #: 31
+
+Index: bits.c
+Prereq: 4.3.1.2
+*** bits.c.old	Tue Sep  9 16:03:37 1986
+--- bits.c	Tue Sep  9 16:03:50 1986
+***************
+*** 1,4
+! /* $Header: bits.c,v 4.3.1.2 86/07/24 14:40:23 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3.1.2  86/07/24  14:40:23  lwall
+
+--- 1,4 -----
+! /* $Header: bits.c,v 4.3.1.3 86/09/09 16:01:43 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3.1.3  86/09/09  16:01:43  lwall
+***************
+*** 1,6
+  /* $Header: bits.c,v 4.3.1.2 86/07/24 14:40:23 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3.1.2  86/07/24  14:40:23  lwall
+   * Gets host name from path instead of relay-version for news 2.10.3.
+   * 
+
+--- 1,9 -----
+  /* $Header: bits.c,v 4.3.1.3 86/09/09 16:01:43 lwall Exp $
+   *
+   * $Log:	bits.c,v $
++  * Revision 4.3.1.3  86/09/09  16:01:43  lwall
++  * Fixed 'n more articles' bug.
++  * 
+   * Revision 4.3.1.2  86/07/24  14:40:23  lwall
+   * Gets host name from path instead of relay-version for news 2.10.3.
+   * 
+***************
+*** 621,628
+  	IF(verbose)
+  	    sprintf(buf,
+  		"%ld more article%s arrived--looking for more to kill...\n\n",
+! 		(long)(lastart - firstart + 1),
+! 		(lastart > firstart ? "s have" : " has" ) );
+  	ELSE			/* my, my, how clever we are */
+  #endif
+  #ifdef TERSE
+
+--- 624,631 -----
+  	IF(verbose)
+  	    sprintf(buf,
+  		"%ld more article%s arrived--looking for more to kill...\n\n",
+! 		(long)(lastart - tmpfirst + 1),
+! 		(lastart > tmpfirst ? "s have" : " has" ) );
+  	ELSE			/* my, my, how clever we are */
+  #endif
+  #ifdef TERSE
+
+

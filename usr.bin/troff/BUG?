@@ -1,0 +1,7 @@
+troff -
+
+The big fix we made was to remove any loader flags from the Makefile.
+Suffix and hyphen tables are moved into text area to make them shareable.
+Using a -i (or -n) loader flag will give you run-time errors.
+
+---------------------

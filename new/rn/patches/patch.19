@@ -1,0 +1,108 @@
+
+System: rn version 4.3
+Patch #: 19
+Priority: LOW
+Subject: on some systems rn can miss new newsgroups
+>From: stephen@dcl-cs.UUCP (Stephen J. Muir)
+
+Description:
+	Some versions of inews don't create the spool directory immediately
+	for newly created newsgroups.  The routine in rn that determines the
+	age of a newsgroup incorrectly assumes that a spool directory will
+	be there before the first article arrives.  This can cause newly
+	created newsgroups to be skipped over in the scan for new newsgroups.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source
+directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 18
+1c1
+< Patch #: 18
+---
+> Patch #: 19
+
+Index: addng.c
+Prereq: 4.3
+*** addng.c.old	Wed May 29 09:09:52 1985
+--- addng.c	Wed May 29 09:09:55 1985
+***************
+*** 1,4
+! /* $Header: addng.c,v 4.3 85/05/01 11:34:41 lwall Exp $
+   *
+   * $Log:	addng.c,v $
+   * Revision 4.3  85/05/01  11:34:41  lwall
+
+--- 1,4 -----
+! /* $Header: addng.c,v 4.3.1.2 85/05/29 09:06:24 lwall Exp $
+   *
+   * $Log:	addng.c,v $
+   * Revision 4.3.1.2  85/05/29  09:06:24  lwall
+***************
+*** 1,6
+  /* $Header: addng.c,v 4.3 85/05/01 11:34:41 lwall Exp $
+   *
+   * $Log:	addng.c,v $
+   * Revision 4.3  85/05/01  11:34:41  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: addng.c,v 4.3.1.2 85/05/29 09:06:24 lwall Exp $
+   *
+   * $Log:	addng.c,v $
++  * Revision 4.3.1.2  85/05/29  09:06:24  lwall
++  * New newsgroups without spool directories incorrectly classified as
+"ancient".
++  * 
++  * Revision 4.3.1.1  85/05/10  11:30:50  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:34:41  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 101,106
+  ART_NUM ngsize;
+  {
+      char tst[128];
+   
+      sprintf(tst, ngsize ? "%s/%s/1" : "%s/%s" ,spool,getngdir(ngnam));
+      if (stat(tst,&filestat) < 0)
+
+--- 107,113 -----
+  ART_NUM ngsize;
+  {
+      char tst[128];
++     long time();
+   
+      sprintf(tst, ngsize ? "%s/%s/1" : "%s/%s" ,spool,getngdir(ngnam));
+      if (stat(tst,&filestat) < 0)
+***************
+*** 104,110
+   
+      sprintf(tst, ngsize ? "%s/%s/1" : "%s/%s" ,spool,getngdir(ngnam));
+      if (stat(tst,&filestat) < 0)
+! 	return 0L;			/* not there, assume ancient */
+      else
+  	return filestat.st_mtime;
+  }
+
+--- 111,117 -----
+   
+      sprintf(tst, ngsize ? "%s/%s/1" : "%s/%s" ,spool,getngdir(ngnam));
+      if (stat(tst,&filestat) < 0)
+! 	return (ngsize ? 0L : time(0));	/* not there, assume something good
+*/
+      else
+  	return filestat.st_mtime;
+  }
+
+

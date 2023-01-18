@@ -1,0 +1,681 @@
+From mcvax!doc.ic.ac.uk!ajd Fri Feb 21 18:42:18 1986
+Date: Fri, 21 Feb 86 17:12:19 GMT
+From: "Alan J. Dempster" <mcvax!doc.ic.ac.uk!ajd>
+To: keith
+Subject: DEQNA and DHV drivers
+
+	Many thanks for your posting of 73 mods and DEQNA driver source.
+	Do you have the "qereg.h" definitions file? It wasnt in the shar.
+	We may get a chance later in the year to do some driver work, so
+	I shall see then if we could merge your more sophistiated driver.
+
+	I have included our DHV11 driver source. It is generally OK with
+	one bug which hangs terminals occassionaly. We think it is something 
+	to do with nulls. If you fix it.................. please let us know.
+
+	Alan Dempster
+
+: This is a shar archieve.  Extract with sh, not csh.
+: The rest of this file will extract:
+: dhv.c dhv.h dhvreg.h
+echo extracting - dhv.c
+sed 's/^X//' > dhv.c << 'FUNKY STUFF'
+X/*
+X *	dhv.c -	S. Isard, U of Sussex, 8/85
+X *	Modem Control - Kevin Twidle, Imperial College, ukc!icdoc!kevin 9/85
+X *
+X *	Driver for dhv11.
+X *
+X */
+X
+X#include "dhv.h"
+X#if	NDHV > 0
+X#include "param.h"
+X#include <sys/conf.h>
+X#include <sys/systm.h>
+X#include <sys/dir.h>
+X#include <sys/user.h>
+X#include <sys/file.h>
+X#include <sys/tty.h>
+X#include <sys/dhvreg.h>
+X#include <sys/uba.h>
+X
+X#define	q3	tp->t_outq
+X
+X#ifdef	UCB_CLIST
+Xextern	ubadr_t	clstaddr;
+Xextern	struct	cblock	*cfree;
+X#define	cpaddr(x)	(clstaddr + (ubadr_t)((x) - cfree))
+X#else	UCB_CLIST
+X#define	cpaddr(x)	(x)
+X#endif	UCB_CLIST
+X
+X#ifdef	DHV_SOFTCAR
+X#define	DHVLINE(dev)	(minor(dev) & 0177)
+X#else
+X#define	DHVLINE(dev)	minor(dev)
+X#endif
+X
+X#define	DHVBIS	0
+X#define	DHVBIC	1
+X
+X#define	NDHVLINE	(NDHV * 8)
+Xstruct	tty dhv11[NDHVLINE];
+Xint	ndhv11	= NDHVLINE; /* only for pstat */
+Xint	dhvstart();
+Xint	ttrstrt();
+X
+Xstruct	dhvdevice *dhv_addr[NDHV];
+X
+Xchar	dhv_speeds[] = {
+X	0,	000,	001,	002,	003,	004,	0,	005,
+X	006,	007,	010,	012,	013,	015,	0,	0,
+X};
+X
+Xdhvattach(addr, unit)
+Xstruct dhvdevice *addr;
+X{
+X	if ((unsigned) unit >= NDHV)
+X		return 0;
+X	dhv_addr[unit] = addr;
+X	while(addr->dhvrcr < 0) /* Clear initial diagnostic info */;
+X	return 1;
+X}
+X
+X/*
+X * Open a DHV line.  Turn on this dhv if this is
+X * the first use of it.
+X */
+X/*ARGSUSED*/
+Xdhvopen(dev, flag)
+Xdev_t	dev;
+X{
+X	register struct tty *tp;
+X	register unit;
+X	register struct dhvdevice *addr;
+X
+X	unit = DHVLINE(dev);
+X	if ((unit >= NDHVLINE) || ((addr = dhv_addr[unit >> 3]) == 0)) {
+X		u.u_error = ENXIO;
+X		return;
+X	}
+X	tp = &dhv11[unit];
+X	if (tp->t_state & XCLUDE && u.u_uid != 0) {
+X		u.u_error = EBUSY;
+X		return;
+X	}
+X	tp->t_addr = (caddr_t) addr;
+X	tp->t_oproc = dhvstart;
+X	tp->t_iproc = NULL;
+X	tp->t_state |= WOPEN;
+X
+X	/*
+X	 * If this is first open, initialize tty state to default.
+X	 */
+X	if ((tp->t_state & ISOPEN) == 0) {
+X		ttychars(tp);
+X		if (tp->t_ispeed == 0) {
+X			tp->t_ispeed = B300;
+X			tp->t_ospeed = B300;
+X			tp->t_flags = ODDP | EVENP | ECHO;
+X		}
+X		tp->t_line = DFLT_LDISC;
+X		addr->un.dhvcsrl = (unit & 017);
+X		addr->dhvlnctl = DHV_RXEN;
+X		addr->dhvtxenb = DHV_TXEN;
+X		dhvparam(unit);
+X	}
+X	addr->un.dhvcsr = DHV_IE;
+X#ifdef	DHV_SOFTCAR
+X	if (dev & 0200) {
+X		dhvmodem(unit, DHV_DTR | DHV_RTS, DHVBIS);
+X		tp->t_state |= CARR_ON;
+X	} else
+X#endif
+X	{
+X		int s;
+X		dhvmodem(unit, DHV_DTR | DHV_RTS | DHV_MODEM, DHVBIS);
+X		s = spl6();
+X		addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X		if (addr->dhvlstat & DHV_CARR)
+X			tp->t_state |= CARR_ON;
+X		while ((tp->t_state & CARR_ON) == 0)
+X			sleep((caddr_t) &tp->t_rawq, TTIPRI);
+X		splx(s);
+X	}
+X	ttyopen(dev,tp);
+X}
+X
+X/*
+X * Close a DHV line.
+X */
+X/*ARGSUSED*/
+Xdhvclose(dev, flag)
+Xdev_t	dev;
+Xint	flag;
+X{
+X	register struct tty *tp;
+X	register unit;
+X	register struct dhvdevice *addr;
+X
+X	unit = DHVLINE(dev);
+X	tp = &dhv11[unit];
+X	addr = (struct dhvdevice *) tp->t_addr;
+X	addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X	/* addr->dhvlnctl |= DHV_BRK; sometimes causes channel to hang */
+X	if (tp->t_state & HUPCLS) {
+X		ttyclose(tp);	/* ttyclose clears t_state */
+X		dhvmodem(unit, DHV_DTR | DHV_RTS | DHV_MODEM, DHVBIC);
+X	} else {
+X		ttyclose(tp);
+X	}
+X}
+X
+X/*
+X * Read from a DHV line.
+X */
+Xdhvread(dev)
+Xdev_t	dev;
+X{
+X	register struct tty *tp;
+X
+X	tp = &dhv11[DHVLINE(dev)];
+X	(void) (*linesw[tp->t_line].l_read)(tp);
+X}
+X
+X/*
+X * Write on a DHV line.
+X */
+Xdhvwrite(dev)
+X{
+X	register struct tty *tp;
+X
+X	tp = &dhv11[DHVLINE(dev)];
+X	(void) (*linesw[tp->t_line].l_write)(tp);
+X}
+X
+X/*
+X * DHV11 receiver interrupt.
+X */
+Xdhvrint(dhv)
+Xint	dhv;
+X{
+X	register struct tty *tp;
+X	register int c;
+X	register struct dhvdevice *addr;
+X	struct	tty *tp0;
+X	int	overrun = 0;
+X	int unit;
+X
+X	addr = dhv_addr[dhv];
+X	tp0 = &dhv11[dhv << 3];
+X	/*
+X	 * Loop fetching characters from the silo for this
+X	 * dhv until there are no more in the silo.
+X	 */
+X	while ((c = addr->dhvrcr) < 0) {
+X		unit = (c >> 8) & 017;
+X		tp = tp0 + unit;
+X		if (tp >= &dhv11[NDHVLINE])
+X			continue;
+X		if ((c & DHV_RXERR) == DHV_MSTAT) {
+X			if (c & DHV_DIAG) {
+X				printf("dhv%d: diag info 0%o\n", dhv, c);
+X			} else {
+X				if (c & (DHV_CARR >> 8 & 0377)) {
+X					/* carrier present */
+X					if ((tp->t_state & CARR_ON) == 0) {
+X						wakeup((caddr_t) &tp->t_rawq);
+X						tp->t_state |= CARR_ON;
+X					}
+X				} else {
+X					if ((tp->t_state & CARR_ON)
+X#ifdef	DHV_SOFTCAR
+X					&& ((tp->t_dev & 0200) == 0)
+X#endif
+X#ifdef	UCB_NTTY
+X					&& ((tp->t_local & LNOHANG) == 0)
+X					/* we should make use of LMDMBUF here too! */
+X#endif
+X						) {
+X						/* carrier lost */
+X						if (tp->t_state & ISOPEN) {
+X							gsignal(tp->t_pgrp, SIGHUP);
+X							dhvmodem(unit, DHV_DTR | DHV_RTS, DHVBIC);
+X							flushtty(tp, FREAD | FWRITE);
+X						}
+X						tp->t_state &= ~CARR_ON;
+X					}
+X				}
+X			}
+X			continue;
+X		}
+X		if((tp->t_state & ISOPEN) == 0) {
+X			wakeup((caddr_t)tp);
+X			continue;
+X		}
+X#ifdef  TEXAS_AUTOBAUD
+X		if (image_mode(tp))
+X			c &= ~(DHV_PE|DHV_FE);
+X#endif
+X		switch (c & DHV_RXERR) {
+X		case DHV_FE:
+X		case DHV_FE | DHV_PE:
+X			/*
+X			 * At framing error (break) generate
+X			 * a null (in raw mode, for getty), or an
+X			 * interrupt (in cooked/cbreak mode).
+X			 */
+X			if (tp->t_flags & RAW)
+X				c = 0;
+X			else
+X				c = tun.t_intrc;
+X			break;
+X		case DHV_PE:
+X			if ((tp->t_flags & (EVENP | ODDP)) == EVENP
+X			 || (tp->t_flags & (EVENP | ODDP)) == ODDP)
+X				continue;
+X			break;
+X		case DHV_DO:
+X			if (overrun == 0) {
+X				printf("dhv%d: silo overflow\n", dhv);
+X				overrun = 1;
+X				}
+X			break;
+X		case 0:
+X			break;
+X		default:
+X			printf("dhv%d: error code 0%o\n", dhv, c);
+X			continue;
+X		}
+X		(*linesw[tp->t_line].l_input)(c,tp);
+X	}
+X}
+X
+X/*
+X * Ioctl for DHV11.
+X */
+Xdhvioctl(dev, cmd, addr, flag)
+Xdev_t	dev;
+Xcaddr_t	addr;
+X{
+X	register struct tty *tp;
+X	register unit = DHVLINE(dev);
+X
+X	tp = &dhv11[unit];
+X	switch (ttioctl(tp, cmd, addr, flag)) {
+X	    case TIOCSETP:
+X	    case TIOCSETN:
+X		dhvparam(unit);
+X		break;
+X#ifdef	DHV_IOCTL
+X	    case TIOCSBRK:
+X			dhvmodem(unit, DHV_BRK, DHVBIS);
+X			break;
+X	    case TIOCCBRK:
+X			dhvmodem(unit, DHV_BRK, DHVBIC);
+X			break;
+X	    case TIOCSDTR:
+X			dhvmodem(unit, DHV_DTR | DHV_RTS, DHVBIS);
+X			break;
+X	    case TIOCCDTR:
+X			dhvmodem(unit, DHV_DTR | DHV_RTS, DHVBIC);
+X			break;
+X#endif	DHV_IOCTL
+X	    case 0:
+X			break;
+X	    default:
+X			u.u_error = ENOTTY;
+X	}
+X}
+X
+X/*
+X * Set parameters from open or stty into the DHV hardware
+X * registers.
+X */
+Xdhvparam(unit)
+Xint	unit;
+X{
+X	register struct tty *tp;
+X	register struct dhvdevice *addr;
+X	int s;
+X	register lpar;
+X
+X	tp = &dhv11[unit];
+X	addr = (struct dhvdevice *) tp->t_addr;
+X	/*
+X	 * Block interrupts so parameters will be set
+X	 * before the line interrupts.
+X	 */
+X	s = spl6();
+X	addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X	if ((tp->t_ispeed) == 0) {
+X		tp->t_state |= HUPCLS;
+X		dhvmodem(unit, DHV_DTR | DHV_RTS, DHVBIC);
+X		return;
+X	}
+X	lpar = ((dhv_speeds[tp->t_ospeed]) << 12)
+X		| ((dhv_speeds[tp->t_ispeed]) << 8);
+X#ifdef	UCB_NTTY
+X	if ((tp->t_flags & RAW) || (tp->t_local & LLITOUT))
+X#else
+X	if (tp->t_flags & RAW)
+X#endif
+X		lpar |= DHV_BITS8;
+X	else
+X		lpar |= DHV_BITS7 | DHV_PENABLE;
+X	if (tp->t_flags & EVENP)
+X		lpar |= DHV_EPAR;
+X	if (tp->t_ospeed == B110)	/* 110 baud */
+X		lpar |= DHV_TWOSB;
+X	addr->dhvlpr = lpar;
+X	splx(s);
+X}
+X
+X/*
+X * DHV transmitter interrupt.
+X * Restart each line which used to be active but has
+X * terminated transmission since the last interrupt.
+X */
+Xdhvxint(dhv)
+Xint	dhv;
+X{
+X	register struct tty *tp;
+X	register struct dhvdevice *addr;
+X	register unit;
+X
+X	addr = dhv_addr[dhv];
+X	unit = (addr->un.dhvcsr & DHV_TXL) >> 8;
+X	if (addr->un.dhvcsr & DHV_TXER) {
+X		printf("dhv%d chan%d: TXER\nad1 = %o ad2 = %o\n", dhv, unit,
+X			addr->dhvtbad1, addr->dhvtbad2);
+X	}
+X
+X	addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X	tp = &dhv11[unit];
+X	tp->t_state &= ~BUSY;
+X	if (tp->t_state & FLUSH) {
+X		tp->t_state &= ~FLUSH;
+X		addr -> dhvbcr = 0;
+X		/* don't resume the current dma transfer on restart */
+X	}
+X	else {
+X		if ((tp->t_state & TTSTOP) && (addr->dhvbcr != 0)) return;
+X			/* hold off updating queue until the end of this
+X			 * dma transfer
+X			 */
+X#ifndef	UCB_CLIST
+X		/*
+X		 * Clists are in kernel virtual space,
+X		 *	    which in turn lies in the
+X		 *	    first 64K of physical memory
+X		 *
+X		 * The extension bits are 0.
+X		 */
+X		ndflush(&q3, (short)(addr->dhvtbad1 - cpaddr(q3.c_cf)));
+X#else
+X		ubadr_t car;
+X		int count;
+X
+X		car = (ubadr_t) addr->dhvtbad1
+X		    | (ubadr_t)(addr->dhvtbad2 & 077) << 16;
+X		count = car - cpaddr(q3.c_cf);
+X		ndflush(&q3, count);
+X#endif
+X	}
+X	dhvstart(tp);
+X}
+X
+X/*
+X * Start (restart) transmission on the given DHV line.
+X */
+Xdhvstart(tp)
+Xregister struct tty *tp;
+X{
+X	register struct dhvdevice *addr;
+X	register nch;
+X	int s, unit;
+X
+X	unit = (int) (tp - dhv11);
+X	addr = (struct dhvdevice *) tp->t_addr;
+X
+X	/*
+X	 * Must hold interrupts in following code to prevent
+X	 * state of the tp from changing.
+X	 */
+X	s = spl6();
+X
+X	/*
+X	 * If it's already active, or delaying, no need to do anything.
+X	 */
+X	if (tp->t_state & (TIMEOUT | TTSTOP | BUSY))
+X		goto out;
+X
+X	addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X	addr->dhvlnctl =& ~DHV_ABORT; /* for interrupts caused by dhvstop */
+X
+X	/* If there is a suspended dma transfer in progress, allow
+X	 * the hardware to get on with it.
+X	 */
+X	if (addr->dhvbcr != 0) {
+X		addr->dhvtbad2 |= DHV_XSTART;
+X		tp->t_state |= BUSY; /* in case txn re-suspended */
+X		goto out;
+X	}
+X	/*
+X	 * If there are sleepers, and the output has drained below low
+X	 * water mark, wake up the sleepers.
+X	 */
+X	if (tp->t_outq.c_cc<=TTLOWAT(tp)) {
+X		if (tp->t_state&ASLEEP) {
+X			tp->t_state &= ~ASLEEP;
+X#ifdef	MPX_FILS
+X			if (tp->t_chan)
+X				mcstart(tp->t_chan, (caddr_t)&tp->t_outq);
+X			else
+X#endif
+X				wakeup((caddr_t)&tp->t_outq);
+X		}
+X#ifdef	UCB_NET
+X		if (tp->t_wsel) {
+X			selwakeup(tp->t_wsel, tp->t_state & TS_WCOLL);
+X			tp->t_wsel = 0;
+X			tp->t_state &= ~TS_WCOLL;
+X		}
+X#endif
+X	}
+X
+X	/*
+X	 * Now restart transmission unless the output queue is
+X	 * empty.
+X	 */
+X	if (tp->t_outq.c_cc == 0)
+X		goto out;
+X#ifdef	UCB_NTTY
+X	if ((tp->t_flags & RAW) || (tp->t_local & LLITOUT))
+X#else
+X	if (tp->t_flags & RAW)
+X#endif
+X		nch = ndqb(&tp->t_outq, 0);
+X	else {
+X		nch = ndqb(&tp->t_outq, 0200);
+X		/*
+X		 * If first thing on queue is a delay, process it.
+X		 */
+X		if (nch == 0) {
+X			nch = getc(&tp->t_outq);
+X			timeout(ttrstrt, (caddr_t) tp, (nch & 0177) + 6);
+X			tp->t_state |= TIMEOUT;
+X			goto out;
+X		}
+X	}
+X	/*
+X	 * If characters to transmit, restart transmission.
+X	 */
+X	if (nch) {
+X		addr->dhvbcr = nch;
+X#ifndef	UCB_CLIST
+X		addr->dhvtbad1 = (short)cpaddr(tp->t_outq.c_cf);
+X		addr->dhvtbad2 = DHV_XSTART;
+X#else
+X		ubadr_t uba;
+X
+X		uba = cpaddr(tp->t_outq.c_cf);
+X		addr->dhvtbad1 = loint(uba);
+X		addr->dhvtbad2 = (hiint(uba) & 077) | DHV_XSTART;
+X#endif
+X		tp->t_state |= BUSY;
+X	}
+X    out:
+X	splx(s);
+X}
+X
+X
+X/*
+X * Stop output on a line, e.g. for ^S/^Q or output flush.
+X */
+X/*ARGSUSED*/
+Xdhvstop(tp, flag)
+Xregister struct tty *tp;
+X{
+X	register struct dhvdevice *addr;
+X	register unit;
+X	int s;
+X
+X	addr = (struct dhvdevice *)tp->t_addr;
+X	/*
+X	 * Block input/output interrupts while messing with state.
+X	 */
+X	s = spl6();
+X	if (tp->t_state & BUSY) {
+X		/*
+X		 * Device is transmitting; stop output by selecting the line and
+X		 * setting abort bit in line control register.  If TTSTOP
+X		 * not set, assume output is being flushed.  Setting abort bit
+X		 * will cause a transmitter interrupt, which will distinguish
+X		 * between TTSTOP and FLUSH.
+X		 */
+X		if (!(tp->t_state & TTSTOP))
+X			tp->t_state |= FLUSH;
+X		unit = DHVLINE(tp->t_dev);
+X		addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X		addr->dhvlnctl |= DHV_ABORT;
+X	}
+X	splx(s);
+X}
+X
+Xdhvmodem(unit, bits, how)
+Xregister unit;
+X{
+X	register struct dhvdevice *addr;
+X	register s;
+X
+X	s = spl6();
+X	addr = dhv_addr[unit >> 3];
+X	addr->un.dhvcsrl = (unit & 017) | DHV_RIE;
+X	if (how == DHVBIS)
+X		addr->dhvlnctl |= bits;
+X	else /* == DHVBIC */
+X		addr->dhvlnctl &= ~bits;
+X	splx(s);
+X}
+X#endif	NDHV
+FUNKY STUFF
+echo extracting - dhv.h
+sed 's/^X//' > dhv.h << 'FUNKY STUFF'
+X/*
+X * NDH is in units of boards (8 lines each).
+X * All units are assumed to have
+X * modem control (with the exception of those with 0200 bit on in
+X * their minor device numbers if DHV_SOFTCAR is defined).
+X */
+X#define	NDHV		1
+X#define DHV_IOCTL
+X#define DHV_SOFTCAR
+X/* DHV_CARR is a set of DCE control signals any of which constitute carrier up
+X * at your site.
+X * You may choose from :-
+X * DHV_CTS	Clear To Send
+X * DHV_DCD	Data Carrier Detect
+X * DHV_MRI	Ring Indicate
+X * DHV_DSR	Data Set Ready
+X * e.g. #define DHV_CARR (DHV_DCD) or #define DHV_CARR (DHV_DSR|DHV_DCD|DHV_CTS)
+X * If you dont want to use Modem control, define DHV_SOFTCHAR and use 0200 bit.
+X * You must define DHV_CARR to something.
+X */
+X#define DHV_CARR	(DHV_DSR | DHV_DCD | DHV_CTS)
+FUNKY STUFF
+echo extracting - dhvreg.h
+sed 's/^X//' > dhvreg.h << 'FUNKY STUFF'
+Xstruct dhvdevice
+X{
+X	union {
+X		short	dhvcsr;		/* control-status register */
+X		char	dhvcsrl;	/* low byte for line select */
+X	} un;
+X	short	dhvrcr;			/* receive character register */
+X	short	dhvlpr;			/* line parameter register */
+X	short	dhvlstat;		/* line status register */
+X	short	dhvlnctl;		/* line control register */
+X	u_short	dhvtbad1;		/* transmit buffer address 1 */
+X	char	dhvtbad2;		/* transmit buffer address 2
+X					 * (low byte of register) */
+X	char	dhvtxenb;		/* high byte of tbad2, containing just
+X					 * transmit enable bit */
+X	u_short	dhvbcr;			/* buffer counter */
+X};
+X
+X/* Bits in dhvcsr */
+X#define	DHV_TI		0100000		/* transmit interrupt */
+X#define	DHV_TIE		0040000		/* transmit interrupt enable */
+X#define	DHV_TXER	0010000		/* transmission error */
+X#define DHV_TXL		0007400		/* transmission line number */
+X#define	DHV_RI		0000200		/* receiver interrupt */
+X#define	DHV_RIE		0000100		/* receiver interrupt enable */
+X#define DHV_MSR		0000040		/* master reset */
+X#define DHV_CHAN	0000017		/* channel number */
+X#define DHV_IE		0040100		/* enable both kinds of interrupt */
+X
+X/* Bits in dhvrcr */
+X#define DHV_DIAG	0000001		/* diagnostic information */
+X#define	DHV_PE		0010000		/* parity error */
+X#define	DHV_FE		0020000		/* framing error */
+X#define	DHV_DO		0040000		/* data overrun */
+X#define DHV_RXERR	0070000		/* receive error mask */
+X#define DHV_MSTAT	0070000		/* status byte returned */
+X
+X/* Bits in dhvlpr */
+X#define	DHV_BITS6	0010
+X#define	DHV_BITS7	0020
+X#define	DHV_BITS8	0030
+X#define	DHV_PENABLE	0040
+X#define	DHV_EPAR	0100
+X#define	DHV_TWOSB	0200
+X
+X/* Bits in dhvlstat */
+X#define DHV_CTS		0004000		/* Clear to send */
+X#define DHV_DCD		0010000		/* Data Carrier Detect */
+X#define DHV_MRI		0020000		/* (Modem) Ring Indicate */
+X#define DHV_DSR		0100000		/* Date Set Ready */
+X
+X/* Bits in dhvlnctl */
+X#define DHV_ABORT	0000001		/* abort transmission */
+X#define DHV_IAUTO	0000002		/* incoming XON/XOFF flow control */
+X#define DHV_RXEN	0000004		/* enable receiver */
+X#define DHV_BRK		0000010		/* line break */
+X#define	DHV_MODEM	0000400		/* link type */
+X#define DHV_DTR		0001000		/* Data Terminal Ready */
+X#define DHV_RTS		0010000		/* Request To Send */
+X
+X/* Bit in dhvtbad2 */
+X#define DHV_XSTART	0000200		/* start transmission */
+X
+X/* Bit in dhvtxenb */
+X#define DHV_TXEN	0000200		/* enable transmission */
+FUNKY STUFF
+--
+	Alan J. Dempster			Dept. of Computing,
+						Imperial College,
+	uucp  -> ...mcvax!ukc!icdoc!ajd		180 Queen's Gate,
+	janet -> ajd@uk.ac.ic.doc		LONDON SW7 2BZ.
+

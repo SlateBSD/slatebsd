@@ -1,0 +1,103 @@
+System: rn version 4.3
+Patch #: 23
+Priority: HIGH for sites without line buffering
+Subject: the NOLINEBUF option doesn't work
+>From: msb@lsuc.UUCP (Mark Brader)
+
+Description:
+	Rn has a hidden feature such that if you define NOLINEBUF it is
+	supposed to do its own buffering, so that a system call isn't
+	made on every character of output.  Unfortunately, the feature
+	was never tested, and had two glaring errors right at the start.
+	The buffer for stdout was declared as auto rather than static,
+	and the setbuf() call was missing an argument.  Heesh.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 22
+1c1
+< Patch #: 22
+---
+> Patch #: 23
+
+Index: init.c
+Prereq: 4.3.1.2
+*** init.c.old	Tue Jul 23 18:09:36 1985
+--- init.c	Tue Jul 23 18:09:42 1985
+***************
+*** 1,4
+! /* $Header: init.c,v 4.3.1.2 85/05/21 14:22:46 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3.1.2  85/05/21  14:22:46  lwall
+
+--- 1,4 -----
+! /* $Header: init.c,v 4.3.1.3 85/07/23 18:08:36 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3.1.3  85/07/23  18:08:36  lwall
+***************
+*** 1,6
+  /* $Header: init.c,v 4.3.1.2 85/05/21 14:22:46 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3.1.2  85/05/21  14:22:46  lwall
+   * Sped up "rn -c" by avoiding unnecessary initialization.
+   * 
+
+--- 1,9 -----
+  /* $Header: init.c,v 4.3.1.3 85/07/23 18:08:36 lwall Exp $
+   *
+   * $Log:	init.c,v $
++  * Revision 4.3.1.3  85/07/23  18:08:36  lwall
++  * Fixed up NOLINEBUF option to work.
++  * 
+   * Revision 4.3.1.2  85/05/21  14:22:46  lwall
+   * Sped up "rn -c" by avoiding unnecessary initialization.
+   * 
+***************
+*** 51,57
+      register bool foundany = FALSE;
+      long time();
+  #ifdef NOLINEBUF
+!     char std_out_buf[BUFSIZ];
+  
+      setbuf(std_out_buf);
+  #endif
+
+--- 54,60 -----
+      register bool foundany = FALSE;
+      long time();
+  #ifdef NOLINEBUF
+!     static char std_out_buf[BUFSIZ];	/* must be static or malloced */
+  
+      setbuf(stdout, std_out_buf);
+  #endif
+***************
+*** 53,59
+  #ifdef NOLINEBUF
+      char std_out_buf[BUFSIZ];
+  
+!     setbuf(std_out_buf);
+  #endif
+  
+      tcbuf = safemalloc(1024);		/* make temp buffer for termcap and */
+
+--- 56,62 -----
+  #ifdef NOLINEBUF
+      static char std_out_buf[BUFSIZ];	/* must be static or malloced */
+  
+!     setbuf(stdout, std_out_buf);
+  #endif
+  
+      tcbuf = safemalloc(1024);		/* make temp buffer for termcap and */
+
+

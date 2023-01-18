@@ -1,0 +1,86 @@
+Application	Version
+-----------	-------
+Makefile	4.3  (small mods for load type (separate I&D or pure))
+XNSrouted/	4.3  (untested)
+ac.c		4.3
+accton.c	4.3
+arff.c		UNIMPLEMENTED
+arp.c		4.3  (some 2.10'isms)
+bad144.c	2.10 (4.3 should be ported; note that MAXBAD is currently 32)
+badsect.c	2.10 (4.3 should be ported)
+catman.c	4.3
+chown.c		4.3
+clri.c		2.10 (4.3 should be ported)
+comsat.c	4.3  (a few long/int fixes)
+config/		UNIMPLEMENTED
+cron.c		4.3
+dcheck.c	2.10 (4.3 should be ported)
+diskpart.c	UNIMPLEMENTED (4.3 should be ported)
+dmesg.c		4.3  (minor mods to accomodate different kernel MSG structure)
+dump/		2.10 (4.3 user interface should be ported)
+dump.4.1/	UNIMPLEMENTED
+dumpfs.c	UNIMPLEMENTED
+edquota.c	UNIMPLEMENTED
+fingerd.c	4.3
+flcopy.c	UNIMPLEMENTED
+fsck/		2.10 (4.3 should be ported, it's easier than it seems)
+ftpd/		4.3+
+gettable.c	4.3
+getty/		4.3
+htable/		4.3
+icheck.c	2.10 (4.3 should be ported)
+ifconfig.c	4.3+ (a few long/int fixes)
+implog/		2.10 (4.3 should be ported)
+inetd.c		4.3  (a few long/int fixes)
+init.c		4.3
+kgmon.c		UNIMPLEMENTED (but may be eventually...)
+mkfs.c		2.10
+mkhosts.c	4.3
+mklost.sh	2.10 (renamed from mklost+found.sh)
+mknod.c		4.3
+mkpasswd.c	4.3
+mkproto.c	UNIMPLEMENTED
+mkproto.data/	4.3
+mount.c		4.3
+named/		UNIMPLEMENTED (The source is in PORT, if you're *sure*...)
+ncheck.c	2.10 (4.3 should be ported)
+newfs.c		2.10
+ping.c		4.3+
+pstat.c		UNIMPLEMENTED
+quot.c		2.10
+quotacheck.c	UNIMPLEMENTED
+quotaon.c	UNIMPLEMENTED
+reboot.c	4.4
+renice.c	4.3
+repquota.c	UNIMPLEMENTED
+restore/	2.10 (4.3 user interface and rebuild code should be ported)
+rexecd.c	4.3  (a few long/int fixes)
+rlogind.c	4.3  (a few long/int fixes)
+rmt.c		4.3  (a few long/int fixes)
+route.c		4.3  (a few long/int fixes; some 2.10'isms)
+routed/		4.3  (lots of long/int fixes)
+rshd.c		4.3+
+rwhod.c		4.3  (a few long/int fixes; some 2.10'isms)
+rxformat.c	2.10 (interdependent with the RX kernel driver...)
+sa.c		4.3
+savecore.c	2.10 (4.3 should be ported)
+shutdown.c	4.3
+slattach.c	4.3
+swapon.c	UNIMPLEMENTED
+syslogd.c	4.3
+talkd/		UNIMPLEMENTED; see PORT
+telnetd.c	4.3+
+termcap/	4.3
+tftpd/		4.3
+timed/		4.3  (many long/int fixes)
+trpt.c		4.3
+trsp.c		4.3
+tunefs.c	UNIMPLEMENTED
+tzone		4.4
+umount.c	4.3
+update.c	4.3
+vipw.c		4.3  (minor name length changes)
+
+The directories OLD and PORT are special.  They contain source code from
+the 2.9 and 4.3 distributions that should probably be ported to 2.10 as
+soon as someone has the time and inclination to do so.

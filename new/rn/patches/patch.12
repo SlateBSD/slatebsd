@@ -1,0 +1,94 @@
+System: rn version 4.3
+Patch #: 12
+Priority: LOW
+Subject: Rnmail shouldn't ask editor if EDITOR or VISUAL defined
+>From: markb@cbosgd.UUCP (Mark Horton)
+
+Description:
+	Pnews doesn't ask you for your editor if you have EDITOR or VISUAL
+	defined.  Rnmail should (shouldn't?) do likewise.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 11
+1c1
+< Patch #: 11
+---
+> Patch #: 12
+
+Index: Rnmail.SH
+Prereq: 4.3.1.2
+*** Rnmail.SH.old	Mon May 20 16:26:20 1985
+--- Rnmail.SH	Mon May 20 16:26:27 1985
+***************
+*** 4,10
+  echo "Extracting Rnmail (with variable substitutions)"
+  $spitshell >Rnmail <<!GROK!THIS!
+  $startsh
+! # $Header: Rnmail.SH,v 4.3.1.2 85/05/17 10:36:19 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3.1.2  85/05/17  10:36:19  lwall
+
+--- 4,10 -----
+  echo "Extracting Rnmail (with variable substitutions)"
+  $spitshell >Rnmail <<!GROK!THIS!
+  $startsh
+! # $Header: Rnmail.SH,v 4.3.1.3 85/05/20 16:25:17 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3.1.3  85/05/20  16:25:17  lwall
+***************
+*** 7,12
+  # $Header: Rnmail.SH,v 4.3.1.2 85/05/17 10:36:19 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3.1.2  85/05/17  10:36:19  lwall
+  # Added "-- " before .signature.
+  # 
+
+--- 7,15 -----
+  # $Header: Rnmail.SH,v 4.3.1.3 85/05/20 16:25:17 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
++ # Revision 4.3.1.3  85/05/20  16:25:17  lwall
++ # Shouldn't ask editor if EDITOR or VISUAL defined.
++ # 
+  # Revision 4.3.1.2  85/05/17  10:36:19  lwall
+  # Added "-- " before .signature.
+  # 
+***************
+*** 173,179
+  	rescue="sleep 1; $cat $tmpart >>${HOME-$LOGDIR}/dead.letter ; $echo saved in ${HOME-$LOGDIR}/dead.letter ; $rm -f $tmpart; exit"
+  	trap "$rescue" 1
+  	trap : 2
+! 	tmp=h
+  	while $test "$tmp" = h ; do
+  	    $echo $n "Editor [${VISUAL-${EDITOR-$defeditor}}]: $c"
+  	    read tmp
+
+--- 176,189 -----
+  	rescue="sleep 1; $cat $tmpart >>${HOME-$LOGDIR}/dead.letter ; $echo saved in ${HOME-$LOGDIR}/dead.letter ; $rm -f $tmpart; exit"
+  	trap "$rescue" 1
+  	trap : 2
+! 	case "${VISUAL-${EDITOR-}}" in
+! 	'')
+! 	    tmp=h
+! 	    ;;
+! 	*)
+! 	    tmp=''
+! 	    ;;
+! 	esac
+  	while $test "$tmp" = h ; do
+  	    $echo $n "Editor [${VISUAL-${EDITOR-$defeditor}}]: $c"
+  	    read tmp
+
+

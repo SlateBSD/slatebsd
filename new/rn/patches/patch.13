@@ -1,0 +1,323 @@
+System: rn version 4.3
+Patch #: 13
+Priority: MEDIUM
+Subject: Configure gets spoofed on terminfo vs. termlib.
+>From: lwall@sdcrdcf (Larry Wall)
+
+Description:
+	Several people have complained that Configure found what it
+	thought was a terminfo system, only to find when rn was loaded
+	that -lcurses didn't contain termlib routines.  Checking for the
+	directories /usr/lib/terminfo or /etc/term is not really good
+	enough.  The following patch makes Configure check -lcurses to see
+	if it really has a termlib emulator in it.
+
+	The patch also corrects a minor problem in that values in
+	the config.sh file were surrounded by double rather than single
+	quotes, which causes an unwanted variable substitution to occur
+	on values containing '$', such as Log="$Log".  Rayan Zachariassen
+	<rayan@utai.UUCP> pointed out the problem.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 12
+1c1
+< Patch #: 12
+---
+> Patch #: 13
+
+Index: Configure
+Prereq: 4.3.1.3
+*** Configure.old	Mon May 20 17:14:24 1985
+--- Configure	Mon May 20 17:14:37 1985
+***************
+*** 3,9
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.3 85/05/16 16:48:48 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.3  85/05/16  16:48:48  lwall
+
+--- 3,9 -----
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.4 85/05/20 17:13:11 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.4  85/05/20  17:13:11  lwall
+***************
+*** 6,11
+  # $Header: Configure,v 4.3.1.3 85/05/16 16:48:48 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.3  85/05/16  16:48:48  lwall
+  # Took space from end of filexp output.
+  # 
+
+--- 6,15 -----
+  # $Header: Configure,v 4.3.1.4 85/05/20 17:13:11 lwall Exp $
+  #
+  # $Log:	Configure,v $
++ # Revision 4.3.1.4  85/05/20  17:13:11  lwall
++ # Makes sure -lcurses is really a terminfo library.
++ # Puts single instead of double quotes around defs in config.sh.
++ # 
+  # Revision 4.3.1.3  85/05/16  16:48:48  lwall
+  # Took space from end of filexp output.
+  # 
+***************
+*** 1032,1042
+  
+  : where do we get termlib routines from
+  $echo " "
+! if $test -d /usr/lib/terminfo || $test -d /etc/term; then
+!     termlib='-lcurses'
+!     havetlib=define
+!     $echo "Terminfo library found."
+! else
+      ans=`loc libtermlib.a x /usr/lib /usr/local/lib /lib`
+      case "$ans" in
+      /usr/lib*|/lib*)
+
+--- 1036,1056 -----
+  
+  : where do we get termlib routines from
+  $echo " "
+! ans=`loc libcurses.a x /usr/lib /usr/local/lib /lib`
+! case "$ans" in
+! /*)
+!     ar t $ans >grimble
+!     if $contains tputs.o grimble >/dev/null 2>&1; then
+! 	termlib='-lcurses'
+! 	havetlib=define
+! 	$echo "Terminfo library found."
+!     else
+! 	ans=x
+!     fi
+!     ;;
+! esac
+! case "$ans" in
+! x)
+      ans=`loc libtermlib.a x /usr/lib /usr/local/lib /lib`
+      case "$ans" in
+      /usr/lib*|/lib*)
+***************
+*** 1088,1094
+  	esac
+  	;;
+      esac
+! fi
+  
+  : see if there is a whoami file
+  if $test -r /usr/include/whoami.h ; then
+
+--- 1102,1109 -----
+  	esac
+  	;;
+      esac
+!     ;;
+! esac
+  
+  : see if there is a whoami file
+  if $test -r /usr/include/whoami.h ; then
+***************
+*** 1714,1805
+  # config.sh
+  # This file was produced by running the Configure script.
+  
+! n="$n"
+! c="$c"
+! libc="$libc"
+! eunicefix="$eunicefix"
+! eunice="$eunice"
+! cpp="$cpp"
+! shsharp="$shsharp"
+! startsh="$startsh"
+! spitshell="$spitshell"
+! test="$test"
+! expr="$expr"
+! sed="$sed"
+! echo="$echo"
+! cat="$cat"
+! rm="$rm"
+! mv="$mv"
+! cp="$cp"
+! tail="$tail"
+! tr="$tr"
+! mkdir="$mkdir"
+! sort="$sort"
+! uniq="$uniq"
+! inews="$inews"
+! grep="$grep"
+! egrep="$egrep"
+! contains="$contains"
+! lib="$lib"
+! libexp="$libexp"
+! nametype="$nametype"
+! cc="$cc"
+! iandd="$iandd"
+! termlib="$termlib"
+! jobslib="$jobslib"
+! ndirlib="$ndirlib"
+! libndir="$libndir"
+! usendir="$usendir"
+! ndirc="$ndirc"
+! ndiro="$ndiro"
+! pager="$pager"
+! mailer="$mailer"
+! internet="$internet"
+! rnbin="$rnbin"
+! filexp="$filexp"
+! distlist="$distlist"
+! Log="$Log"
+! Header="$Header"
+! sitename="$sitename"
+! orgname="$orgname"
+! isadmin="$isadmin"
+! newsadmin="$newsadmin"
+! rnlib="$rnlib"
+! mansrc="$mansrc"
+! manext="$manext"
+! maildir="$maildir"
+! spool="$spool"
+! active="$active"
+! myactive="$myactive"
+! mininact="$mininact"
+! pref="$pref"
+! defeditor="$defeditor"
+! rootid="$rootid"
+! mboxchar="$mboxchar"
+! locpref="$locpref"
+! orgpref="$orgpref"
+! citypref="$citypref"
+! statepref="$statepref"
+! cntrypref="$cntrypref"
+! contpref="$contpref"
+! strchr="$strchr"
+! novoid="$novoid"
+! novfork="$novfork"
+! portable="$portable"
+! passnam="$passnam"
+! berknam="$berknam"
+! usgnam="$usgnam"
+! whoami="$whoami"
+! termio="$termio"
+! fcntl="$fcntl"
+! ioctl="$ioctl"
+! normsig="$normsig"
+! havetlib="$havetlib"
+! getpwent="$getpwent"
+! gethostname="$gethostname"
+! douname="$douname"
+! phostname="$phostname"
+! hostcmd="$hostcmd"
+  CONFIG=true
+  EOT
+  
+
+--- 1729,1820 -----
+  # config.sh
+  # This file was produced by running the Configure script.
+  
+! n='$n'
+! c='$c'
+! libc='$libc'
+! eunicefix='$eunicefix'
+! eunice='$eunice'
+! cpp='$cpp'
+! shsharp='$shsharp'
+! startsh='$startsh'
+! spitshell='$spitshell'
+! test='$test'
+! expr='$expr'
+! sed='$sed'
+! echo='$echo'
+! cat='$cat'
+! rm='$rm'
+! mv='$mv'
+! cp='$cp'
+! tail='$tail'
+! tr='$tr'
+! mkdir='$mkdir'
+! sort='$sort'
+! uniq='$uniq'
+! inews='$inews'
+! grep='$grep'
+! egrep='$egrep'
+! contains='$contains'
+! lib='$lib'
+! libexp='$libexp'
+! nametype='$nametype'
+! cc='$cc'
+! iandd='$iandd'
+! termlib='$termlib'
+! jobslib='$jobslib'
+! ndirlib='$ndirlib'
+! libndir='$libndir'
+! usendir='$usendir'
+! ndirc='$ndirc'
+! ndiro='$ndiro'
+! pager='$pager'
+! mailer='$mailer'
+! internet='$internet'
+! rnbin='$rnbin'
+! filexp='$filexp'
+! distlist='$distlist'
+! Log='$Log'
+! Header='$Header'
+! sitename='$sitename'
+! orgname='$orgname'
+! isadmin='$isadmin'
+! newsadmin='$newsadmin'
+! rnlib='$rnlib'
+! mansrc='$mansrc'
+! manext='$manext'
+! maildir='$maildir'
+! spool='$spool'
+! active='$active'
+! myactive='$myactive'
+! mininact='$mininact'
+! pref='$pref'
+! defeditor='$defeditor'
+! rootid='$rootid'
+! mboxchar='$mboxchar'
+! locpref='$locpref'
+! orgpref='$orgpref'
+! citypref='$citypref'
+! statepref='$statepref'
+! cntrypref='$cntrypref'
+! contpref='$contpref'
+! strchr='$strchr'
+! novoid='$novoid'
+! novfork='$novfork'
+! portable='$portable'
+! passnam='$passnam'
+! berknam='$berknam'
+! usgnam='$usgnam'
+! whoami='$whoami'
+! termio='$termio'
+! fcntl='$fcntl'
+! ioctl='$ioctl'
+! normsig='$normsig'
+! havetlib='$havetlib'
+! getpwent='$getpwent'
+! gethostname='$gethostname'
+! douname='$douname'
+! phostname='$phostname'
+! hostcmd='$hostcmd'
+  CONFIG=true
+  EOT
+  
+
+

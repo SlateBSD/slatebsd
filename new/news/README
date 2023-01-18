@@ -1,0 +1,44 @@
+This file and the directories cvt and uucp have been stolen directly from
+the 4.3BSD distibution.  They are as is and untested.
+
+The rest of the directories (doc, man, misc, and src) comprise the 2.11NEWS
+system as distributed on mod.sources in September of 1986.  They have been
+compiled and run on a 2.10BSD system and work with the exception of expire
+and vnews which tend to die from memory starvation.  You can live without
+vnews obviously, but we haven't been able to find anyone willing to rewrite
+expire more portably, so your best bet, when it starts to die when the
+history files grows too large, is to start using find and rm ...  This is
+obviously not very satifactory, so you're welcome to rewrite expire for
+2.10BSD.  And no, setting the expiration time limit down doesn't seem to
+solve the problem.
+
+-----<2.10.3NEWS, 4.3BSD distribution release README>-----
+
+Warning: The compression scheme provided here is not compatible with the
+2.10.2 version. You must get all the sites you communicate with to run
+this version of unbatch.c. Otherwise, your compressed news will
+be thrown away. On the otherhand, you no longer need to have cunbatch
+on the remote system.
+
+Compress V4.0 is provided with this release. It is not compatible with
+the 2.0 compress, however, if the -C flag is given to sendbatch, compress
+will generate V2.0 output. This program can decompress either format 
+automatically.
+
+Note that sendbatch -c  has replaced csendbatch. sendbatch now takes
+several flags. See the man page for details.
+
+Disclaimer:
+
+This release (2.10.3 4.3bsd) is for the 4.3bsd tape. The code is known
+to work on 4.[123]bsd vaxes. It seems works on USG  & V7 systems but has not
+been extensively tested. There are certainly problems on Eunice systems.
+DO NOT use this with VMS defined, you will regret it.
+
+In any case, please mail me any problems you have.
+
+---rick
+rick@seismo.CSS.GOV
+seismo!rick
+January 17, 1986
+

@@ -1,0 +1,155 @@
+System: rn version 4.3
+Patch #: 11
+Priority: MEDIUM
+Subject: mbox and norm.saver don't put "Article n of newsgroup" line.
+>From: geoff@desint.UUCP (Geoff Kuenning)
+
+Description:
+	The shell scripts mbox.saver and norm.saver are supposed to put
+	a line at the front of the saved article saying where the article
+	came from.  This doesn't happen because a missing backslash causes
+	premature evaluation of a $5.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 10
+1c1
+< Patch #: 10
+---
+> Patch #: 11
+
+Index: mbox.saver.SH
+Prereq: 4.3
+*** mbox.saver.SH.old	Mon May 20 15:56:54 1985
+--- mbox.saver.SH	Mon May 20 15:56:59 1985
+***************
+*** 4,10
+  echo "Extracting mbox.saver (with variable substitutions)"
+  $spitshell >mbox.saver <<!GROK!THIS!
+  $startsh
+! # $Header: mbox.saver.SH,v 4.3 85/05/01 11:42:51 lwall Exp $
+  # 
+  # $Log:	mbox.saver.SH,v $
+  # Revision 4.3  85/05/01  11:42:51  lwall
+
+--- 4,10 -----
+  echo "Extracting mbox.saver (with variable substitutions)"
+  $spitshell >mbox.saver <<!GROK!THIS!
+  $startsh
+! # $Header: mbox.saver.SH,v 4.3.1.2 85/05/20 15:55:37 lwall Exp $
+  # 
+  # $Log:	mbox.saver.SH,v $
+  # Revision 4.3.1.2  85/05/20  15:55:37  lwall
+***************
+*** 7,12
+  # $Header: mbox.saver.SH,v 4.3 85/05/01 11:42:51 lwall Exp $
+  # 
+  # $Log:	mbox.saver.SH,v $
+  # Revision 4.3  85/05/01  11:42:51  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 7,18 -----
+  # $Header: mbox.saver.SH,v 4.3.1.2 85/05/20 15:55:37 lwall Exp $
+  # 
+  # $Log:	mbox.saver.SH,v $
++ # Revision 4.3.1.2  85/05/20  15:55:37  lwall
++ # Turned $5 into \$5.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:35:30  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:42:51  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 24,30
+  export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)
+  
+  ( $echo "\$8"
+!   case "$5" in
+    0) $echo "Article \$4 of \$6:" ;;
+    esac
+    $tail +\$5c \$1 | $sed "s/^From/>From/"
+
+--- 30,36 -----
+  export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)
+  
+  ( $echo "\$8"
+!   case "\$5" in
+    0) $echo "Article \$4 of \$6:" ;;
+    esac
+    $tail +\$5c \$1 | $sed "s/^From/>From/"
+
+Index: norm.saver.SH
+Prereq: 4.3
+*** norm.saver.SH.old	Mon May 20 15:57:13 1985
+--- norm.saver.SH	Mon May 20 15:57:19 1985
+***************
+*** 4,10
+  echo "Extracting norm.saver (with variable substitutions)"
+  $spitshell >norm.saver <<!GROK!THIS!
+  $startsh
+! # $Header: norm.saver.SH,v 4.3 85/05/01 11:45:16 lwall Exp $
+  # 
+  # $Log:	norm.saver.SH,v $
+  # Revision 4.3  85/05/01  11:45:16  lwall
+
+--- 4,10 -----
+  echo "Extracting norm.saver (with variable substitutions)"
+  $spitshell >norm.saver <<!GROK!THIS!
+  $startsh
+! # $Header: norm.saver.SH,v 4.3.1.2 85/05/20 15:56:24 lwall Exp $
+  # 
+  # $Log:	norm.saver.SH,v $
+  # Revision 4.3.1.2  85/05/20  15:56:24  lwall
+***************
+*** 7,12
+  # $Header: norm.saver.SH,v 4.3 85/05/01 11:45:16 lwall Exp $
+  # 
+  # $Log:	norm.saver.SH,v $
+  # Revision 4.3  85/05/01  11:45:16  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 7,18 -----
+  # $Header: norm.saver.SH,v 4.3.1.2 85/05/20 15:56:24 lwall Exp $
+  # 
+  # $Log:	norm.saver.SH,v $
++ # Revision 4.3.1.2  85/05/20  15:56:24  lwall
++ # Turned $5 into \$5.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:36:52  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:45:16  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 22,28
+  #
+  export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)
+  
+! ( case "$5" in
+    0) $echo "Article \$4 of \$6:" ;;
+    esac
+    $tail +\$5c \$1
+
+--- 28,34 -----
+  #
+  export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)
+  
+! ( case "\$5" in
+    0) $echo "Article \$4 of \$6:" ;;
+    esac
+    $tail +\$5c \$1
+
+

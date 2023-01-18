@@ -1,0 +1,25 @@
+	These files allow you to compile 2.10 on another machine,
+in this case a VAX.  Makefile.vax is the Makefile, VAX.c replaces
+the .s files.  An interesting fact (for contemplation as you wait
+for your 11/34 to compile the kernel) is that 2.10 compiles and
+loads in just under eight minutes on an VAX 8600.  Just thought
+you'd want to know.
+	Fix cpp.c so that it defines the right things; this one has
+been altered so that "vax" isn't defined.  Probably should alter it
+so that it defines BSD2_10, too, but I didn't and just defined BSD2_10
+in the Makefile.  It's also defined in param.h, so it's probably a
+safe thing.
+	Fix cc.c so that it calls the right cpp.
+
+	Then...
+		(cd cpp;make cpp)
+		mv cpp/cpp CPP
+		cc -O cc.c -o CC
+		(cd ..;config VAX)
+
+		rm ../../VAX/Make*		# use shell script install
+		cp VAX.c Makefile ../../VAX	# to do this
+
+		cd ../../VAX
+		make unix
+

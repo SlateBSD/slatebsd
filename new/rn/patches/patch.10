@@ -1,0 +1,534 @@
+System: rn version 4.3
+Patch #: 10
+Priority: LOW
+Subject: 7 with one blow
+>From: rlh@ukc.UUCP (Ron Hellier), wescott@ncrcae.UUCP (Mike Wescott),
+	netnews@wnuxb.UUCP (Ron Heiby), urban@spp3.UUCP (Mike Urban),
+	sjs@u1100s.UUCP (Stan Switzer)
+
+Description:
+	7 buglets:
+
+	The filexp script produced by Configure expands ~name with a space
+	on the end (in the presence of /bin/csh) because of carryover from
+	programming around a Eunice bug.
+
+	Pnews had some extra backslashes in it.
+
+	Rnmail didn't put "-- " in front of the .signature.
+
+	When using V7/Berkeley fullname code, intrp.c didn't capitalize the
+	& substitution of login name into fullname if it was the last
+	rather than the first name.
+
+	A help message in ng.c contained the interesting word
+	"unsubsubscribe".
+
+	The prompt for catch-up confirmation in rn.c didn't pay attention
+	to the -t (terse) flag.
+
+	There is a glitch in terminfo's emulation of termcap (with regard
+	to the bc capability) that needed programming around.  Also there
+	seem to be some systems that don't translate \r to \n on input
+	properly, so that was programmed around too.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 9
+1c1
+< Patch #: 9
+---
+> Patch #: 10
+
+Index: Configure
+Prereq: 
+*** Configure.old	Fri May 17 10:55:31 1985
+--- Configure	Fri May 17 10:56:06 1985
+***************
+*** 3,9
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.2 85/05/13 15:54:35 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.2  85/05/13  15:54:35  lwall
+
+--- 3,9 -----
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.3 85/05/16 16:48:48 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.3  85/05/16  16:48:48  lwall
+***************
+*** 6,11
+  # $Header: Configure,v 4.3.1.2 85/05/13 15:54:35 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.2  85/05/13  15:54:35  lwall
+  # Libraries in /usr/local/lib shouldn't use -l switch.
+  # 
+
+--- 6,14 -----
+  # $Header: Configure,v 4.3.1.3 85/05/16 16:48:48 lwall Exp $
+  #
+  # $Log:	Configure,v $
++ # Revision 4.3.1.3  85/05/16  16:48:48  lwall
++ # Took space from end of filexp output.
++ # 
+  # Revision 4.3.1.2  85/05/13  15:54:35  lwall
+  # Libraries in /usr/local/lib shouldn't use -l switch.
+  # 
+***************
+*** 568,574
+  ~*)
+      if $test -f /bin/csh; then
+  	/bin/csh -f -c "glob \$1"
+! 	$echo " "
+      else
+  	name=\`$expr x\$1 : '..\([^/]*\)'\`
+  	dir=\`$sed </etc/passwd -n -e "/^\${name}:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:\([^:]*\).*"'\$'"/\1/" -e p -e q -e '}'\`
+
+--- 571,577 -----
+  ~*)
+      if $test -f /bin/csh; then
+  	/bin/csh -f -c "glob \$1"
+! 	$echo ""
+      else
+  	name=\`$expr x\$1 : '..\([^/]*\)'\`
+  	dir=\`$sed </etc/passwd -n -e "/^\${name}:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:\([^:]*\).*"'\$'"/\1/" -e p -e q -e '}'\`
+
+Index: Pnews.SH
+Prereq: 4.3
+*** Pnews.SH.old	Fri May 17 10:40:18 1985
+--- Pnews.SH	Fri May 17 10:40:21 1985
+***************
+*** 4,10
+  echo "Extracting Pnews (with variable substitutions)"
+  $spitshell >Pnews <<!GROK!THIS!
+  $startsh
+! # $Header: Pnews.SH,v 4.3 85/05/01 12:20:33 lwall Exp $
+  #
+  # $Log:	Pnews.SH,v $
+  # Revision 4.3  85/05/01  12:20:33  lwall
+
+--- 4,10 -----
+  echo "Extracting Pnews (with variable substitutions)"
+  $spitshell >Pnews <<!GROK!THIS!
+  $startsh
+! # $Header: Pnews.SH,v 4.3.1.2 85/05/17 10:36:46 lwall Exp $
+  #
+  # $Log:	Pnews.SH,v $
+  # Revision 4.3.1.2  85/05/17  10:36:46  lwall
+***************
+*** 7,12
+  # $Header: Pnews.SH,v 4.3 85/05/01 12:20:33 lwall Exp $
+  #
+  # $Log:	Pnews.SH,v $
+  # Revision 4.3  85/05/01  12:20:33  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 7,18 -----
+  # $Header: Pnews.SH,v 4.3.1.2 85/05/17 10:36:46 lwall Exp $
+  #
+  # $Log:	Pnews.SH,v $
++ # Revision 4.3.1.2  85/05/17  10:36:46  lwall
++ # Removed some extra backslashes.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:30:21  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  12:20:33  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 344,351
+  		esac
+  		for newsgroup in $*; do
+  # the following screwy sed should prevent Eunice from hanging on no match
+! 		    moderator=`$sed <$lib/moderators \\
+! 		    -e "/^$newsgroup[ 	]/!s/.*//" \\
+  		    -e "s/^$newsgroup[ 	]//"`
+  		    case ${moderator}X in
+  		    X)  tryinews=yes
+
+--- 350,357 -----
+  		esac
+  		for newsgroup in $*; do
+  # the following screwy sed should prevent Eunice from hanging on no match
+! 		    moderator=`$sed <$lib/moderators \
+! 		    -e "/^$newsgroup[ 	]/!s/.*//" \
+  		    -e "s/^$newsgroup[ 	]//"`
+  		    case ${moderator}X in
+  		    X)  tryinews=yes
+
+Index: Rnmail.SH
+Prereq: 4.3
+*** Rnmail.SH.old	Fri May 17 10:40:07 1985
+--- Rnmail.SH	Fri May 17 10:40:10 1985
+***************
+*** 4,10
+  echo "Extracting Rnmail (with variable substitutions)"
+  $spitshell >Rnmail <<!GROK!THIS!
+  $startsh
+! # $Header: Rnmail.SH,v 4.3 85/05/01 11:34:18 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3  85/05/01  11:34:18  lwall
+
+--- 4,10 -----
+  echo "Extracting Rnmail (with variable substitutions)"
+  $spitshell >Rnmail <<!GROK!THIS!
+  $startsh
+! # $Header: Rnmail.SH,v 4.3.1.2 85/05/17 10:36:19 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3.1.2  85/05/17  10:36:19  lwall
+***************
+*** 7,12
+  # $Header: Rnmail.SH,v 4.3 85/05/01 11:34:18 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
+  # Revision 4.3  85/05/01  11:34:18  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 7,18 -----
+  # $Header: Rnmail.SH,v 4.3.1.2 85/05/17 10:36:19 lwall Exp $
+  # 
+  # $Log:	Rnmail.SH,v $
++ # Revision 4.3.1.2  85/05/17  10:36:19  lwall
++ # Added "-- " before .signature.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:30:38  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:34:18  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 227,233
+  	    echo $n "Append .signature file? [y] $c"
+  	    read ans
+  	    case $ans in
+! 	    ''|y*) cat $dotdir/.signature >> $tmpart
+  	    esac
+  	fi
+  	case $mailer in
+
+--- 233,242 -----
+  	    echo $n "Append .signature file? [y] $c"
+  	    read ans
+  	    case $ans in
+! 	    ''|y*)
+! 		echo "-- " >> $tmpart
+! 		cat $dotdir/.signature >> $tmpart
+! 		;;
+  	    esac
+  	fi
+  	case $mailer in
+
+Index: intrp.c
+Prereq: 4.3.1.2
+*** intrp.c.old	Fri May 17 10:40:36 1985
+--- intrp.c	Fri May 17 10:40:42 1985
+***************
+*** 1,4
+! /* $Header: intrp.c,v 4.3.1.2 85/05/15 14:39:45 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.2  85/05/15  14:39:45  lwall
+
+--- 1,4 -----
+! /* $Header: intrp.c,v 4.3.1.3 85/05/17 10:37:11 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.3  85/05/17  10:37:11  lwall
+***************
+*** 1,6
+  /* $Header: intrp.c,v 4.3.1.2 85/05/15 14:39:45 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.2  85/05/15  14:39:45  lwall
+   * Spelled gecos right.
+   * 
+
+--- 1,9 -----
+  /* $Header: intrp.c,v 4.3.1.3 85/05/17 10:37:11 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
++  * Revision 4.3.1.3  85/05/17  10:37:11  lwall
++  * Fixed & substitution to capitalize last name too.
++  * 
+   * Revision 4.3.1.2  85/05/15  14:39:45  lwall
+   * Spelled gecos right.
+   * 
+***************
+*** 1021,1030
+  	*c = '\0';
+      s = cpytill(buf,s,'&');
+      if (*s == '&') {			/* whoever thought this one up was */
+! 	strcat(buf,logname);		/* in the middle of the night */
+! 	strcat(buf,s+1);		/* before the morning after */
+! 	if (islower(*buf))
+! 	    *buf = toupper(*buf);	/* gack and double gack */
+      }
+  #else
+      if ((c = index(s, '(')) != Nullch)
+
+--- 1024,1034 -----
+  	*c = '\0';
+      s = cpytill(buf,s,'&');
+      if (*s == '&') {			/* whoever thought this one up was */
+! 	c = buf + strlen(buf);		/* in the middle of the night */
+! 	strcat(c,logname);		/* before the morning after */
+! 	strcat(c,s+1);
+! 	if (islower(*c))
+! 	    *c = toupper(*c);		/* gack and double gack */
+      }
+  #else
+      if ((c = index(s, '(')) != Nullch)
+
+Index: ng.c
+Prereq: 4.3.1.2
+*** ng.c.old	Fri May 17 10:55:26 1985
+--- ng.c	Fri May 17 10:55:44 1985
+***************
+*** 1,4
+! /* $Header: ng.c,v 4.3.1.2 85/05/13 09:29:28 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.2  85/05/13  09:29:28  lwall
+
+--- 1,4 -----
+! /* $Header: ng.c,v 4.3.1.3 85/05/16 16:48:09 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.3  85/05/16  16:48:09  lwall
+***************
+*** 1,6
+  /* $Header: ng.c,v 4.3.1.2 85/05/13 09:29:28 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.2  85/05/13  09:29:28  lwall
+   * Added CUSTOMLINES option.
+   * 
+
+--- 1,9 -----
+  /* $Header: ng.c,v 4.3.1.3 85/05/16 16:48:09 lwall Exp $
+   *
+   * $Log:	ng.c,v $
++  * Revision 4.3.1.3  85/05/16  16:48:09  lwall
++  * Fixed unsubsubscribe.
++  * 
+   * Revision 4.3.1.2  85/05/13  09:29:28  lwall
+   * Added CUSTOMLINES option.
+   * 
+***************
+*** 693,699
+  		fputs("\
+  Type y or SP to mark all articles as read.\n\
+  Type n to leave articles marked as they are.\n\
+! Type u to mark everything read and unsubsubscribe.\n\
+  ",stdout) FLUSH;
+  	    ELSE
+  #endif
+
+--- 696,702 -----
+  		fputs("\
+  Type y or SP to mark all articles as read.\n\
+  Type n to leave articles marked as they are.\n\
+! Type u to mark everything read and unsubscribe.\n\
+  ",stdout) FLUSH;
+  	    ELSE
+  #endif
+
+Index: rn.c
+Prereq: 4.3.1.2
+*** rn.c.old	Thu May 16 16:50:49 1985
+--- rn.c	Thu May 16 16:51:03 1985
+***************
+*** 8,14
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.2 85/05/13 09:34:53 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.2  85/05/13  09:34:53  lwall
+
+--- 8,14 -----
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.3 85/05/16 16:47:10 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.3  85/05/16  16:47:10  lwall
+***************
+*** 11,16
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.2 85/05/13 09:34:53 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.2  85/05/13  09:34:53  lwall
+   * Fixed default after do_newsgroup() returns from Q command.
+   * 
+
+--- 11,19 -----
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.3 85/05/16 16:47:10 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
++  * Revision 4.3.1.3  85/05/16  16:47:10  lwall
++  * Catchup confirmation didn't grok -t.
++  * 
+   * Revision 4.3.1.2  85/05/13  09:34:53  lwall
+   * Fixed default after do_newsgroup() returns from Q command.
+   * 
+***************
+*** 334,339
+  #ifdef CATCHUP
+  reask_catchup:
+  #ifdef VERBOSE
+  		    in_char("\nDo you really want to mark everything as read? [yn] ");
+  #else
+  		    in_char("\nReally? [ynh] ");
+
+--- 337,343 -----
+  #ifdef CATCHUP
+  reask_catchup:
+  #ifdef VERBOSE
++ 		IF(verbose)
+  		    in_char("\nDo you really want to mark everything as read? [yn] ");
+  		ELSE
+  #endif
+***************
+*** 335,341
+  reask_catchup:
+  #ifdef VERBOSE
+  		    in_char("\nDo you really want to mark everything as read? [yn] ");
+! #else
+  		    in_char("\nReally? [ynh] ");
+  #endif
+  		    putchar('\n') FLUSH;
+
+--- 339,347 -----
+  #ifdef VERBOSE
+  		IF(verbose)
+  		    in_char("\nDo you really want to mark everything as read? [yn] ");
+! 		ELSE
+! #endif
+! #ifdef TERSE
+  		    in_char("\nReally? [ynh] ");
+  #endif
+  		    putchar('\n') FLUSH;
+
+Index: term.c
+Prereq: 4.3
+*** term.c.old	Thu May 16 16:50:45 1985
+--- term.c	Thu May 16 16:51:05 1985
+***************
+*** 1,4
+! /* $Header: term.c,v 4.3 85/05/01 11:51:10 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3  85/05/01  11:51:10  lwall
+
+--- 1,4 -----
+! /* $Header: term.c,v 4.3.1.2 85/05/16 16:45:35 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3.1.2  85/05/16  16:45:35  lwall
+***************
+*** 1,6
+  /* $Header: term.c,v 4.3 85/05/01 11:51:10 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3  85/05/01  11:51:10  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,13 -----
+  /* $Header: term.c,v 4.3.1.2 85/05/16 16:45:35 lwall Exp $
+   *
+   * $Log:	term.c,v $
++  * Revision 4.3.1.2  85/05/16  16:45:35  lwall
++  * Forced \r to \n on input.
++  * Fix for terminfo braindamage regarding bc emulation.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:41:03  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:51:10  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 140,146
+      tmpaddr = tcarea;			/* set up strange tgetstr pointer */
+      s = Tgetstr("pc");			/* get pad character */
+      PC = *s;				/* get it where tputs wants it */
+!     if (!tgetflag("bs"))		/* is backspace not used? */
+  	BC = Tgetstr("bc");		/* find out what is */
+      else
+  	BC = "\b";			/* make a backspace handy */
+
+--- 147,153 -----
+      tmpaddr = tcarea;			/* set up strange tgetstr pointer */
+      s = Tgetstr("pc");			/* get pad character */
+      PC = *s;				/* get it where tputs wants it */
+!     if (!tgetflag("bs")) {		/* is backspace not used? */
+  	BC = Tgetstr("bc");		/* find out what is */
+  	if (BC == nullstr) 		/* terminfo grok's 'bs' but not 'bc' */
+  	    BC = Tgetstr("le");
+***************
+*** 142,148
+      PC = *s;				/* get it where tputs wants it */
+      if (!tgetflag("bs"))		/* is backspace not used? */
+  	BC = Tgetstr("bc");		/* find out what is */
+!     else
+  	BC = "\b";			/* make a backspace handy */
+      UP = Tgetstr("up");			/* move up a line */
+      if (!*UP)				/* no UP string? */
+
+--- 149,157 -----
+      PC = *s;				/* get it where tputs wants it */
+      if (!tgetflag("bs")) {		/* is backspace not used? */
+  	BC = Tgetstr("bc");		/* find out what is */
+! 	if (BC == nullstr) 		/* terminfo grok's 'bs' but not 'bc' */
+! 	    BC = Tgetstr("le");
+!     } else
+  	BC = "\b";			/* make a backspace handy */
+      UP = Tgetstr("up");			/* move up a line */
+      if (!*UP)				/* no UP string? */
+***************
+*** 749,754
+      }
+  
+  got_canonical:
+      if (whatbuf == buf)
+  	whatbuf[1] = FINISHCMD;		/* tell finish_command to work */
+  }
+
+--- 758,767 -----
+      }
+  
+  got_canonical:
++ #ifndef TERMIO
++     if (*whatbuf == '\r')
++ 	*whatbuf = '\n';
++ #endif
+      if (whatbuf == buf)
+  	whatbuf[1] = FINISHCMD;		/* tell finish_command to work */
+  }
+
+

@@ -1,0 +1,509 @@
+System: rn version 4.3
+Patch #: 18
+Priority: ENHANCEMENT
+Subject: The 'r' and 'f' commands ought to work from "End of newsgroup"
+
+Description:
+	The reply and followup commands should let you do so from a null
+	article (typically the pseudo-article called "End of newsgroup")
+	producing a basenote, or a mail message to nobody (yet).  Not only
+	would this be handy, but it allows certain news administrators who
+	can't put Pnews and Rnmail in a public place to nevertheless let
+	people originate notes or messages.  It also lets you invoke
+	Pnews or Rnmail with the same environment as rn, in the situation
+	where you aren't really carrying environment variables around in
+	your environment but rather setting them with -E.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 17
+1c1
+< Patch #: 17
+---
+> Patch #: 18
+
+Index: common.h
+Prereq: 4.3.1.2
+*** common.h.old	Thu May 23 17:23:43 1985
+--- common.h	Thu May 23 17:24:16 1985
+***************
+*** 1,4
+! /* $Header: common.h,v 4.3.1.2 85/05/13 09:30:39 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3.1.2  85/05/13  09:30:39  lwall
+
+--- 1,4 -----
+! /* $Header: common.h,v 4.3.1.3 85/05/23 17:19:32 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3.1.3  85/05/23  17:19:32  lwall
+***************
+*** 1,6
+  /* $Header: common.h,v 4.3.1.2 85/05/13 09:30:39 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3.1.2  85/05/13  09:30:39  lwall
+   * Added CUSTOMLINES option.
+   * 
+
+--- 1,9 -----
+  /* $Header: common.h,v 4.3.1.3 85/05/23 17:19:32 lwall Exp $
+   * 
+   * $Log:	common.h,v $
++  * Revision 4.3.1.3  85/05/23  17:19:32  lwall
++  * Now allows 'r' and 'f' on null articles.
++  * 
+   * Revision 4.3.1.2  85/05/13  09:30:39  lwall
+   * Added CUSTOMLINES option.
+   * 
+***************
+*** 531,537
+  #else
+  #   ifndef MAILHEADER		/* % */
+  #	ifdef CONDSUB
+! #	    define MAILHEADER "To: %T\nSubject: Re: %S\nNewsgroups: %n\nIn-Reply-To: %i\n%(%[references]!=^$?References\\: %[references]\n)Organization: %o\nCc: \nBcc: \n\n"
+  #	else
+  #	    define MAILHEADER "To: %T\nSubject: Re: %S\nNewsgroups: %n\nIn-Reply-To: %i\nReferences: %[references]\nCc: \nBcc: \n\n"
+  #	endif
+
+--- 534,540 -----
+  #else
+  #   ifndef MAILHEADER		/* % */
+  #	ifdef CONDSUB
+! #	    define MAILHEADER "To: %T\nSubject: %(%i=^$?:Re: %S\nNewsgroups: %n\nIn-Reply-To: %i)\n%(%[references]!=^$?References\\: %[references]\n)Organization: %o\nCc: \nBcc: \n\n"
+  #	else
+  #	    define MAILHEADER "To: %T\nSubject: Re: %S\nNewsgroups: %n\nIn-Reply-To: %i\nReferences: %[references]\nCc: \nBcc: \n\n"
+  #	endif
+***************
+*** 548,554
+  #endif
+  
+  #ifndef NEWSHEADER		/* % */
+! #   define NEWSHEADER "Newsgroups: %F\nSubject: Re: %S\nSummary: \nExpires: \nReferences: %R\nSender: \nReply-To: %L@%H.UUCP (%N)\nFollowup-To: \nDistribution: %D\nOrganization: %o\nKeywords: %[keywords]\n\n"
+  #endif
+  
+  #ifndef ATTRIBUTION		/* % */
+
+--- 551,561 -----
+  #endif
+  
+  #ifndef NEWSHEADER		/* % */
+! #   ifdef CONDSUB
+! #	define NEWSHEADER "Newsgroups: %(%F=^$?%C:%F)\nSubject: %(%S=^$?%\"\n\nSubject: \":Re: %S)\nSummary: \nExpires: \n%(%R=^$?:References: %R\n)Sender: \nReply-To: %L@%H.UUCP (%N)\nFollowup-To: \nDistribution: %(%i=^$?%\"Distribution: \":%D)\nOrganization: %o\nKeywords: %[keywords]\n\n"
+! #   else
+! #	define NEWSHEADER "Newsgroups: %F\nSubject: Re: %S\nSummary: \nExpires: \nReferences: %R\nSender: \nReply-To: %L@%H.UUCP (%N)\nFollowup-To: \nDistribution: %D\nOrganization: %o\nKeywords: %[keywords]\n\n"
+! #   endif
+  #endif
+  
+  #ifndef ATTRIBUTION		/* % */
+
+Index: intrp.c
+Prereq: 4.3.1.4
+*** intrp.c.old	Thu May 23 17:28:02 1985
+--- intrp.c	Thu May 23 17:29:42 1985
+***************
+*** 1,4
+! /* $Header: intrp.c,v 4.3.1.4 85/05/21 13:35:21 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.4  85/05/21  13:35:21  lwall
+
+--- 1,4 -----
+! /* $Header: intrp.c,v 4.3.1.5 85/05/23 17:21:24 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.5  85/05/23  17:21:24  lwall
+***************
+*** 1,6
+  /* $Header: intrp.c,v 4.3.1.4 85/05/21 13:35:21 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.4  85/05/21  13:35:21  lwall
+   * Sped up "rn -c" by not doing unnecessary initialization.
+   * 
+
+--- 1,9 -----
+  /* $Header: intrp.c,v 4.3.1.5 85/05/23 17:21:24 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
++  * Revision 4.3.1.5  85/05/23  17:21:24  lwall
++  * Now allows 'r' and 'f' on null articles.
++  * 
+   * Revision 4.3.1.4  85/05/21  13:35:21  lwall
+   * Sped up "rn -c" by not doing unnecessary initialization.
+   * 
+***************
+*** 625,631
+  		case 'i':
+  		    if (!(s=artid_buf))
+  			s = artid_buf = fetchlines(art,MESSID_LINE);
+! 		    if (*s != '<') {
+  			sprintf(scrbuf,"<%s>",artid_buf);
+  			s = scrbuf;
+  		    }
+
+--- 628,634 -----
+  		case 'i':
+  		    if (!(s=artid_buf))
+  			s = artid_buf = fetchlines(art,MESSID_LINE);
+! 		    if (*s && *s != '<') {
+  			sprintf(scrbuf,"<%s>",artid_buf);
+  			s = scrbuf;
+  		    }
+***************
+*** 713,719
+  			artid_buf = fetchlines(art,MESSID_LINE);
+  		    if (artid_buf[0] == '<')
+  			safecat(scrbuf,artid_buf,sizeof(scrbuf));
+! 		    else {
+  			char tmpbuf[64];
+      
+  			sprintf(tmpbuf,"<%s>",artid_buf);
+
+--- 716,722 -----
+  			artid_buf = fetchlines(art,MESSID_LINE);
+  		    if (artid_buf[0] == '<')
+  			safecat(scrbuf,artid_buf,sizeof(scrbuf));
+! 		    else if (artid_buf[0]) {
+  			char tmpbuf[64];
+      
+  			sprintf(tmpbuf,"<%s>",artid_buf);
+
+Index: respond.c
+Prereq: 4.3.1.3
+*** respond.c.old	Thu May 23 17:27:17 1985
+--- respond.c	Thu May 23 17:27:44 1985
+***************
+*** 1,4
+! /* $Header: respond.c,v 4.3.1.3 85/05/15 14:42:32 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.3  85/05/15  14:42:32  lwall
+
+--- 1,4 -----
+! /* $Header: respond.c,v 4.3.1.4 85/05/23 17:24:49 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.4  85/05/23  17:24:49  lwall
+***************
+*** 1,6
+  /* $Header: respond.c,v 4.3.1.3 85/05/15 14:42:32 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.3  85/05/15  14:42:32  lwall
+   * Removed duplicate include of intrp.h.
+   * 
+
+--- 1,9 -----
+  /* $Header: respond.c,v 4.3.1.4 85/05/23 17:24:49 lwall Exp $
+   *
+   * $Log:	respond.c,v $
++  * Revision 4.3.1.4  85/05/23  17:24:49  lwall
++  * Now allows 'r' and 'f' on null articles.
++  * 
+   * Revision 4.3.1.3  85/05/15  14:42:32  lwall
+   * Removed duplicate include of intrp.h.
+   * 
+***************
+*** 306,322
+      bool incl_body = (*buf == 'R');
+      char *maildoer = savestr(filexp(getval("MAILPOSTER",MAILPOSTER)));
+  
+!     if (artopen(art) == Nullfp) {
+! #ifdef VERBOSE
+! 	IF(verbose)
+! 	    fputs("\nBut null articles are so dull!  :-)\n",stdout) FLUSH;
+! 	ELSE
+! #endif
+! #ifdef TERSE
+! 	    fputs(nullart,stdout) FLUSH;
+! #endif
+! 	goto no_reply;
+!     }
+      tmpfp = fopen(headname,"w");	/* open header file */
+      if (tmpfp == Nullfp) {
+  	printf(cantcreate,headname) FLUSH;
+
+--- 309,315 -----
+      bool incl_body = (*buf == 'R');
+      char *maildoer = savestr(filexp(getval("MAILPOSTER",MAILPOSTER)));
+  
+!     artopen(art);
+      tmpfp = fopen(headname,"w");	/* open header file */
+      if (tmpfp == Nullfp) {
+  	printf(cantcreate,headname) FLUSH;
+***************
+*** 334,340
+  #ifdef TERSE
+  	    printf("\n%s\n(Header in %s)\n",buf,headname) FLUSH;
+  #endif
+!     if (incl_body) {
+  	interp(buf, (sizeof buf), getval("YOUSAID",YOUSAID));
+  	fprintf(tmpfp,"%s\n",buf);
+  #ifdef ASYNC_PARSE
+
+--- 327,333 -----
+  #ifdef TERSE
+  	    printf("\n%s\n(Header in %s)\n",buf,headname) FLUSH;
+  #endif
+!     if (incl_body && artfp != Nullfp) {
+  	interp(buf, (sizeof buf), getval("YOUSAID",YOUSAID));
+  	fprintf(tmpfp,"%s\n",buf);
+  #ifdef ASYNC_PARSE
+***************
+*** 359,375
+  {
+      bool incl_body = (*buf == 'F');
+  
+!     if (artopen(art) == Nullfp) {
+! #ifdef VERBOSE
+! 	IF(verbose)
+! 	    fputs("\nNull articles give me indigestion!  :-)\n",stdout) FLUSH;
+! 	ELSE
+! #endif
+! #ifdef TERSE
+! 	    fputs(nullart,stdout) FLUSH;
+! #endif
+! 	return;
+!     }
+      tmpfp = fopen(headname,"w");
+      if (tmpfp == Nullfp) {
+  	printf(cantcreate,headname) FLUSH;
+
+--- 352,358 -----
+  {
+      bool incl_body = (*buf == 'F');
+  
+!     artopen(art);
+      tmpfp = fopen(headname,"w");
+      if (tmpfp == Nullfp) {
+  	printf(cantcreate,headname) FLUSH;
+***************
+*** 377,383
+      }
+      interp(buf, (sizeof buf), getval("NEWSHEADER",NEWSHEADER));
+      fprintf(tmpfp,"%s",buf);
+!     if (incl_body) {
+  #ifdef VERBOSE
+  	if (verbose)
+  	    fputs("\n\
+
+--- 360,366 -----
+      }
+      interp(buf, (sizeof buf), getval("NEWSHEADER",NEWSHEADER));
+      fprintf(tmpfp,"%s",buf);
+!     if (incl_body && artfp != Nullfp) {
+  #ifdef VERBOSE
+  	if (verbose)
+  	    fputs("\n\
+
+Index: rn.1
+Prereq: 4.3.1.2
+*** rn.1.old	Thu May 23 17:21:17 1985
+--- rn.1	Thu May 23 17:23:24 1985
+***************
+*** 1,4
+! ''' $Header: rn.1,v 4.3.1.2 85/05/13 09:27:53 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.2  85/05/13  09:27:53  lwall
+
+--- 1,4 -----
+! ''' $Header: rn.1,v 4.3.1.3 85/05/23 17:14:14 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.3  85/05/23  17:14:14  lwall
+***************
+*** 1,6
+  ''' $Header: rn.1,v 4.3.1.2 85/05/13 09:27:53 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.2  85/05/13  09:27:53  lwall
+  ''' Added CUSTOMLINES option.
+  ''' 
+
+--- 1,9 -----
+  ''' $Header: rn.1,v 4.3.1.3 85/05/23 17:14:14 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
++ ''' Revision 4.3.1.3  85/05/23  17:14:14  lwall
++ ''' Now allows 'r' and 'f' on null articles.
++ ''' 
+  ''' Revision 4.3.1.2  85/05/13  09:27:53  lwall
+  ''' Added CUSTOMLINES option.
+  ''' 
+***************
+*** 512,517
+  the mailing behavior of
+  .I rn
+  (see environment section).
+  .Ip R 8
+  Reply, including the current article in the header file generated.
+  (See \*(L'F\*(R' command below).
+
+--- 515,523 -----
+  the mailing behavior of
+  .I rn
+  (see environment section).
++ If on a nonexistent article such as the "End of newsgroup" pseudo-article
++ (which you can get to with a \*(L'$\*(R' command), invokes the mailer to
++ nobody in particular.
+  .Ip R 8
+  Reply, including the current article in the header file generated.
+  (See \*(L'F\*(R' command below).
+***************
+*** 518,523
+  The YOUSAID environment variable controls the format of the attribution line.
+  .Ip f 8
+  Submit a followup article.
+  .Ip F 8
+  Submit a followup article, and include the old article, with lines prefixed
+  either by \*(L">\*(R" or by the argument to a
+
+--- 524,532 -----
+  The YOUSAID environment variable controls the format of the attribution line.
+  .Ip f 8
+  Submit a followup article.
++ If on a nonexistent article such as the "End of newsgroup" pseudo-article
++ (which you can get to with a \*(L'$\*(R' command), posts an original
++ article (basenote).
+  .Ip F 8
+  Submit a followup article, and include the old article, with lines prefixed
+  either by \*(L">\*(R" or by the argument to a
+***************
+*** 1336,1342
+  .Sp
+  To: %T
+  .br
+! Subject: Re: %S
+  .br
+  Newsgroups: %n
+  .br
+
+--- 1345,1351 -----
+  .Sp
+  To: %T
+  .br
+! Subject: %(%i=^$?:Re: %S
+  .br
+  Newsgroups: %n
+  .br
+***************
+*** 1340,1346
+  .br
+  Newsgroups: %n
+  .br
+! In-Reply-To: %i
+  .br
+  %(%[references]!=^$?References\\: %[references]
+  .br
+
+--- 1349,1355 -----
+  .br
+  Newsgroups: %n
+  .br
+! In-Reply-To: %i)
+  .br
+  %(%[references]!=^$?References\\: %[references]
+  .br
+***************
+*** 1383,1389
+  .Sp
+  Default:
+  .Sp
+! Newsgroups: %F
+  .br
+  Subject: Re: %S
+  .br
+
+--- 1392,1398 -----
+  .Sp
+  Default:
+  .Sp
+! Newsgroups: %(%F=^$?%C:%F)
+  .br
+  Subject: %(%S=^$?%"\n\nSubject: ":Re: %S)
+  .br
+***************
+*** 1385,1391
+  .Sp
+  Newsgroups: %F
+  .br
+! Subject: Re: %S
+  .br
+  Summary:
+  .br
+
+--- 1394,1400 -----
+  .Sp
+  Newsgroups: %(%F=^$?%C:%F)
+  .br
+! Subject: %(%S=^$?%"\n\nSubject: ":Re: %S)
+  .br
+  Summary:
+  .br
+***************
+*** 1391,1397
+  .br
+  Expires: 
+  .br
+! References: %R
+  .br
+  Sender: 
+  .br
+
+--- 1400,1406 -----
+  .br
+  Expires: 
+  .br
+! %(%R=^$?:References: %R
+  .br
+  )Sender: 
+  .br
+***************
+*** 1393,1399
+  .br
+  References: %R
+  .br
+! Sender: 
+  .br
+  Reply-To: %L@%H.UUCP (%N)
+  .br
+
+--- 1402,1408 -----
+  .br
+  %(%R=^$?:References: %R
+  .br
+! )Sender: 
+  .br
+  Reply-To: %L@%H.UUCP (%N)
+  .br
+***************
+*** 1399,1405
+  .br
+  Followup-To: 
+  .br
+! Distribution: %D
+  .br
+  Organization: %o
+  .br
+
+--- 1408,1414 -----
+  .br
+  Followup-To: 
+  .br
+! Distribution: %(%i=^$?%"\nDistribution: ":%D)
+  .br
+  Organization: %o
+  .br
+
+

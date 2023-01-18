@@ -1,0 +1,674 @@
+From jsq@ut-sally.UUCP (John Quarterman) Fri Jan 11 15:48:16 1985
+Relay-Version: version B 2.10.2 12/21/84; site seismo.UUCP
+Posting-Version: version B 2.10.2 9/18/84; site ut-sally.UUCP
+Path: seismo!ut-sally!jsq
+From: jsq@ut-sally.UUCP (John Quarterman)
+Newsgroups: net.sources
+Subject: uuhosts that works with January 1984 mod.map.uucp postings
+Message-ID: <619@ut-sally.UUCP>
+Date: 11 Jan 85 20:48:16 GMT
+Date-Received: 11 Jan 85 21:27:06 GMT
+References: <500@ut-sally.UUCP> <588@ut-sally.UUCP>
+Reply-To: jsq@ut-sally.UUCP (John Quarterman)
+Followup-To: net.sources.bugs
+Distribution: net
+Organization: U. Texas CS Dept., Austin, Texas
+Lines: 655
+
+: This is a shar archive.  Extract with sh, not csh.
+echo x - README
+sed -e 's/^X//' > README << '!RoNnIe!RaYgUn!'
+XThis is the source directory for uuhosts, which may be used to display
+Xinformation from the USENET newsgroups mod.map.uucp and mod.map.news.
+XThe format of mod.map.uucp has changed (yet again) since the last time
+XI posted uuhosts, thus this reposting which works with the new format
+Xand has a few improvements in the way it displays things.  Also,
+X"make install" will now create all the necessary directories and
+Xcommands in the proper modes and groups.
+X
+XMail routing information as produced by pathalias is also displayed.
+X(Pathalias is not included here:  it was posted to net.sources a while back.)
+XIf you have uupath, you will want to use it instead of the method
+Xuuhosts uses by default.  Just look for uupath in uuhosts.sh and it's
+Xobvious what to change.
+X
+X
+XSince uuhosts needs the map information from the USENET spool directories
+Xextracted into a more accessible (and permanent) location, it can be
+Xused to do that, too.  Arrangements should be made in news/sys for inews
+Xto call "uuhosts -x" when mod.map.all articles arrive.  See uuhosts(1).
+X
+XFor the extraction (and *only* the extraction), uuhosts depends on a
+Xsmall setuid program called mapsh (included here) which uses chroot(2),
+Xwhich is in (at least) 4BSD, System N, and Version 7.  The purpose of
+Xmapsh is to limit the commands which may be executed when found in a
+Xmap article.  If you trust everyone who can post to USENET from any
+Xmachine in the world, you can probably replace mapsh with "cd $MAPS; sh".
+XOr you can use unmvax!lee's article parser, if you just don't like chroot.
+X
+X
+XIf you had uuhosts installed before the January 1984 mod.map.uucp
+Xpostings, it should have extracted the news articles into the map
+Xdirectory, but you will need to do "uuhosts -i" with the new uuhosts
+Xto build an appropriate Index for display use.
+X
+XIf you haven't extracted anything from the mod.map.uucp newsgroup yet,
+Xyou should do "make install" to create the appropriate map directories
+Xand programs, and then feed the news articles to "uuhosts -x" with
+Xsomething like this:
+X
+X	cd /usr/spool/news/mod/map/uucp
+X	for f in *
+X	do
+X		uuhosts -x < $f
+X	done
+X
+XThat will take a while:  display speed has been bought by slowness
+Xin creating the Index files.
+X
+X
+XHere is an example of the most common use of uuhosts, which is to
+Xdisplay information about a particular host:
+X
+X% uuhosts cbosgd
+XUUCP mail path for cbosgd:
+Xcbosgd	seismo!cbosgd!%s
+X
+XUUCP mail host information for cbosgd:
+X#Name			cbosgd
+X#System-CPU-OS		
+X#Organization		AT&T Bell Laboratories, Columbus (cb)
+X#Contact		mark horton
+X#Electronic-Address	cbosgd!mark
+X#Telephone		(614)860-4276
+X#Postal-Address		2C-249;6200 East Broad Street;Columbus, OH 43213
+X#Latitude-Longitude	
+X#Remarks		
+X#Written-by		840626 ihnp4!action
+X#
+Xcbosgd	ATT-ACTION,
+X	aat(DEMAND), bang(DEMAND), bragvax(DEMAND), brl-bmd(DEMAND),
+X	cca(DEMAND), cwruecmp(DEMAND), decvax(DEMAND), dual(DEMAND),
+X	duke(DEMAND), excelan(DEMAND), fortune(DEMAND), garfield(DEMAND),
+X	genrad(DEMAND), hasmed(DAILY), hcr(DEMAND), ho95b(DEMAND),
+X	hp-lsd(DEMAND), hplabs(DEMAND), hugo(DEMAND), idi(DEMAND),
+X	idis(DEMAND), ima(DEMAND), ittvax(DEMAND), jett(DEMAND),
+X	lbl-csam(DEMAND), linus(DEMAND), looking(DEMAND), lzmi(DEMAND),
+X	mddc(DEMAND), mss(DEMAND), nbires(DEMAND), ncrday(DEMAND),
+X	neoucom(DEMAND), netword(DEMAND), nmtvax(DEMAND), nsc(DEMAND),
+X	okstate(DEMAND), philabs(DEMAND), plus5(DEMAND), politik(DEMAND),
+X	psuvax1(DEMAND), qubix(DEMAND), randvax(DEMAND), rice(DEMAND),
+X	rlgvax(DEMAND), sanant(DEMAND), scgvaxd(DEMAND), sco(DEMAND),
+X	sdcarl(DEMAND), sdcrdcf(DEMAND), seismo(DEMAND), sfwin(DEMAND),
+X	sfbai(DEMAND), sfbam(DEMAND), sfjec(DEMAND), stcvax(DEMAND),
+X	sun(DEMAND), sunbird(DEMAND), t4test(DEMAND), talcott(DEMAND),
+X	ucbvax(DEMAND), uicsovax(DEMAND), umcp-cs(DEMAND), unm-ivax(DEMAND),
+X	usenix(DEMAND), utah-cs(DEMAND), utcs(DEMAND), uvacs(DEMAND),
+X	vortex(DEMAND), washu(DEMAND), wu1(DEMAND), zehntel(DEMAND),
+X	zinfandel(DEMAND), wjh12(DEMAND),
+X	apr(DEMAND), caribou(DEMAND), chemabs(DEAD), osu-eddie(DEMAND),
+X	cbdbms(LOCAL), cbdkc1(LOCAL), cbnee(LOCAL), cbnmb(LOCAL),
+X	cbosg(LOCAL), cbosgb(LOCAL), cbosge(LOCAL), cbmis(LOCAL),
+X	cbscc(LOCAL), cbuxb(LOCAL), eadas(LOCAL), eadast(LOCAL),
+X	ndbcb(LOCAL), ncpx(LOCAL), ncpa(LOCAL), ncpc(LOCAL),
+X	ncpx(LOCAL), ncpe(LOCAL), ncpf(LOCAL), ncpg(LOCAL),
+X	ncph(LOCAL), noc(LOCAL), nscs(LOCAL), cbnscs(LOCAL),
+X	nsc3b2(LOCAL), sescct(LOCAL), sescent(LOCAL)
+X
+X
+XUSENET news host information for cbosgd:
+XName: cbosgd
+XOrganization: AT&T Bell Laboratories, Operating Systems Group
+XContact: Mark Horton
+XPhone: (614) 860-4276
+XPostal-Address: Rm. 2C-249, 6200 E. Broad St., Columbus, OH 43213
+XElectronic-Address: cbosg!cbosgd!mark
+XNews: ihnp4 cbnscs hasmed cbdkc1 cbuxc cbrmc neoucom cbsck osu-eddie clyde
+XMail: neoucom psuvax1 atlas
+XComments: last edited 12/1/84
+X
+!RoNnIe!RaYgUn!
+echo x - uuhosts.1
+sed -e 's/^X//' > uuhosts.1 << '!RoNnIe!RaYgUn!'
+X.TH UUHOSTS 1L 85/01/11
+X.SH NAME
+Xuuhosts \- USENET news and UUCP mail information.
+X.SH SYNOPSIS
+X.B
+Xuuhosts
+Xhostname ...
+X.br
+X.B
+Xuuhosts
+X-u [ UUCP-mail-region ]
+X.br
+X.B
+Xuuhosts
+X-n [ USENET-news-region ]
+X.br
+X.B
+Xuuhosts
+X-x
+X.SH DESCRIPTION
+XThe \fIuuhosts\fP command is used to look up information about
+Xthe configurations of the UUCP mail network and the USENET news network.
+X.TP
+Xuuhosts \fIhostname\fP ...
+Xfor information about a particular UUCP or USENET host or hosts.
+XThe UUCP mail path is given first, followed by the UUCP mail map
+Xinformation, and then the USENET news map information.
+XAny hosts with names for which the argument is a prefix are shown, e.g.:
+X.TP
+Xuuhosts ut
+Xgets information about all hosts whose names start with ``ut''.
+X.TP
+Xuuhosts \-n \fIUSENET-news-region\fP
+Xfor information about hosts in a region of the USENET news network.
+X.TP
+Xuuhosts \-n README
+Xgets an introduction to the USENET news map.
+X.TP
+Xuuhosts \-n Local
+Xgets USENET news information known only locally.
+X.TP
+Xuuhosts \-n
+Xfor a list of known USENET regions.
+X.TP
+Xuuhosts \-u
+Xgets a list of regions of the UUCP mail network, and
+X.TP
+Xuuhosts \-u \fIUUCP-mail-region\fP
+Xretrieves information about UUCP hosts in that region.
+XThere may be a Local region, as for the USENET map.
+X.TP
+Xuuhosts
+Xwith no arguments gets a short usage message.
+X.SH MAINTENANCE
+XIn addition to the options mentioned above, there is
+X.TP
+Xuuhosts \-x
+XExtract pieces of the USENET news or UUCP mail maps from a
+Xmod.map.news or mod.map.uucp article.
+X.PP
+XThis should be called automatically by a line in \fB/usr/local/lib/news/sys\fP
+Xlike
+X.IP
+Xmaps:mod.map.news,mod.map.uucp:B:/usr/local/uuhosts\ \-x
+X.TP
+Xuuhosts \-i
+Xrebuilds all the Index files (see below).
+X.LP
+XThere are more details in the uuhosts shell script itself.
+X.SH FILES
+X.TP
+X/usr/local/lib/nmail.paths
+XUUCP mail path database as produced by \fIpathalias\fP and used by \fInmail\fP
+X(which is called automatically from \fIsendmail\fP on \fIut\-sally\fP)
+XIt is searched by \fIlook\fP(1), if present, else \fIgrep\fP(1).
+X.TP
+X/usr/local/lib/news/maps/mod.map.news
+XUSENET news site information taken from newsgroup \fBmod.map.news\fP
+X(thanks to \fBcbosgd!map\fP).
+XNotices of updates are mailed to usenet, which should be an alias
+Xredistributing to the local USENET administrators.
+X.TP
+X/usr/local/lib/news/maps/mod.map.news/Index
+XThis index is used to decrease search time on the map about an order
+Xof magnitude.
+XThe search is done by either \fIlook\fP(1) or \fIgrep\fP(1), as above.
+XThe index is updated each time a mod.map.news article arrives,
+Xand may be manually forced by ``uuhosts\ \-ni''.
+X.TP
+X/usr/local/lib/news/maps/mod.map.uucp
+XUUCP mail site information taken from newsgroup \fBmod.map.uucp\fP
+X(thanks to the UUCP mapping project).
+XNotices of updates are mailed to postmaster, which should be an alias
+Xredistributing to the local mail and UUCP administrators.
+X.TP
+X/usr/local/lib/news/maps/mod.map.uucp/Index
+XLike the corresponding file in the mod.map.news directory.
+XA manual update may be forced by ``uuhosts\ \-ui''.
+X.TP
+X/usr/local/lib/news/sys
+XContains arrangements to call "uuhosts\ \-x".
+X.SH SEE ALSO
+Xvnews(1), readnews(1), mail(1), sendmail(8), look(1)
+X.SH BUGS
+XHaving uuhosts\ \-x create a complete new Index for each incoming article
+Xis clumsy, takes a long time, and eats CPU.
+XOn the other hand, articles don't come in but once or twice a month.
+XIf anybody has a clever method of handling this (given that ordinary
+Xusers may read but not write on the map directories), let me know.
+X.sp
+X.nf
+XJohn Quarterman, CS Dept., University of Texas, Austin, Texas 78712 USA
+Xjsq@ut-sally.ARPA, jsq@ut-sally.UUCP, {ihnp4,seismo,ctvax}!ut-sally!jsq
+!RoNnIe!RaYgUn!
+echo x - Makefile
+sed -e 's/^X//' > Makefile << '!RoNnIe!RaYgUn!'
+XSHELL=/bin/sh
+X
+X# BIN should be either /usr/local or /usr/local/bin
+XBIN=/usr/local
+X# nmail.paths is found in this directory
+XLIB=/usr/local/lib
+X# Most of the news parameter files and mapsh are in this directory.
+XNEWS=$(LIB)/news
+X# The maps from mod.map.all are under this directory.
+XMAPS=$(NEWS)/maps
+X
+XSOURCES=uuhosts.sh mapsh.c
+XALL=uuhosts mapsh
+X
+Xall: $(ALL)
+X
+Xuuhosts: uuhosts.sh
+X	sed -e \
+X's%^BIN=.*$$%BIN=$(BIN)%;s%^LIB=.*$$%LIB=$(LIB)%;s%^NEWS=.*$$%NEWS=$(NEWS)%;s%^MAPS=.*$$%MAPS=$(MAPS)%'\
+X uuhosts.sh > uuhosts
+X	chmod +x uuhosts
+X
+Xmapsh: mapsh.c
+X	$(CC) -o mapsh -DMAPS=\"$(MAPS)\" mapsh.c
+X
+Xinstall: uuhosts mapsh
+X	-rm -f $(BIN)/uuhosts
+X	cp uuhosts $(BIN)/uuhosts
+X	chmod 555 $(BIN)/uuhosts
+X	@echo "installation has to be done as root"
+X	-rm -f $(NEWS)/mapsh
+X	cp mapsh $(NEWS)/mapsh
+X	-strip $(NEWS)/mapsh
+X	chown root $(NEWS)/mapsh
+X	chgrp news $(NEWS)/mapsh
+X	chmod 4550 $(NEWS)/mapsh
+X	ls -lg $(NEWS)/mapsh
+X	@echo "If the following mkdir of $(MAPS) fails,"
+X	@echo "the map directories must already be set up."
+X	mkdir $(MAPS)
+X	mkdir $(MAPS)/bin $(MAPS)/tmp $(MAPS)/mod.map.uucp $(MAPS)/mod.map.news
+X	chgrp news $(MAPS) $(MAPS)/*
+X	chmod 555 $(MAPS)
+X	chmod 775 $(MAPS)/mod.map.*
+X	chmod 777 $(MAPS)/tmp
+X	chmod 555 $(MAPS)/bin
+X	cp /bin/cat $(MAPS)/bin
+X	cp /bin/echo $(MAPS)/bin
+X	cp /bin/sed $(MAPS)/bin
+X	cp /bin/sh $(MAPS)/bin
+X	-strip $(MAPS)/bin/*
+X	chgrp news $(MAPS)/bin/*
+X	chmod 555 $(MAPS)/bin/*
+X	ls -lga $(MAPS)/bin
+X	ls -lga $(MAPS)
+X
+Xclean:
+X	rm -f $(ALL)
+X	rm -f *.o
+X	rm -f *.shar
+X
+Xshar:
+X	shar README* uuhosts.1 Makefile $(SOURCES) > uuhosts.shar
+!RoNnIe!RaYgUn!
+echo x - uuhosts.sh
+sed -e 's/^X//' > uuhosts.sh << '!RoNnIe!RaYgUn!'
+X#!/bin/sh
+X# '@(#) uuhosts.sh 1.42 85/01/11'
+X
+XBIN=/usr/local
+XLIB=/usr/local/lib
+XNEWS=$LIB/news
+XMAPS=$NEWS/maps
+XNEWSMAPGROUP=mod.map.news
+XUUCPMAPGROUP=mod.map.uucp
+XNEWSMAP=$NEWSMAPGROUP
+XUUCPMAP=$UUCPMAPGROUP
+XMAPSH=$NEWS/mapsh
+X
+X# Routing information produced by pathalias.
+Xpaths=$LIB/nmail.paths
+X
+X# The directories $MAPS/$NEWSMAP and $MAPS/$UUCPMAP contain the map information
+X# extracted from the newsgroups mod.map.news (for the USENET news map)
+X# and mod.map.uucp (for the UUCP mail map).  The extraction is done by
+X# a line in $NEWS/sys like this:
+X
+X# maps:mod.map.news,mod.map.uucp:B:$BIN/uuhosts -x
+X
+X# $MAPSH is needed, to use the chroot(2) system call to limit
+X# what can be done when executing a shell with a news article as input.
+X# N.B.:  chroot is *only* needed for *automatic extraction* of news
+X# articles from mod.map.all; it has nothing to do with display of
+X# the information by ordinary users.
+X
+X# Assuming the target system has a group named news, doing "make install"
+X# will set up the map directories as follows.  (If the directories are
+X# already set up, "make install" will leave them as is.)
+X
+X# $MAPS, $MAPS/bin and $MAPS/bin/* must be unwritable by anyone:
+X
+X# $MAPS: total 16
+X# dr-xr-xr-x  6 root     news          512 Nov 11 16:42 .
+X# drwxrwxr-x 19 news     news         1024 Nov 11 16:45 ..
+X# dr-xr-xr-x  2 root     news          512 Nov 11 16:39 bin
+X# drwxrwxr-x  2 news     news         2048 Nov 11 16:42 mod.map.news
+X# drwxrwxr-x  2 news     news        10240 Nov 11 16:39 mod.map.uucp
+X# drwxrwxrwx  2 news     news           24 Nov 11 16:41 tmp
+X
+X# $MAPS/bin: total 59
+X# -r-xr-xr-x  1 root     news        10240 Nov 11 15:29 cat
+X# -r-xr-xr-x  1 root     news         4096 Nov 11 16:33 echo
+X# -r-xr-xr-x  1 root     news        18432 Nov 11 15:29 sed
+X# -r-xr-xr-x  1 root     news        27648 Nov 11 15:29 sh
+X
+X# Update notices are mailed to postmaster (for UUCP) and usenet (for news),
+X# which should be aliases which redistribute to the local mail and news
+X# (respectively) administrators.
+X
+Xcd $NEWS
+X
+Xcase $1 in
+X	-x)
+X		# extract a new map piece into a map directory
+X		temphead=/tmp/maphead.$$
+X		temptext=/tmp/maptext.$$
+X		tempcomm=/tmp/mapcomm.$$
+X		cp /dev/null $temphead
+X		cp /dev/null $temptext
+X		echo 'exec /bin/mail usenet' > $tempcomm
+X		awk '
+XBEGIN	{
+X	temphead = "'$temphead'"; tempcomm = "'$tempcomm'";
+X	typeset = 0; isnewsmap = 0; isuucpmap = 0;
+X	shead = 0; stext = 1; snews = 2; suucp = 3;
+X	state = shead;
+X}
+Xstate == shead && ($1 == "From:" || $1 == "Sender:" \
+X    || $1 == "Date:" || $1 == "Message-ID:" || $1 == "Message-Id:") {
+X	print "Original-" $0 >> temphead;
+X	next;
+X}
+Xstate == shead && $1 == "Newsgroups:" {	# no cross-postings allowed
+X	if ($2 == "'$NEWSMAPGROUP'") {
+X		isnewsmap = 1;
+X		typeset = 1;
+X		print "Reply-To: usenet" >> temphead;
+X		print "exec /bin/mail usenet" > tempcomm;
+X	} else if ($2 == "'$UUCPMAPGROUP'") {
+X		isuucpmap = 1;
+X		typeset = 1;
+X		print "Reply-To: postmaster" >> temphead;
+X		print "exec /bin/mail postmaster" > tempcomm;
+X	}
+X}
+Xstate == shead && $1 == "Subject:" {
+X	if ($1 == "Re:" || $1 == "RE:" || $1 == "re:"\
+X	|| !typeset) {	# this requires Newsgroups: before Subject:
+X		print "Subject:  not a map update" >> temphead;
+X		print "Original-" $0 >> temphead;
+X	} else
+X		print $0 >> temphead;
+X	next;
+X}
+Xstate == shead && /^$/	{
+X	if (isnewsmap != 0) {
+X		print "PATH=/bin; umask 0002; cd '$NEWSMAP'" | "uuhosts -nx";
+X		state = snews;
+X	} else if (isuucpmap != 0) {
+X		print "PATH=/bin; umask 0002; cd '$UUCPMAP'" | "uuhosts -ux";
+X		state = suucp;
+X	} else
+X		state = stext;
+X}
+Xstate == shead {
+X		print $0 >> temphead;
+X}
+Xstate == snews	{
+X	print | "uuhosts -nx";
+X}
+Xstate == suucp	{
+X	print | "uuhosts -ux";
+X}
+Xstate == stext	{
+X	print;
+X}
+X' > $temptext 2>&1
+X		cat $temphead $temptext | sh $tempcomm
+X		rm -f $temphead $temptext $tempcomm
+X		exit 0
+X	;;
+X
+X	-ux)
+X		# extract a UUCP map piece
+X		$MAPSH
+X		exec uuhosts -ui
+X		exit 0
+X	;;
+X
+X	-nx)
+X		# extract a USENET map piece
+X		$MAPSH
+X		exec uuhosts -ni
+X		exit 0
+X	;;
+X
+X	-i)
+X		uuhosts -ui
+X		uuhosts -ni
+X		exit 0
+X	;;
+X
+X	-ui)
+X		# make an index for the UUCP map
+X		exec uuhosts -mi $MAPS/$UUCPMAP "#N"
+X		exit 1
+X	;;
+X
+X	-ni)
+X		# make an index for the NEWS map
+X		exec uuhosts -mi $MAPS/$NEWSMAP "Name:"
+X		exit 1
+X	;;
+X
+X	-mi)
+X		cd $2
+X		hostmarker=$3
+X		if [ ! -f Local ]; then
+X			cp /dev/null Local
+X		fi
+X		cp /dev/null Index.t.$$
+X		for f in Local [a-z]* 
+X		do
+X 			awk '
+XBEGIN {
+X	sinside = 1; soutside = 2; state = soutside;
+X	hostmarker = "'"$hostmarker"'";
+X}
+X/^$/ {
+X	if (state != sinside)
+X		next;
+X	state = soutside;
+X	printf ("%s\t%s\t%d\t%d\n", hostname, FILENAME, firstline, NR);
+X	next;
+X}
+X$1 == hostmarker {
+X	hostname = $2;
+X	firstline = NR;
+X	state = sinside;
+X}
+XEND {
+X	if (state != sinside)
+X		exit (0);
+X	printf ("%s\t%s\t%d\t%d\n", hostname, FILENAME, firstline, NR);
+X	exit (0);
+X}
+X' $f >> Index.t.$$
+X		done
+X		sort -f Index.t.$$ > Index.s.$$
+X 		mv Index.s.$$ Index
+X		rm Index.t.$$
+X		exit 0
+X	;;
+X
+X	-u)
+X		# UUCP mail map by region
+X		cd $MAPS/$UUCPMAP
+X		shift
+X		if [ $# -eq 0 ]; then
+X			exec ls
+X			exit 1
+X		fi
+X		exec cat $*
+X		exit 1
+X	;;
+X
+X	-n)
+X		# USENET news map by region
+X		cd $MAPS/$NEWSMAP
+X		shift
+X		if [ $# -eq 0 ]; then
+X			exec ls
+X			exit 1
+X		fi
+X		exec cat $*
+X		exit 1
+X	;;
+X
+X	-k)
+X		# USENET map by keyword
+X		cd $MAPS/$NEWSMAP
+X		shift
+X		exec awk '
+XBEGIN		{ inside = 1; outside = 0; state = outside; }
+X/^Name:/	{ state = inside; count = 0; useit = 0; }
+Xstate == inside	{ block[count++] = $0; }
+X/'"$*"'/	{ useit = 1; }
+X/^$/ && state == inside	{
+X	if (useit == 1) {
+X		for (i = 0; i < count; i++) {
+X			print block[i];
+X		}
+X	}
+X	state = outside;
+X}
+X' *
+X		exit 1
+X	;;
+X
+X	-*)
+X		# unknown option
+X	;;
+X
+X	"")
+X		# no arguments
+X	;;
+X
+X	*)
+X		# by host name
+X		if [ -f /usr/bin/look ]; then
+X			look=/usr/bin/look
+X			lookopt="-f "
+X		else
+X			look=grep
+X			lookopt="^"
+X		fi
+X		for arg in $*
+X		do
+X			echo 'UUCP mail path for '$arg':'
+X			$look $lookopt$arg $paths
+X# 			uupath $arg
+X			echo '
+XUUCP mail host information for '$arg':'
+X			cd $MAPS/$UUCPMAP
+X			eval `$look $lookopt$arg Index | awk '
+X/^'$arg'/ {
+X	printf ("sed -n -e \"%d,%dp\" %s;\n", $3, $4, $2);
+X}'` | sed -e '
+Xs/^#N/#Name		/
+Xs/^#S/#System-CPU-OS	/
+Xs/^#O/#Organization	/
+Xs/^#C/#Contact	/
+Xs/^#E/#Electronic-Address/
+Xs/^#T/#Telephone	/
+Xs/^#P/#Postal-Address	/
+Xs/^#L/#Latitude-Longitude/
+Xs/^#R/#Remarks	/
+Xs/^#W/#Written-by	/'
+X			cd $MAPS/$NEWSMAP
+X			echo '
+XUSENET news host information for '$arg':'
+X			eval `$look $lookopt$arg Index | awk '
+X/^'$arg'/ {
+X	printf ("sed -n -e \"%d,%dp\" %s;\n", $3, $4, $2);
+X}'`
+X		done
+X		exit 0
+X	;;
+Xesac
+X
+Xecho 'Usage:	'uuhosts' hostname ...
+Xfor information about a particular UUCP or USENET host or hosts, or
+X
+X	'uuhosts' -n USENET-news-region
+Xfor information about hosts in a region of the USENET news network, or
+X
+X	'uuhosts' -u UUCP-mail-region
+Xfor information about hosts in a region of the UUCP mail network, or
+X
+X	"'uuhosts' -n" or "'uuhosts' -u"
+Xfor a list of known USENET or UUCP network regions.
+X
+XSee uuhosts(1) for further details and more obscure options.
+X'
+Xexit 1
+!RoNnIe!RaYgUn!
+echo x - mapsh.c
+sed -e 's/^X//' > mapsh.c << '!RoNnIe!RaYgUn!'
+X#include <stdio.h>
+X/*
+X	This command depends on chroot(2), which exists in 4BSD, System V,
+X	Version 7, and probably all related systems.
+X */
+X
+X#ifndef MAPS
+X#define MAPS "/usr/local/lib/news/maps"
+X#endif
+X
+Xmain(argc,argv)
+Xint argc;
+Xchar **argv;
+X{
+X	char *rootdir = MAPS;
+X	char *command = "/bin/sh";
+X
+X	if (geteuid() != 0) {
+X		fprintf (stderr, "mapsh must be setuid to root\n");
+X		exit(1);
+X	}
+X	if (chroot(rootdir) == -1) {
+X		fprintf (stderr, "mapsh:  chroot(%s) failed\n", rootdir);
+X		perror ("");
+X		exit(1);
+X	}
+X	if (setuid(getuid()) == -1) {
+X		perror ("mapsh:  setuid(getuid()) failed");
+X		exit(1);
+X	}
+X	if (chdir("/") == -1) {
+X		fprintf (stderr, "mapsh:  chdir(%s) failed\n", "/");
+X		perror ("");
+X		exit(1);
+X	}
+X	execvp (command, argv);
+X	fprintf (stderr, "mapsh:  %s not found\n", command);
+X	perror ("mapsh:  execvp(2) failed");
+X	exit(1);
+X}
+!RoNnIe!RaYgUn!
+exit
+-- 
+
+John Quarterman, CS Dept., University of Texas, Austin, Texas 78712 USA
+jsq@ut-sally.ARPA, jsq@ut-sally.UUCP, {ihnp4,seismo,ctvax}!ut-sally!jsq
+
+

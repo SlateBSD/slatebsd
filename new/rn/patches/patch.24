@@ -1,0 +1,173 @@
+System: rn version 4.3
+Patch #: 24
+Priority: INFINITESIMAL
+Subject: tailorable mail call string
+>From: msb@lsuc.UUCP (Mark Brader)
+
+Description:
+	Some users don't like the prompt "(Mail)" when there's new mail.
+	In order to tailor that they may now define the variable MAILCALL.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 23
+1c1
+< Patch #: 23
+---
+> Patch #: 24
+
+Index: ng.c
+Prereq: 4.3.1.3
+*** ng.c.old	Tue Jul 23 18:20:53 1985
+--- ng.c	Tue Jul 23 18:21:00 1985
+***************
+*** 1,4
+! /* $Header: ng.c,v 4.3.1.3 85/05/16 16:48:09 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.3  85/05/16  16:48:09  lwall
+
+--- 1,4 -----
+! /* $Header: ng.c,v 4.3.1.4 85/07/23 18:19:46 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.4  85/07/23  18:19:46  lwall
+***************
+*** 1,6
+  /* $Header: ng.c,v 4.3.1.3 85/05/16 16:48:09 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.3  85/05/16  16:48:09  lwall
+   * Fixed unsubsubscribe.
+   * 
+
+--- 1,9 -----
+  /* $Header: ng.c,v 4.3.1.4 85/07/23 18:19:46 lwall Exp $
+   *
+   * $Log:	ng.c,v $
++  * Revision 4.3.1.4  85/07/23  18:19:46  lwall
++  * Added MAILCALL environment variable.
++  * 
+   * Revision 4.3.1.3  85/05/16  16:48:09  lwall
+   * Fixed unsubsubscribe.
+   * 
+***************
+*** 948,954
+  	    || filestat.st_atime > filestat.st_mtime)
+  	    mailcall = nullstr;
+  	else
+! 	    mailcall = "(Mail) ";
+      }
+      mailcount %= 10;			/* check every 10 articles */
+  }
+
+--- 951,957 -----
+  	    || filestat.st_atime > filestat.st_mtime)
+  	    mailcall = nullstr;
+  	else
+! 	    mailcall = getval("MAILCALL","(Mail) ");
+      }
+      mailcount %= 10;			/* check every 10 articles */
+  }
+
+Index: rn.1
+Prereq: 4.3.1.3
+*** rn.1.old	Tue Jul 23 18:28:24 1985
+--- rn.1	Tue Jul 23 18:28:40 1985
+***************
+*** 1,4
+! ''' $Header: rn.1,v 4.3.1.3 85/05/23 17:14:14 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.3  85/05/23  17:14:14  lwall
+
+--- 1,4 -----
+! ''' $Header: rn.1,v 4.3.1.4 85/07/23 18:26:40 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.4  85/07/23  18:26:40  lwall
+***************
+*** 1,6
+  ''' $Header: rn.1,v 4.3.1.3 85/05/23 17:14:14 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.3  85/05/23  17:14:14  lwall
+  ''' Now allows 'r' and 'f' on null articles.
+  ''' 
+
+--- 1,9 -----
+  ''' $Header: rn.1,v 4.3.1.4 85/07/23 18:26:40 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
++ ''' Revision 4.3.1.4  85/07/23  18:26:40  lwall
++ ''' Added MAILCALL.
++ ''' 
+  ''' Revision 4.3.1.3  85/05/23  17:14:14  lwall
+  ''' Now allows 'r' and 'f' on null articles.
+  ''' 
+***************
+*** 1292,1298
+  A recommended string for this purpose is \*(L"^>...\*(R", which \fIdoesn't\fR
+  hide lines with only \*(L'>\*(R', to give some indication that quoted
+  material is being skipped.
+! If you want to hide more than one pattern, you can use \*(L"\|\*(R" to
+  separate the alternatives.
+  You can view the hidden lines by restarting the article with the \*(L'v\*(R'
+  command.
+
+--- 1295,1301 -----
+  A recommended string for this purpose is \*(L"^>...\*(R", which \fIdoesn't\fR
+  hide lines with only \*(L'>\*(R', to give some indication that quoted
+  material is being skipped.
+! If you want to hide more than one pattern, you can use \*(L"\||\|\*(R" to
+  separate the alternatives.
+  You can view the hidden lines by restarting the article with the \*(L'v\*(R'
+  command.
+***************
+*** 1333,1338
+  May be interpolated using \*(L"%L\*(R".
+  .Sp
+  Default: value of getlogin().
+  .Ip "MAILFILE (~)" 8
+  Where to check for mail.
+  .Sp
+
+--- 1336,1345 -----
+  May be interpolated using \*(L"%L\*(R".
+  .Sp
+  Default: value of getlogin().
++ .Ip "MAILCALL (~)" 8
++ What to say when there is new mail.
++ .Sp
++ Default: (Mail)
+  .Ip "MAILFILE (~)" 8
+  Where to check for mail.
+  .Sp
+***************
+*** 1444,1450
+  (Then, when you see \*(L"--\*(R" at the bottom of the page, you can skip
+  the signature if you so desire by typing \*(L'n\*(R' instead of space.)
+  To do both, you could use \*(L"^--\*(R".
+! If you want to break on more than one pattern, you can use \*(L"\|\*(R" to
+  separate the alternatives.
+  .Sp
+  There is some overhead involved in matching each line of the article against
+
+--- 1451,1457 -----
+  (Then, when you see \*(L"--\*(R" at the bottom of the page, you can skip
+  the signature if you so desire by typing \*(L'n\*(R' instead of space.)
+  To do both, you could use \*(L"^--\*(R".
+! If you want to break on more than one pattern, you can use \*(L"\||\|\*(R" to
+  separate the alternatives.
+  .Sp
+  There is some overhead involved in matching each line of the article against
+
+

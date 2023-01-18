@@ -1,0 +1,51 @@
+/usr/src/lib/libc/pdp/fpsim/README
+
+  This directory contains the standard library floating point simulator.
+Don't blame us for the way the code looks - it came to us this way and we
+weren't about to fool with it.  Anyone running with this is brain-dead.
+Floating point processors are now less than $200.
+
+  Crt0.o, when compiled with NONFP defined, will perform a setfpt() which
+will perform a signal(SIGILL,fptrap) causing illegal instructions to be
+delivered to fptrap in one of the fp1_*.s modules (depending on whether
+NONSEPARATE is defined or not).  If a non-floating point instruction is
+delivered to fptrap it will perform a break point trap.
+
+  Note that traps to the floating point simulator are different than normal
+signal delivery.  In particular the trap frame on the stack is just a
+pushed ps/pc pair set up so the floating point simulator can simply perform
+an rtt to return from the interrupt.  This has much lower overhead than
+normal signal processing ...  besides, the fp simulator was already set up
+for that style of delivery and we weren't about to go mucking about in it!
+
+  Note that the simulator defines the global symbol fpsim which is
+referenced in ../stdio/fltpr.s (the floating point output routines for
+_doprint).  fltpr.s is dragged in by a compiler generated reference to the
+symbol fltused which fltpr.s defines.  Finally, there is an empty object
+file which only defines fptrap (ffpsim.s) to satisfy a reference to that
+symbol by setfpt.s.  The objects are then arranged in the following order:
+
+	fltpr.o:	T fltused
+			T pgen and other floating point output routines
+			U fpsim
+
+	doprnt.o:	T __doprnt
+			U pgen, etc.
+
+	ffltpr.o:	T pgen, etc. - fake definitions
+
+	fpsim.o:	T fpsim
+			T fptrap
+
+	setfpt.o:	T setfpt
+			U fptrap
+
+	ffpsim.o:	T fptrap
+
+See ../stdio/fltpr.s for more comments.
+
+  One final comment: I don't like this either.  It should have been
+incorporated into the kernel, but we just didn't have the time.
+
+Casey Leedom
+Wed Jun  6, 1987

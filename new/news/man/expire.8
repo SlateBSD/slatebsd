@@ -1,0 +1,149 @@
+.if n .ds La '
+.if n .ds Ra '
+.if t .ds La `
+.if t .ds Ra '
+.if n .ds Lq "
+.if n .ds Rq "
+.if t .ds Lq ``
+.if t .ds Rq ''
+.de Ch
+\\$3\\*(Lq\\$1\\*(Rq\\$2
+..
+.TH EXPIRE 8 "January 17, 1986"
+.ds ]W  Version B 2.10.3
+.SH NAME
+expire \- remove outdated news articles
+.SH SYNOPSIS
+.BR /usr/lib/news/expire " [ " \-n
+.IR newsgroups " ] ["
+.BR \-i " ] [ " \-I " ] ["
+.BR \-a " ] ["
+.BI \-v level
+] [
+.BI \-e days
+] [
+.BI \-E days
+] 
+.br
+.B /usr/lib/news/expire
+.BR \-p " ["
+.BI \-e days
+] [
+.BI \-E days
+] 
+.br
+.B /usr/lib/news/expire
+.B \-r
+.br
+.B /usr/lib/news/expire 
+.BI \-f account
+[
+.BI \-e days
+] [
+.BI \-E days
+] 
+.br
+.B /usr/lib/news/expire
+.B \-u
+.SH DESCRIPTION
+.PP
+.I Expire
+is normally started by
+.IR cron (8)
+every night to remove all expired news.
+If no newsgroups are specified, the default is all newsgroups.
+.PP
+Articles whose specified expiration date has already passed
+are considered expirable.
+The
+.B \-a
+option causes expire to archive articles in
+.IR /usr/spool/oldnews .
+Otherwise, the articles are unlinked.
+.PP
+The
+.B \-v
+option causes expire to be more verbose.
+It can be given a verbosity level (default 1) as in
+.B \-v3
+for even more output.
+This is useful if articles aren't being expired and you want to know why.
+.PP
+The
+.B \-e
+flag gives the number of days to use for a default expiration date.
+If not given, an installation dependent default (often 2 weeks) is used.
+.PP
+The 
+.B \-E
+flag is the number of days to save the history of the article
+(often 4 weeks). A record of an article is kept in the history file past
+the time that the article itself has been deleted. This is to
+minimize duplicate articles.
+.PP
+The
+.B \-i
+and
+.B \-I
+flags
+tell
+.I expire
+to ignore any expiration date explicitly given on articles.
+This can be used when disk space is really tight.
+The
+.B \-I
+flag will always ignore expiration dates,
+while the
+.B \-i
+flag will only ignore the date if ignoring it would expire the article sooner.
+.B WARNING:
+If you have articles archived by giving them expiration dates far into the
+future, these options might remove these files anyway.
+.PP
+The
+.B \-h
+flag will cause expire to ignore the history file if it exists. It will
+instead search the entire spool directory, open each file in it and check
+the header for expirations. This is much less efficient than using a
+history file by a couple of orders of magnitude, but if you have your
+history file garbaged or have things drop out of the history file for some
+reason this will track them down and remove them.
+.PP
+The 
+.B \-r
+flag will cause expire to rebuild the history file. It does this by
+searching the entire spool directory and building a new history entry for
+each article found.  Rebuilding the history file also rebuilds the
+associated
+.IR dbm (3X)
+files.
+.PP
+The 
+.B \-p
+flag causes expire to use the posting date rather than the received date to
+expire articles.
+.PP
+The
+.B \-f
+flag allows you to define a specific user and expire all messages sent by
+that person. The next parameter is used as the name and is in the same
+format as the \*(LqFrom:\*(Rq line in the header (e.g.
+.IR account@site.UUCP ).
+This is 
+normally used when a
+.IR notes (1)
+site resends a batch of old news.
+.PP
+The
+.B \-u
+flag causes the minimum article number field in the active file to be
+updated. This is normally only used when converting from a 2.10.1 news
+system to a 2.10.2 version.
+.SH "SEE ALSO"
+inews(1),
+postnews(1),
+getdate(3),
+news(5),
+recnews(8),
+sendnews(8),
+uurec(8)

@@ -1,0 +1,395 @@
+System: rn version 4.3
+Patch #: 7
+Priority: HIGH
+Subject: various fixes for configure and make stuff
+>From: jimt@bmcg.UUCP (Jim Tollefson)
+
+Description:
+	Make on System V has to have a space before a \ that continues a
+	line--apparently it turns two tokens into one if you don't put the
+	space and you get an "unexpected done" when you install.
+
+	Certain libraries and include files are not found if they aren't
+	in /usr/lib or /usr/include.
+
+	Also, re-running Configure can have problems if the "contains"
+	variable is defined to 'egrep', since egrep thinks '+' is special.
+
+	Note: if the last patch sequence below doesn't find config.sh, just
+	interrupt and you're done.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 6
+1c1
+< Patch #: 6
+---
+> Patch #: 7
+
+Index: Makefile.SH
+Prereq: 4.3
+*** Makefile.SH.old	Mon May 13 17:22:15 1985
+--- Makefile.SH	Mon May 13 17:22:17 1985
+***************
+*** 3,9
+  esac
+  echo "Extracting Makefile (with variable substitutions)"
+  cat >Makefile <<!GROK!THIS!
+! # $Header: Makefile.SH,v 4.3 85/05/01 11:33:26 lwall Exp $
+  #
+  # $Log:	Makefile.SH,v $
+  # Revision 4.3  85/05/01  11:33:26  lwall
+
+--- 3,9 -----
+  esac
+  echo "Extracting Makefile (with variable substitutions)"
+  cat >Makefile <<!GROK!THIS!
+! # $Header: Makefile.SH,v 4.3.1.2 85/05/13 17:21:18 lwall Exp $
+  #
+  # $Log:	Makefile.SH,v $
+  # Revision 4.3.1.2  85/05/13  17:21:18  lwall
+***************
+*** 6,11
+  # $Header: Makefile.SH,v 4.3 85/05/01 11:33:26 lwall Exp $
+  #
+  # $Log:	Makefile.SH,v $
+  # Revision 4.3  85/05/01  11:33:26  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 6,17 -----
+  # $Header: Makefile.SH,v 4.3.1.2 85/05/13 17:21:18 lwall Exp $
+  #
+  # $Log:	Makefile.SH,v $
++ # Revision 4.3.1.2  85/05/13  17:21:18  lwall
++ # System V make needs space before line-continuing backslash.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:30:15  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:33:26  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 87,96
+  	- if test `pwd` != `./filexp $(rnlib)`; then cp INIT $(private) `./filexp $(rnlib)`; fi
+  	cd `./filexp $(rnlib)`; chmod 755 $(private)
+  	- if test ! -f `./filexp $(rnlib)/newsnews`; then cp newsnews `./filexp $(rnlib)`; fi
+! 	- if test `pwd` != $(mansrc); then\
+! for page in $(manpages); do\
+! cp $$page $(mansrc)/`basename $$page .1`.$(manext);\
+! done;\
+  fi
+  
+  clean:
+
+--- 93,102 -----
+  	- if test `pwd` != `./filexp $(rnlib)`; then cp INIT $(private) `./filexp $(rnlib)`; fi
+  	cd `./filexp $(rnlib)`; chmod 755 $(private)
+  	- if test ! -f `./filexp $(rnlib)/newsnews`; then cp newsnews `./filexp $(rnlib)`; fi
+! 	- if test `pwd` != $(mansrc); then \
+! for page in $(manpages); do \
+! cp $$page $(mansrc)/`basename $$page .1`.$(manext); \
+! done; \
+  fi
+  
+  clean:
+
+Index: Configure
+Prereq: 4.3
+*** Configure.old	Mon May 13 15:59:49 1985
+--- Configure	Mon May 13 16:00:35 1985
+***************
+*** 3,9
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3 85/05/01 11:31:23 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3  85/05/01  11:31:23  lwall
+
+--- 3,9 -----
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.2 85/05/13 15:54:35 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.2  85/05/13  15:54:35  lwall
+***************
+*** 6,11
+  # $Header: Configure,v 4.3 85/05/01 11:31:23 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3  85/05/01  11:31:23  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 6,17 -----
+  # $Header: Configure,v 4.3.1.2 85/05/13 15:54:35 lwall Exp $
+  #
+  # $Log:	Configure,v $
++ # Revision 4.3.1.2  85/05/13  15:54:35  lwall
++ # Libraries in /usr/local/lib shouldn't use -l switch.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:29:20  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:31:23  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 480,490
+      echo "Substituting grep for egrep."
+      egrep=$grep
+      ;;
+- *)
+-     case "$contains" in
+-     grep*) contains=e$contains;;
+-     esac
+-     ;;
+  esac
+  case $test in
+  test)
+
+--- 486,491 -----
+      echo "Substituting grep for egrep."
+      egrep=$grep
+      ;;
+  esac
+  case $test in
+  test)
+***************
+*** 1033,1039
+      havetlib=define
+      $echo "Terminfo library found."
+  else
+!     if loc libtermlib.a x /usr/lib /usr/local/lib /lib >/dev/null; then
+  	termlib='-ltermlib'
+  	havetlib=define
+  	$echo "Termlib library found."
+
+--- 1034,1042 -----
+      havetlib=define
+      $echo "Terminfo library found."
+  else
+!     ans=`loc libtermlib.a x /usr/lib /usr/local/lib /lib`
+!     case "$ans" in
+!     /usr/lib*|/lib*)
+  	termlib='-ltermlib'
+  	havetlib=define
+  	$echo "Termlib library found."
+***************
+*** 1037,1044
+  	termlib='-ltermlib'
+  	havetlib=define
+  	$echo "Termlib library found."
+!     else
+! 	if loc libtermcap.a x /usr/lib /usr/local/lib /lib >/dev/null; then
+  	    termlib='-ltermcap'
+  	    havetlib=define
+  	    $echo "Termcap library found."
+
+--- 1040,1055 -----
+  	termlib='-ltermlib'
+  	havetlib=define
+  	$echo "Termlib library found."
+! 	;;
+!     /*)
+! 	termlib="$ans"
+! 	havetlib=define
+! 	$echo "Termlib library found."
+! 	;;
+!     *)
+! 	ans=`loc libtermcap.a x /usr/lib /usr/local/lib /lib`
+! 	case "$ans" in
+! 	/usr/lib*|/lib*)
+  	    termlib='-ltermcap'
+  	    havetlib=define
+  	    $echo "Termcap library found."
+***************
+*** 1042,1048
+  	    termlib='-ltermcap'
+  	    havetlib=define
+  	    $echo "Termcap library found."
+! 	else
+  	    case "$termlib" in
+  	    '')
+  		$echo $n "Your system appears to NOT have termlib-style routines.  Is this true? [y] $c"
+
+--- 1053,1065 -----
+  	    termlib='-ltermcap'
+  	    havetlib=define
+  	    $echo "Termcap library found."
+! 	    ;;
+! 	/*)
+! 	    termlib="$ans"
+! 	    havetlib=define
+! 	    $echo "Termcap library found."
+! 	    ;;
+! 	*)
+  	    case "$termlib" in
+  	    '')
+  		$echo $n "Your system appears to NOT have termlib-style routines.  Is this true? [y] $c"
+***************
+*** 1064,1071
+  	    *)  $echo "You said termlib was $termlib before."
+  		;;
+  	    esac
+! 	fi
+!     fi
+  fi
+  
+  : see if there is a whoami file
+
+--- 1081,1090 -----
+  	    *)  $echo "You said termlib was $termlib before."
+  		;;
+  	    esac
+! 	    ;;
+! 	esac
+! 	;;
+!     esac
+  fi
+  
+  : see if there is a whoami file
+***************
+*** 1201,1207
+      jobslib='-ljobs'
+  else
+      if bsd; then
+! 	$echo "No jobs library found.  (I suppose this is 4.2...)"
+      else
+  	$echo "No jobs library found.  (That's okay, we all have our faults.)"
+      fi
+
+--- 1220,1226 -----
+      jobslib='-ljobs'
+  else
+      if bsd; then
+! 	$echo "No jobs library found.  (I suppose this is at least 4.2...)"
+      else
+  	$echo "No jobs library found.  (That's okay, we all have our faults.)"
+      fi
+***************
+*** 1212,1218
+  : see if there are directory access routines out there
+  if $test -r /usr/lib/libndir.a || $test -r /usr/local/lib/libndir.a ; then
+      $echo "Ndir library found."
+!     ndirlib='-lndir'
+      libndir=define
+      usendir=undef
+      ndirc=''
+
+--- 1231,1241 -----
+  : see if there are directory access routines out there
+  if $test -r /usr/lib/libndir.a || $test -r /usr/local/lib/libndir.a ; then
+      $echo "Ndir library found."
+!     if $test -r /usr/lib/libndir.a; then
+! 	ndirlib='-lndir'
+!     else
+! 	ndirlib="/usr/local/lib/libndir.a"
+!     fi
+      libndir=define
+      usendir=undef
+      ndirc=''
+
+Index: makedepend.SH
+Prereq: 4.3
+*** makedepend.SH.old	Mon May 13 15:59:22 1985
+--- makedepend.SH	Mon May 13 15:59:24 1985
+***************
+*** 4,10
+  echo "Extracting makedepend (with variable substitutions)"
+  $spitshell >makedepend <<!GROK!THIS!
+  $startsh
+! # $Header: makedepend.SH,v 4.3 85/05/01 11:42:26 lwall Exp $
+  #
+  # $Log:	makedepend.SH,v $
+  # Revision 4.3  85/05/01  11:42:26  lwall
+
+--- 4,10 -----
+  echo "Extracting makedepend (with variable substitutions)"
+  $spitshell >makedepend <<!GROK!THIS!
+  $startsh
+! # $Header: makedepend.SH,v 4.3.1.2 85/05/13 15:53:42 lwall Exp $
+  #
+  # $Log:	makedepend.SH,v $
+  # Revision 4.3.1.2  85/05/13  15:53:42  lwall
+***************
+*** 7,12
+  # $Header: makedepend.SH,v 4.3 85/05/01 11:42:26 lwall Exp $
+  #
+  # $Log:	makedepend.SH,v $
+  # Revision 4.3  85/05/01  11:42:26  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+
+--- 7,18 -----
+  # $Header: makedepend.SH,v 4.3.1.2 85/05/13 15:53:42 lwall Exp $
+  #
+  # $Log:	makedepend.SH,v $
++ # Revision 4.3.1.2  85/05/13  15:53:42  lwall
++ # Made cpp look in /usr/local/include too.
++ # 
++ # Revision 4.3.1.1  85/05/10  11:35:10  lwall
++ # Branch for patches.
++ # 
+  # Revision 4.3  85/05/01  11:42:26  lwall
+  # Baseline for release with 4.3bsd.
+  # 
+***************
+*** 25,31
+  	-e 's|/\*.*$||' \\
+  	-e p \\
+  	-e '}'
+!     $cpp X\$file | $sed  \\
+  	-e '/^# *[0-9]/!d' \\
+  	-e 's/^.*"\(.*\)".*\$/'\$filebase'.o: \1/' \\
+  	-e 's|: \./|: |' \\
+
+--- 31,37 -----
+  	-e 's|/\*.*$||' \\
+  	-e p \\
+  	-e '}'
+!     $cpp -I/usr/local/include X\$file | $sed  \\
+  	-e '/^# *[0-9]/!d' \\
+  	-e 's/^.*"\(.*\)".*\$/'\$filebase'.o: \1/' \\
+  	-e 's|: \./|: |' \\
+
+NOTE: if patch says "File to patch:", it just means you haven't run
+Configure yet, and don't need the following patch.  Just type interrupt and
+you're done.
+
+Index: config.sh
+*** config.sh.old	Mon Apr  1 16:18:20 1985
+--- config.sh	Mon May 13 16:26:07 1985
+***************
+*** 27,33
+  inews="/usr/lib/news/inews"
+  grep="/usr/ucb/grep"
+  egrep="/usr/bin/egrep"
+! contains="egrep"
+  lib="/usr/lib/news"
+  libexp="/usr/lib/news"
+  nametype="bsd"
+
+--- 27,33 -----
+  inews="/usr/lib/news/inews"
+  grep="/usr/ucb/grep"
+  egrep="/usr/bin/egrep"
+! contains="grep"
+  lib="/usr/lib/news"
+  libexp="/usr/lib/news"
+  nametype="bsd"
+
+

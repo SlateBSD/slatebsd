@@ -1,0 +1,16 @@
+***************
+*** 7,12 ****
+  g/^#BSD4_3 /s///
+  g/^#BSD4_1 /d
+  g/^#USG /d
+  /^LIBDIR/s;/usr/lib/news;/usr/new/lib/news;
+  /^BINDIR/s;/usr/bin;/usr/new;
+  w
+--- 7,13 ----
+  g/^#BSD4_3 /s///
+  g/^#BSD4_1 /d
+  g/^#USG /d
++ g/#NOTVMS/s/#NOTVMS.*//
+  /^LIBDIR/s;/usr/lib/news;/usr/new/lib/news;
+  /^BINDIR/s;/usr/bin;/usr/new;
+  w

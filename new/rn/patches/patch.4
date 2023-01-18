@@ -1,0 +1,628 @@
+Patch #: 4
+Priority: ENHANCEMENT
+Subject: there should be a way to suppress quoted material and signatures
+>From: lwall@sdcrdcf.UUCP (Larry Wall)
+
+Description:
+	There have been numerous requests for a way to suppress quoted
+	material and oversized signatures, especially at low baud rates.
+	I resisted implementing any of the proposed solutions in the
+	released version because I didn't feel they were general enough.
+	It suddenly occured to me, however, that we already had regular
+	expressions that supported alternatives, and that by defining
+	a couple more environment variables (which can be set via a
+	baud-rate-controlled -E switch) we could do what we wanted
+	without hardwiring the current net conventions into rn.
+
+	The following are the new "environment" variables:
+
+	HIDELINE -- contains, if defined, a pattern of lines to hide.
+	Can be used to suppress lines beginning with ">", for instance.
+
+	PAGESTOP -- contains, if defined, a pattern of lines to treat as
+	form feeds.  This can be used to do page breaks between articles
+	in a digest, and to do a page break before the signature, which
+	can then be recognized (from the "--") and 'n'ed.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	Warning: this patch is not reversed.  If the patch program says
+	it is, then this patch has already been applied, and you should
+	not apply it again.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 3
+1c1
+< Patch #: 3
+---
+> Patch #: 4
+
+Index: art.c
+Prereq: 4.3.1.2
+*** art.c.old	Mon May 13 09:32:42 1985
+--- art.c	Mon May 13 09:32:48 1985
+***************
+*** 1,4
+! /* $Header: art.c,v 4.3.1.2 85/05/10 13:46:07 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.2  85/05/10  13:46:07  lwall
+
+--- 1,4 -----
+! /* $Header: art.c,v 4.3.1.3 85/05/13 09:29:55 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.3  85/05/13  09:29:55  lwall
+***************
+*** 1,6
+  /* $Header: art.c,v 4.3.1.2 85/05/10 13:46:07 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.2  85/05/10  13:46:07  lwall
+   * Fixed header reparse bug on backpage.
+   * 
+
+--- 1,9 -----
+  /* $Header: art.c,v 4.3.1.3 85/05/13 09:29:55 lwall Exp $
+   *
+   * $Log:	art.c,v $
++  * Revision 4.3.1.3  85/05/13  09:29:55  lwall
++  * Added CUSTOMLINES option.
++  * 
+   * Revision 4.3.1.2  85/05/10  13:46:07  lwall
+   * Fixed header reparse bug on backpage.
+   * 
+***************
+*** 61,66
+  
+  bool firstpage;			/* is this the 1st page of article? */
+  
+  void
+  art_init()
+  {
+
+--- 64,71 -----
+  
+  bool firstpage;			/* is this the 1st page of article? */
+  
++ char art_buf[LBUFLEN];		/* place for article lines */
++ 
+  void
+  art_init()
+  {
+***************
+*** 72,78
+  {
+      register char *s;
+      ART_POS artsize;			/* size in bytes of article */
+-     char art_buf[LBUFLEN];		/* place for article lines */
+      bool hide_this_line = FALSE;	/* hidden header line? */
+      ART_LINE linenum;	/* line # on page, 1 origin */
+  #ifdef ULSMARTS
+
+--- 77,82 -----
+  {
+      register char *s;
+      ART_POS artsize;			/* size in bytes of article */
+      bool hide_this_line = FALSE;	/* hidden header line? */
+      ART_LINE linenum;	/* line # on page, 1 origin */
+  #ifdef ULSMARTS
+***************
+*** 199,204
+  		hide_this_line = TRUE;	/* and do not print either */
+  		notesfiles = FALSE;
+  	    }
+  	    if (in_header && htype[in_header].ht_flags & HT_MAGIC) {
+  		if (in_header == NGS_LINE) {
+  		    hide_this_line = (index(art_buf,',') == Nullch && do_hiding);
+
+--- 203,213 -----
+  		hide_this_line = TRUE;	/* and do not print either */
+  		notesfiles = FALSE;
+  	    }
++ #ifdef CUSTOMLINES
++ 	    if (hideline && bufptr == art_buf &&
++ 		  execute(&hide_compex,art_buf) )
++ 		hide_this_line = TRUE;
++ #endif
+  	    if (in_header && htype[in_header].ht_flags & HT_MAGIC) {
+  		if (in_header == NGS_LINE) {
+  		    hide_this_line = (index(art_buf,',') == Nullch);
+***************
+*** 201,207
+  	    }
+  	    if (in_header && htype[in_header].ht_flags & HT_MAGIC) {
+  		if (in_header == NGS_LINE) {
+! 		    hide_this_line = (index(art_buf,',') == Nullch && do_hiding);
+  		}
+  		else if (in_header == EXPIR_LINE) {
+  		    if (!(htype[EXPIR_LINE].ht_flags & HT_HIDE))
+
+--- 210,216 -----
+  #endif
+  	    if (in_header && htype[in_header].ht_flags & HT_MAGIC) {
+  		if (in_header == NGS_LINE) {
+! 		    hide_this_line = (index(art_buf,',') == Nullch);
+  		}
+  		else if (in_header == EXPIR_LINE) {
+  		    if (!(htype[EXPIR_LINE].ht_flags & HT_HIDE))
+***************
+*** 205,211
+  		}
+  		else if (in_header == EXPIR_LINE) {
+  		    if (!(htype[EXPIR_LINE].ht_flags & HT_HIDE))
+! 		    hide_this_line = (strlen(art_buf) < 10 && do_hiding);
+  		}
+  	    }
+  	    if (in_header == SUBJ_LINE &&
+
+--- 214,220 -----
+  		}
+  		else if (in_header == EXPIR_LINE) {
+  		    if (!(htype[EXPIR_LINE].ht_flags & HT_HIDE))
+! 		    hide_this_line = (strlen(art_buf) < 10);
+  		}
+  	    }
+  	    if (in_header == SUBJ_LINE &&
+***************
+*** 243,249
+  		underprint(s);	/* print subject underlined */
+  		putchar('\n') FLUSH;	/* and finish the line */
+  	    }
+! 	    else if (hide_this_line) {	/* do not print line? */
+  		linenum--;		/* compensate for linenum++ */
+  		if (!in_header)
+  		    hide_this_line = FALSE;
+
+--- 252,259 -----
+  		underprint(s);	/* print subject underlined */
+  		putchar('\n') FLUSH;	/* and finish the line */
+  	    }
+! 	    else if (hide_this_line && do_hiding) {
+! 					/* do not print line? */
+  		linenum--;		/* compensate for linenum++ */
+  		if (!in_header)
+  		    hide_this_line = FALSE;
+***************
+*** 277,282
+  #endif
+  		maybe_eol();	/* PWP */
+  #endif CLEAREOL
+  		for (outpos = 0; outpos < COLS; ) {
+  				    /* while line has room */
+  		    if (*bufptr >= ' ') {	/* normal char? */
+
+--- 287,297 -----
+  #endif
+  		maybe_eol();	/* PWP */
+  #endif CLEAREOL
++ #ifdef CUSTOMLINES
++ 		if (pagestop && bufptr == art_buf && 
++ 		  execute(&page_compex,art_buf) )
++ 		    linenum = 32700;
++ #endif
+  		for (outpos = 0; outpos < COLS; ) {
+  				    /* while line has room */
+  		    if (*bufptr >= ' ') {	/* normal char? */
+***************
+*** 559,565
+      case Ctl('d'):	/* half page */
+  	special = TRUE;
+  	slines = LINES / 2 + 1;
+! 	if (marking && *blinebeg != '\f') {
+  	    up_line();
+  	    highlight = --artline;
+  	    restart = blinebeg;
+
+--- 574,585 -----
+      case Ctl('d'):	/* half page */
+  	special = TRUE;
+  	slines = LINES / 2 + 1;
+! 	if (marking && *blinebeg != '\f'
+! #ifdef CUSTOMLINES
+! 	  && (!pagestop || blinebeg != art_buf ||
+! 	      !execute(&page_compex,blinebeg))
+! #endif
+! 	  ) {
+  	    up_line();
+  	    highlight = --artline;
+  	    restart = blinebeg;
+***************
+*** 803,809
+  		clear();	/* else clear screen */
+  
+  #endif CLEAREOL
+! 	    if (*blinebeg != '\f') {
+  		restart = blinebeg;
+  		artline--;	 /* restart this line */
+  		artpos = alinebeg;
+
+--- 823,834 -----
+  		clear();	/* else clear screen */
+  
+  #endif CLEAREOL
+! 	    if (*blinebeg != '\f'
+! #ifdef CUSTOMLINES
+! 	      && (!pagestop || blinebeg != art_buf ||
+! 	          !execute(&page_compex,blinebeg))
+! #endif
+! 	      ) {
+  		restart = blinebeg;
+  		artline--;	 /* restart this line */
+  		artpos = alinebeg;
+***************
+*** 814,820
+  			/* and remember top line of screen */
+  			/*  (line # within article file) */
+  	}
+! 	else if (marking && *blinebeg != '\f') {
+  				/* are we marking repeats? */
+  	    up_line();		/* go up one line */
+  	    highlight = --artline;/* and get ready to highlight */
+
+--- 839,850 -----
+  			/* and remember top line of screen */
+  			/*  (line # within article file) */
+  	}
+! 	else if (marking && *blinebeg != '\f'
+! #ifdef CUSTOMLINES
+! 	  && (!pagestop || blinebeg != art_buf ||
+! 	      !execute(&page_compex,blinebeg))
+! #endif
+! 	  ) {
+  				/* are we marking repeats? */
+  	    up_line();		/* go up one line */
+  	    highlight = --artline;/* and get ready to highlight */
+
+Index: artstate.h
+Prereq: 4.3
+*** artstate.h.old	Mon May 13 09:31:51 1985
+--- artstate.h	Mon May 13 09:31:52 1985
+***************
+*** 1,4
+! /* $Header: artstate.h,v 4.3 85/05/01 11:35:59 lwall Exp $
+   *
+   * $Log:	artstate.h,v $
+   * Revision 4.3  85/05/01  11:35:59  lwall
+
+--- 1,4 -----
+! /* $Header: artstate.h,v 4.3.1.2 85/05/13 09:30:30 lwall Exp $
+   *
+   * $Log:	artstate.h,v $
+   * Revision 4.3.1.2  85/05/13  09:30:30  lwall
+***************
+*** 1,6
+  /* $Header: artstate.h,v 4.3 85/05/01 11:35:59 lwall Exp $
+   *
+   * $Log:	artstate.h,v $
+   * Revision 4.3  85/05/01  11:35:59  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: artstate.h,v 4.3.1.2 85/05/13 09:30:30 lwall Exp $
+   *
+   * $Log:	artstate.h,v $
++  * Revision 4.3.1.2  85/05/13  09:30:30  lwall
++  * Added CUSTOMLINES option.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:31:32  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:35:59  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 19,21
+  EXT char *prompt;			/* pointer to current prompt */
+  
+  EXT char *firstline INIT(Nullch);			/* special first line? */
+
+--- 25,33 -----
+  EXT char *prompt;			/* pointer to current prompt */
+  
+  EXT char *firstline INIT(Nullch);			/* special first line? */
++ #ifdef CUSTOMLINES
++ EXT char *hideline INIT(Nullch);		/* custom line hiding? */
++ EXT char *pagestop INIT(Nullch);		/* custom page terminator? */
++ EXT COMPEX hide_compex;
++ EXT COMPEX page_compex;
++ #endif
+
+Index: common.h
+Prereq: 4.3
+*** common.h.old	Mon May 13 09:31:29 1985
+--- common.h	Mon May 13 09:31:33 1985
+***************
+*** 1,4
+! /* $Header: common.h,v 4.3 85/05/01 11:37:11 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3  85/05/01  11:37:11  lwall
+
+--- 1,4 -----
+! /* $Header: common.h,v 4.3.1.2 85/05/13 09:30:39 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3.1.2  85/05/13  09:30:39  lwall
+***************
+*** 1,6
+  /* $Header: common.h,v 4.3 85/05/01 11:37:11 lwall Exp $
+   * 
+   * $Log:	common.h,v $
+   * Revision 4.3  85/05/01  11:37:11  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: common.h,v 4.3.1.2 85/05/13 09:30:39 lwall Exp $
+   * 
+   * $Log:	common.h,v $
++  * Revision 4.3.1.2  85/05/13  09:30:39  lwall
++  * Added CUSTOMLINES option.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:32:04  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:37:11  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 215,220
+  /* In general, earlier ones are easier to get along without */
+  /* Pdp11's without split I and D may have to undefine them all */
+  #define DEBUGGING	/* include debugging code */
+  #define PUSHBACK	/* macros and keymaps using pushback buffer */
+  #define SPEEDOVERMEM	/* use more memory to run faster */
+  #define WORDERASE	/* enable ^W to erase a word */
+
+--- 221,227 -----
+  /* In general, earlier ones are easier to get along without */
+  /* Pdp11's without split I and D may have to undefine them all */
+  #define DEBUGGING	/* include debugging code */
++ #define CUSTOMLINES	/* include code for HIDELINE and PAGESTOP */
+  #define PUSHBACK	/* macros and keymaps using pushback buffer */
+  #define SPEEDOVERMEM	/* use more memory to run faster */
+  #define WORDERASE	/* enable ^W to erase a word */
+
+Index: ng.c
+Prereq: 4.3
+*** ng.c.old	Mon May 13 09:32:07 1985
+--- ng.c	Mon May 13 09:32:13 1985
+***************
+*** 1,4
+! /* $Header: ng.c,v 4.3 85/05/01 11:43:43 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3  85/05/01  11:43:43  lwall
+
+--- 1,4 -----
+! /* $Header: ng.c,v 4.3.1.2 85/05/13 09:29:28 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.2  85/05/13  09:29:28  lwall
+***************
+*** 1,6
+  /* $Header: ng.c,v 4.3 85/05/01 11:43:43 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3  85/05/01  11:43:43  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: ng.c,v 4.3.1.2 85/05/13 09:29:28 lwall Exp $
+   *
+   * $Log:	ng.c,v $
++  * Revision 4.3.1.2  85/05/13  09:29:28  lwall
++  * Added CUSTOMLINES option.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:36:00  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:43:43  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 29,34
+  #include "backpage.h"
+  #include "rcln.h"
+  #include "last.h"
+  #include "INTERN.h"
+  #include "ng.h"
+  #include "artstate.h"			/* somebody has to do it */
+
+--- 35,41 -----
+  #include "backpage.h"
+  #include "rcln.h"
+  #include "last.h"
++ #include "search.h"
+  #include "INTERN.h"
+  #include "ng.h"
+  #include "artstate.h"			/* somebody has to do it */
+***************
+*** 51,56
+  #ifdef KILLFILES
+      open_kfile(KF_GLOBAL);
+  #endif
+  }
+  
+  /* do newsgroup on line ng with name ngname */
+
+--- 58,67 -----
+  #ifdef KILLFILES
+      open_kfile(KF_GLOBAL);
+  #endif
++ #ifdef CUSTOMLINES
++     init_compex(&hide_compex);
++     init_compex(&page_compex);
++ #endif
+  }
+  
+  /* do newsgroup on line ng with name ngname */
+***************
+*** 164,173
+  
+      writelast();
+  
+-     /* do they want a special top line? */
+- 
+-     firstline = getval("FIRSTLINE",Nullch);
+- 
+      /* see if there are any special searches to do */
+  
+  #ifdef KILLFILES
+
+--- 175,180 -----
+  
+      writelast();
+  
+      /* see if there are any special searches to do */
+  
+  #ifdef KILLFILES
+***************
+*** 182,187
+  #endif
+  #endif
+      
+      /* now read each unread article */
+  
+      rc_changed = doing_ng = TRUE;	/* enter the twilight zone */
+
+--- 189,207 -----
+  #endif
+  #endif
+      
++     /* do they want a special top line? */
++ 
++     firstline = getval("FIRSTLINE",Nullch);
++ 
++     /* custom line suppression, custom page ending */
++ 
++ #ifdef CUSTOMLINES
++     if (hideline = getval("HIDELINE",Nullch))
++ 	compile(&hide_compex,hideline,TRUE,TRUE);
++     if (pagestop = getval("PAGESTOP",Nullch))
++ 	compile(&page_compex,pagestop,TRUE,TRUE);
++ #endif
++ 
+      /* now read each unread article */
+  
+      rc_changed = doing_ng = TRUE;	/* enter the twilight zone */
+
+Index: rn.1
+Prereq: 4.3
+*** rn.1.old	Mon May 13 09:33:24 1985
+--- rn.1	Mon May 13 09:33:34 1985
+***************
+*** 1,4
+! ''' $Header: rn.1,v 4.3 85/05/01 11:48:26 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3  85/05/01  11:48:26  lwall
+
+--- 1,4 -----
+! ''' $Header: rn.1,v 4.3.1.2 85/05/13 09:27:53 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.2  85/05/13  09:27:53  lwall
+***************
+*** 1,6
+  ''' $Header: rn.1,v 4.3 85/05/01 11:48:26 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3  85/05/01  11:48:26  lwall
+  ''' Baseline for release with 4.3bsd.
+  ''' 
+
+--- 1,12 -----
+  ''' $Header: rn.1,v 4.3.1.2 85/05/13 09:27:53 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
++ ''' Revision 4.3.1.2  85/05/13  09:27:53  lwall
++ ''' Added CUSTOMLINES option.
++ ''' 
++ ''' Revision 4.3.1.1  85/05/10  11:38:22  lwall
++ ''' Branch for patches.
++ ''' 
+  ''' Revision 4.3  85/05/01  11:48:26  lwall
+  ''' Baseline for release with 4.3bsd.
+  ''' 
+***************
+*** 1271,1276
+  Warning: this may go away.
+  .Sp
+  Default: Article %a %(%U%M!=^00$?(%U more%(%M!=^0$? + %M Marked to return)\e) )in %C:, more or less.
+  .Ip HOME 8
+  Your home directory.
+  Affects ~ interpretation, and the location of your
+
+--- 1277,1299 -----
+  Warning: this may go away.
+  .Sp
+  Default: Article %a %(%U%M!=^00$?(%U more%(%M!=^0$? + %M Marked to return)\e) )in %C:, more or less.
++ .Ip HIDELINE 8
++ If defined, contains a regular expression which matches article lines to
++ be hidden, in order, for instance, to suppress quoted material.
++ A recommended string for this purpose is \*(L"^>...\*(R", which \fIdoesn't\fR
++ hide lines with only \*(L'>\*(R', to give some indication that quoted
++ material is being skipped.
++ If you want to hide more than one pattern, you can use \*(L"\|\*(R" to
++ separate the alternatives.
++ You can view the hidden lines by restarting the article with the \*(L'v\*(R'
++ command.
++ .Sp
++ There is some overhead involved in matching each line of the article against
++ a regular expression.
++ You might wish to use a baud-rate modifier to enable this feature only at
++ low baud rates.
++ .Sp
++ Default: undefined
+  .Ip HOME 8
+  Your home directory.
+  Affects ~ interpretation, and the location of your
+***************
+*** 1401,1406
+  May be interpolated using \*(L"%o\*(R".
+  .Sp
+  Default: whatever your news administrator compiled in.
+  .Ip "PIPESAVER (%)" 8
+  The shell command to execute in order to accomplish a save to a pipe
+  (\*(L"s\ |\ command\*(R" or \*(L"w\ |\ command\*(R").
+
+--- 1424,1449 -----
+  May be interpolated using \*(L"%o\*(R".
+  .Sp
+  Default: whatever your news administrator compiled in.
++ .Ip PAGESTOP 8
++ If defined, contains a regular expression which matches article lines to
++ be treated as form-feeds.
++ There are at least two things you might want to do with this.
++ To cause page breaks between articles in a digest, you might define it
++ as \*(L"^--------\*(R".
++ To force a page break before a signature, you could define it
++ as \*(L"^-- $\*(R".
++ (Then, when you see \*(L"--\*(R" at the bottom of the page, you can skip
++ the signature if you so desire by typing \*(L'n\*(R' instead of space.)
++ To do both, you could use \*(L"^--\*(R".
++ If you want to break on more than one pattern, you can use \*(L"\|\*(R" to
++ separate the alternatives.
++ .Sp
++ There is some overhead involved in matching each line of the article against
++ a regular expression.
++ You might wish to use a baud-rate modifier to enable this feature only at
++ low baud rates.
++ .Sp
++ Default: undefined
+  .Ip "PIPESAVER (%)" 8
+  The shell command to execute in order to accomplish a save to a pipe
+  (\*(L"s\ |\ command\*(R" or \*(L"w\ |\ command\*(R").
+
+

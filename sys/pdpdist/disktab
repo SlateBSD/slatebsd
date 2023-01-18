@@ -1,0 +1,449 @@
+#
+# Copyright (c) 1983,1986 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)disktab	4.11 (Berkeley) 9/5/87
+#
+# Disk geometry and partition layout tables. 
+# Key:
+#	ty	type of disk
+#	ns	#sectors/track
+#	nt	#tracks/cylinder
+#	nc	#cylinders/disk
+#	rm	rpm, 3600 default
+#	se	sector size, 512 default
+#	sf	supports bad144-style bad sector forwarding
+#	so	partition offsets in sectors
+#	p[a-h]	partition sizes in sectors
+#	b[a-h]	partition block sizes in bytes
+#	f[a-h]	partition fragment sizes in bytes
+#
+# All partition sizes contain space
+# for bad sector tables unless the
+# device drivers fail to support this.
+#
+# Entries may also be used for other compatible drives
+# with the same geometry.
+
+#
+# Drives on xp
+#
+
+# RM02/03:
+#
+# Suggested dead start boot block: /mdec/rm03uboot
+# File system free list parameters (m/n):
+# RM02:
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RM02	11/80	10/80	8/80	8/80	6/80	7/80	6/80	7/80
+# RM03	16/80	15/80	12/80	12/80	8/80	11/80	8/80	11/80
+#
+# CPU	60	70	73	83	84
+# DISK
+# RM02	7/80	5/80	6/80	6/80	5/80
+# RM03	11/80	7/80	9/80	9/80	7/80
+#
+rm02|RM02|rm03|RM03|DEC RM02/03:\
+	:ty=removable:ns#32:nt#5:nc#823:sf:\
+	:pa#4800:ba#1024:fa#1024:\
+	:pb#4800:bb#1024:fb#1024:\
+	:pc#121922:bc#1024:fc#1024:\
+	:pd#62720:bd#1024:fd#1024:\
+	:pe#59202:be#1024:fe#1024:\
+	:pf#9600:bf#1024:ff#1024:\
+	:ph#131522:bh#1024:fh#1024:
+
+# RM05:
+#
+# Suggested dead start boot block: /mdec/rm05uboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RM05	16/304	15/304	12/304	12/304	8/304	11/304	8/304	11/304
+#
+# CPU	60	70	73	83	84
+# DISK
+# RM05	11/304	7/304	8/304	8/304	7/304
+#
+rm05|RM05|cdc9766|CDC9766|9766|DEC RM05, CDC 9766:\
+	:ty=removable:ns#32:nt#19:nc#823:sf:\
+	:pa#9120:ba#1024:fa#1024:\
+	:pb#9120:bb#1024:fb#1024:\
+	:pc#234080:bc#1024:fc#1024:\
+	:pd#247906:bd#4096:fd#1024:\
+	:pe#164160:be#1024:fe#1024:\
+	:pf#152000:bf#1024:ff#1024:\
+	:pg#165826:bg#1024:fg#1024:\
+	:ph#500226:bh#1024:fh#1024:
+9775|CDC 9775:\
+	:ty=winchester:ns#32:nt#40:nc#842:sf:\
+	:pa#10240:ba#1024:fa#1024:\
+	:pb#10240:bb#1024:fb#1024:\
+	:pc#510720:bc#1024:fc#1024:\
+	:pd#541440:bd#1024:fd#1024:\
+	:pe#363520:be#1024:fe#1024:\
+	:pf#320000:bf#1024:ff#1024:\
+	:pg#368640:bg#1024:fg#1024:\
+	:ph#1072640:bh#1024:fh#1024:
+
+# RP04/05/06:
+#
+# Suggested dead start boot block: /mdec/rpuboot
+# File system free list parameters (m/n):
+# CPU		23	24	34	40	44	45	53	55
+# DISK
+# RP04/05/06	11/209	10/209	8/209	8/209	6/209	7/209	6/209	7/209
+#
+# CPU		60	70	73	83	84
+# DISK
+# RP04/05/06	7/209	5/209	6/209	6/209	5/209
+#
+rp04|RP04|rp05|RP05|DEC RP04/05:\
+	:ty=removable:ns#22:nt#19:nc#411:sf:\
+	:pa#9614:ba#1024:fa#1024:\
+	:pb#8778:bb#1024:fb#1024:\
+	:pc#153258:bc#1024:fc#1024:\
+	:pg#171650:bg#1024:fg#1024:
+rp06|RP06|DEC RP06:\
+	:ty=removable:ns#22:nt#19:nc#815:sf:\
+	:pa#9614:ba#1024:fa#1024:\
+	:pb#8778:bb#1024:fb#1024:\
+	:pc#153258:bc#1024:fc#1024:\
+	:pd#168724:bd#1024:fd#1024:\
+	:pe#322130:be#1024:fe#1024:\
+	:pg#171798:bg#1024:fg#1024:\
+	:ph#340522:bh#1024:fh#1024:
+
+# Fujitsu Eagle 160:
+#
+# Suggested dead start boot block: /mdec/si94uboot
+#
+160|fuji|fuji160|Fujitsu 160:\
+	:ty=winchester:ns#32:nt#10:nc#823:sf:\
+	:pa#9600:ba#1024:fa#1024:\
+	:pb#9600:bb#1024:fb#1024:\
+	:pc#244002:bc#1024:fc#1024:\
+	:pd#125440:bd#1024:fd#1024:\
+	:pe#118562:be#1024:fe#1024:\
+	:pf#59520:bf#1024:ff#1024:\
+	:pg#59042:bg#1024:fg#1024:\
+	:ph#263202:bh#1024:fh#1024:
+
+# Diva Comp V, Ampex 9300 (direct):
+#
+# Suggested dead start boot block: /mdec/dvhpuboot
+#
+diva|DIVA|9300|Diva Comp V, Ampex 9300 (in direct mode):\
+	:ty=winchester:ns#33:nt#19:nc#815:sf:\
+	:pa#9405:ba#1024:fa#1024:\
+	:pb#9405:bb#1024:fb#1024:\
+	:pc#241395:bc#1024:fc#1024:\
+	:pd#250641:bd#1024:fd#1024:\
+	:pe#169290:be#1024:fe#1024:\
+	:pf#156750:bf#1024:ff#1024:\
+	:pg#165996:bg#1024:fg#1024:\
+	:ph#510846:bh#1024:fh#1024:
+330|capricorn|Capricorn|Ampex Capricorn:\
+	:ty=winchester:ns#32:nt#16:nc#1024:sf:\
+	:pa#16384:ba#1024:fa#1024:\
+	:pb#33792:bb#1024:fb#1024:\
+	:pc#291840:bc#1024:fc#1024:\
+	:pd#16384:bd#4096:fd#1024:\
+	:pe#56320:be#1024:fe#1024:\
+	:pf#107008:bf#1024:ff#1024:\
+	:pg#179712:bg#1024:fg#1024:\
+	:ph#521728:bh#1024:fh#1024:
+si_eagle|SI_Eagle|2351|2351A|Fujitsu Eagle 2351A (48 sectors):\
+	:ty=winchester:ns#48:nt#20:nc#842:rm#3961:sf:\
+	:pa#11520:ba#1024:fa#1024:\
+	:pb#11520:bb#1024:fb#1024:\
+	:pc#474240:bc#1024:fc#1024:\
+	:pd#214080:bd#1024:fd#1024:\
+	:ph#803520:bh#1024:fh#1024:
+
+#
+# SI 9500 CDC 9766:
+#
+# Suggested dead start boot block: /mdec/si95uboot
+#
+si9766|si9766|CDC 9766 on SI 9500 controller:\
+	:ty=removable:ns#32:nt#19:nc#823:sf:\
+	:pa#9120:ba#1024:fa#1024:\
+	:pb#9120:bb#1024:fb#1024:\
+	:pc#234080:bc#1024:fc#1024:\
+	:pd#244866:bd#4096:fd#1024:\
+	:pe#164160:be#1024:fe#1024:\
+	:pf#152000:bf#1024:ff#1024:\
+	:pg#162786:bg#1024:fg#1024:\
+	:ph#497344:bh#1024:fh#1024:
+
+#
+# Disks for rk
+#
+# RK06/07:
+#
+# Suggested dead start boot block: /mdec/hkuboot
+# File system free list parameters (m/n):
+# CPU		23	24	34	40	44	45	53	55
+# DISK
+# RK06/07	8/33	7/33	6/33	6/33	4/33	5/33	4/33	5/33
+#
+# CPU		60	70	73	83	84
+# DISK
+# RK06/07	5/33	3/33	4/33	4/33	3/33
+#
+rk06|RK06|DEC RK06:\
+	:ty=removable:ns#22:nt#3:nc#411:sf:\
+	:pa#5940:ba#1024:fa#1024:\
+	:pb#2376:bb#1024:fb#1024:\
+	:pd#18662:bd#1024:fd#1024:\
+	:pe#8316:be#1024:fe#1024:\
+	:pg#26978:bg#1024:fg#1024:\
+rk07|RK07|DEC RK07:\
+	:ty=removable:ns#22:nt#3:nc#815:sf:bt=hkuboot:\
+	:pa#5940:ba#1024:fa#1024:\
+	:pb#2376:bb#1024:fb#1024:\
+	:pc#45326:bc#1024:fc#1024:\
+	:pd#18662:bd#1024:fd#1024:\
+	:pe#8316:be#1024:fe#1024:\
+	:pg#26978:bg#1024:fg#1024:\
+	:ph#53642:bh#1024:fh#1024:
+#
+# Disks for rl
+#
+# RL01/02:
+#
+# Suggested dead start boot block: /mdec/rluboot
+# File system free list parameters (m/n):
+# CPU		23	24	34	40	44	45	53	55
+# DISK
+# RL01/2	7/10	6/10	6/10	6/10	4/10	5/10	4/10	5/10
+#
+# CPU		60	70	73	83	84
+# DISK
+# RL01/2	5/10	3/10	4/10	4/10	3/10
+#
+rl01|RL01|DEC RL01:\
+	:ty=removable:se#256:ns#40:nt#2:nc#256:\
+	:ph#20480:bh#1024:fh#1024:
+rl02|RL02|DEC RL02:\
+	:ty=removable:se#256:ns#40:nt#2:nc#512:\
+	:ph#40960:bh#1024:fh#1024:
+
+#
+# Disks for rk
+#
+# RK05:
+#
+# Suggested dead start boot block: /mdec/rkuboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RK05	4/12	4/12	3/12	3/12	2/12	3/12	2/12	3/12
+#
+# CPU	60	70	73	83	84
+# DISK
+# RK05	3/12	2/12	2/12	2/12	2/12
+#
+rk05|RK05|DEC RK05:\
+	:ty=removable:ns#12:nt#2:nc#203:bt=rkuboot:\
+	:ph#4872:bh#1024:fh#1024:
+
+#
+# Disks on a UDA50
+#
+# NOTE: RA partition tables ahave been reordered since 2.10BETA.  In most
+#	cases partitions `c' and `h' were swaped.  The change was made so
+#	that partition `h' would always represent the whole disk.
+#
+
+# RA60:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RA60	21/84	21/84	17/84	17/84	12/84	15/84	12/84	15/84
+#
+# CPU	60	70	73	83	84
+# DISK
+# RA60	15/84	10/84	12/84	12/84	10/84
+#
+ra60|RA60|DEC RA60 Removable:\
+	:ty=removable:ns#42:nt#4:nc#2382:so:\
+	:pa#15884:ba#1024:fa#1024:\
+	:pb#33440:bb#1024:fb#1024:\
+	:pc#193282:bc#1024:fc#1024:\
+	:pd#15884:bd#1024:fd#1024:\
+	:pe#140686:be#1024:fe#1024:\
+	:pg#157570:bg#1024:fg#1024:\
+	:ph#399176:bh#1024:fh#1024:
+
+# RA80:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RA80	16/217	16/217	13/217	13/217	9/217	11/217	9/217	11/217
+#
+# CPU	60	70	73	83	84
+# DISK
+# RA80	11/217	7/217	9/217	9/217	7/217
+#
+ra80|RA80|DEC RA80 Winchester:\
+	:ty=winchester:ns#31:nt#14:nc#559:so:\
+	:pa#15884:ba#1024:fa#1024:\
+	:pb#33440:bb#1024:fb#1024:\
+	:pc#186888:bc#1024:fc#1024:\
+	:ph#236212:bh#1024:fh#1024:
+
+# RA81:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RA81	26/357	26/357	21/357	21/357	14/357	18/357	14/357	17/357
+#
+# CPU	60	70	73	83	84
+# DISK
+# RA81	18/357	12/357	14/357	14/357	12/357
+#
+ra81|RA81|DEC RA81 Winchester:\
+	:ty=winchester:ns#51:nt#14:nc#1248:so:\
+	:pa#15884:ba#1024:fa#1024:\
+	:pb#33440:bb#1024:fb#1024:\
+	:pc#193282:bc#1024:fc#1024:\
+	:pd#15884:bd#1024:fd#1024:\
+	:pe#307200:be#1024:fe#1024:\
+	:pf#324382:bf#1024:ff#1024:\
+	:pg#647466:bg#1024:fg#1024:\
+	:ph#890071:bh#1024:fh#1024:
+
+#
+# Disks on KLESI
+#
+# RC25:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RC25	15/31	15/31	13/31	13/31	9/31	11/31	9/31	11/31
+#
+# CPU	60	70	73	83	84
+# DISK
+# RC25	11/31	7/31	9/31	9/31	7/31
+#
+rc25|RC25:\
+	:ty=winchester:ns#42:nt#4:nc#302:so:bt=rauboot:\
+	:pa#15884:ba#1024:fa#1024:\
+	:pb#10032:bb#1024:fb#1024:\
+	:pc#24986:bc#1024:fc#1024:\
+	:pg#50902:bg#1024:fg#1024:\
+
+#
+#  Disks on RQDX Q-bus controllers
+#
+# RX50:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RX50	1/5	1/5	1/5	1/5	1/5	1/5	1/5	1/5
+#
+# CPU	60	70	73	83	84
+# DISK
+# RX50	1/5	1/5	1/5	1/5	1/5
+#
+rx50|RX50|DEC RX50 floppy disk unit:\
+	:ty=removable:ns#10:nt#1:nc#80:\
+	:ph#1638:bh#1024:fh#1024:
+
+#
+# RD51:
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RD51	1/36	1/36	1/36	1/36	1/36	1/36	1/36	1/36
+#
+# CPU	60	70	73	83	84
+# DISK
+# RD51	1/36	1/36	1/36	1/36	1/36
+#
+rd51|RD51|DEC RD51:\
+	:ty=winchester:ns#18:nt#4:nc#300:so:\
+	:pa#9700:ba#1024:fa#1024:\
+	:pe#7460:be#1024:fe#1024:\
+	:pf#2240:bf#1024:ff#1024:\
+	:pg#11868:bg#1024:fg#1024:\
+	:ph#21568:bh#1024:fh#1024:
+
+#
+# RD52 and RD53:
+#
+# Note that interleaving factors are determined by controller (RQDX2 or
+# RQDX3) rather than disk type.  The names in the entries below are
+# combined with the controller so that newfs(8) can use the right
+# partition sizes and also look up the correct m/n numbers internally.
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU		23	24	34	40	44	45	53	55
+# DISK
+# RQDX2*	2/36	2/36	2/36	2/36	2/36	2/36	2/36	2/36
+# RQDX3*	7/36	7/36	7/36	7/36	7/36	7/36	7/36	7/36
+#
+# CPU		60	70	73	83	84
+# DISK
+# RQDX2*	2/36	2/36	2/36	2/36	2/36
+# RQDX3*	7/36	7/36	7/36	7/36	7/36
+#
+rd52-rqdx2|RD52-RQDX2|rd52-rqdx3|RD52-RQDX3|DEC RD52:\
+	:ty=winchester:ns#18:nt#7:nc#480:so:\
+	:pa#9700:ba#1024:fa#1024:\
+	:pb#17300:bb#1024:fb#1024:\
+	:pc#3100:bc#1024:fc#1024:\
+	:pd#30348:bd#1024:fd#1024:\
+	:pe#7460:be#1024:fe#1024:\
+	:pf#2240:bf#1024:ff#1024:\
+	:pg#50748:bg#1024:fg#1024:\
+	:ph#60448:bh#1024:fh#1024:
+rd53-rqdx2|RD53-RQDX2|rd53-rqdx3|RD53-RQDX3|DEC RD53:\
+	:ty=winchester:ns#18:nt#8:nc#963:so:\
+	:pa#9700:ba#1024:fa#1024:\
+	:pb#17300:bb#1024:fb#1024:\
+	:pc#3100:bc#1024:fc#1024:\
+	:pd#108540:bd#1024:fd#1024:\
+	:pe#7460:be#1024:fe#1024:\
+	:pf#2240:bf#1024:ff#1024:\
+	:pg#128940:bg#1024:fg#1024:\
+	:ph#138640:bh#1024:fh#1024:
+#
+# RX02 floppy disk drives
+#
+# Suggested dead start boot block: /mdec/rauboot
+# File system free list parameters (m/n):
+# CPU	23	24	34	40	44	45	53	55
+# DISK
+# RX02	1/7	1/7	1/7	1/7	1/7	1/7	1/7	1/7
+#
+# CPU	60	70	73	83	84
+# DISK
+# RX02	1/7	1/7	1/7	1/7	1/7
+#
+rx02|RX02|DEC RX02:\
+	:ty=removable:se#128/256:ns#26:nt#1:nc#77:\
+	:pa#250:ba#1024:fa#1024:\
+	:pb#500:bb#1024:fb#1024:
+#
+# RAM disk
+#
+ram|RAM|Ram disk:\
+	:ty=simulated:ns#2:nt#1024:nc#4096:

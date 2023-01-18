@@ -1,0 +1,142 @@
+Patch #: 3
+Priority: VERY LOW
+Subject: search commands shouldn't report things junked that already were
+>From: markb@sdcrdcf.UUCP (Mark Biggar)
+
+Description:
+	Search and number-range commands that junk articles or mark them
+	unread will report all articles found as junked or marked unread
+	even if they already were read or unread, respectively.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	Warning: this patch is not reversed.  If the patch program says
+	it is, then this patch has already been applied, and you should
+	not apply it again.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 2
+1c1
+< Patch #: 2
+---
+> Patch #: 3
+
+Index: ngstuff.c
+Prereq: 4.3
+*** ngstuff.c.old	Fri May 10 14:32:57 1985
+--- ngstuff.c	Fri May 10 14:32:59 1985
+***************
+*** 1,4
+! /* $Header: ngstuff.c,v 4.3 85/05/01 11:45:03 lwall Exp $
+   *
+   * $Log:	ngstuff.c,v $
+   * Revision 4.3  85/05/01  11:45:03  lwall
+
+--- 1,4 -----
+! /* $Header: ngstuff.c,v 4.3.1.2 85/05/10 14:31:52 lwall Exp $
+   *
+   * $Log:	ngstuff.c,v $
+   * Revision 4.3.1.2  85/05/10  14:31:52  lwall
+***************
+*** 1,6
+  /* $Header: ngstuff.c,v 4.3 85/05/01 11:45:03 lwall Exp $
+   *
+   * $Log:	ngstuff.c,v $
+   * Revision 4.3  85/05/01  11:45:03  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: ngstuff.c,v 4.3.1.2 85/05/10 14:31:52 lwall Exp $
+   *
+   * $Log:	ngstuff.c,v $
++  * Revision 4.3.1.2  85/05/10  14:31:52  lwall
++  * Prevented "Junked" or "Marked unread" when no state change.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:36:45  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:45:03  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 223,229
+  	if (isspace(ch) || ch == ':')
+  	    continue;
+  	if (ch == 'j') {
+! 	    mark_as_read(art);
+  #ifdef VERBOSE
+  		IF(verbose)
+  		    fputs("\tJunked",stdout);
+
+--- 229,236 -----
+  	if (isspace(ch) || ch == ':')
+  	    continue;
+  	if (ch == 'j') {
+! 	    if (!was_read(art)) {
+! 		mark_as_read(art);
+  #ifdef VERBOSE
+  		IF(verbose)
+  		    fputs("\tJunked",stdout);
+***************
+*** 228,233
+  		IF(verbose)
+  		    fputs("\tJunked",stdout);
+  #endif
+  	}
+  	else if (ch == 'm') {
+  	    unmark_as_read(art);
+
+--- 235,241 -----
+  		IF(verbose)
+  		    fputs("\tJunked",stdout);
+  #endif
++ 	    }
+  	}
+  	else if (ch == 'm') {
+  	    if (was_read(art)) {
+***************
+*** 230,236
+  #endif
+  	}
+  	else if (ch == 'm') {
+! 	    unmark_as_read(art);
+  #ifdef VERBOSE
+  		IF(verbose)
+  		    fputs("\tMarked unread",stdout);
+
+--- 238,245 -----
+  	    }
+  	}
+  	else if (ch == 'm') {
+! 	    if (was_read(art)) {
+! 		unmark_as_read(art);
+  #ifdef VERBOSE
+  		IF(verbose)
+  		    fputs("\tMarked unread",stdout);
+***************
+*** 235,240
+  		IF(verbose)
+  		    fputs("\tMarked unread",stdout);
+  #endif
+  	}
+  	else if (ch == 'M') {
+  #ifdef DELAYMARK
+
+--- 244,250 -----
+  		IF(verbose)
+  		    fputs("\tMarked unread",stdout);
+  #endif
++ 	    }
+  	}
+  	else if (ch == 'M') {
+  #ifdef DELAYMARK
+
+

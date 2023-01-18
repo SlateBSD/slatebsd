@@ -1,0 +1,665 @@
+System: rn version 4.3
+Patch #: 27
+Priority: LOW
+Subject: %m upgrade
+>From: msb@lsuc.UUCP (Mark Brader)
+
+Description:
+	%m is sometimes wrong at the end of an article (p instead of a).
+
+	Also, miscellaneous questions need separate letters for better
+	differentiation in macro definitions.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 26
+1c1
+< Patch #: 26
+---
+> Patch #: 27
+
+Index: art.c
+Prereq: 4.3.1.4
+*** art.c.old	Tue Sep 10 11:12:08 1985
+--- art.c	Tue Sep 10 11:12:36 1985
+***************
+*** 1,4
+! /* $Header: art.c,v 4.3.1.4 85/05/23 12:13:31 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.4  85/05/23  12:13:31  lwall
+
+--- 1,4 -----
+! /* $Header: art.c,v 4.3.1.5 85/09/10 11:07:18 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.5  85/09/10  11:07:18  lwall
+***************
+*** 1,6
+  /* $Header: art.c,v 4.3.1.4 85/05/23 12:13:31 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.4  85/05/23  12:13:31  lwall
+   * shouldn't display article that's really a subdirectory.
+   * 
+
+--- 1,9 -----
+  /* $Header: art.c,v 4.3.1.5 85/09/10 11:07:18 lwall Exp $
+   *
+   * $Log:	art.c,v $
++  * Revision 4.3.1.5  85/09/10  11:07:18  lwall
++  * %m not restored on some returns.
++  * 
+   * Revision 4.3.1.4  85/05/23  12:13:31  lwall
+   * shouldn't display article that's really a subdirectory.
+   * 
+***************
+*** 177,182
+  	    if (int_count) {	/* exit via interrupt? */
+  		putchar('\n') FLUSH;	/* get to left margin */
+  		int_count = 0;	/* reset interrupt count */
+  		return DA_NORM;	/* skip out of loops */
+  	    }
+  	    if (restart) {		/* did not finish last line? */
+
+--- 180,186 -----
+  	    if (int_count) {	/* exit via interrupt? */
+  		putchar('\n') FLUSH;	/* get to left margin */
+  		int_count = 0;	/* reset interrupt count */
++ 		mode = oldmode;
+  		return DA_NORM;	/* skip out of loops */
+  	    }
+  	    if (restart) {		/* did not finish last line? */
+***************
+*** 186,191
+  	    else {			/* not a restart */
+  		if (fgets(art_buf,LBUFLEN,artfp)==Nullch) {
+  					/* if all done */
+  		    return DA_NORM;	/* skip out of loops */
+  		}
+  		bufptr = art_buf;	/* so start at beginning */
+
+--- 190,196 -----
+  	    else {			/* not a restart */
+  		if (fgets(art_buf,LBUFLEN,artfp)==Nullch) {
+  					/* if all done */
++ 		    mode = oldmode;
+  		    return DA_NORM;	/* skip out of loops */
+  		}
+  		bufptr = art_buf;	/* so start at beginning */
+***************
+*** 499,505
+  
+  	/* extra loop bombout */
+  
+! 	if (artpos == artsize)	/* did we just now reach EOF? */
+  	    return DA_NORM;	/* avoid --MORE--(100%) */
+  
+  /* not done with this article, so pretend we are a pager */
+
+--- 504,511 -----
+  
+  	/* extra loop bombout */
+  
+! 	if (artpos == artsize) {/* did we just now reach EOF? */
+! 	    mode = oldmode;
+  	    return DA_NORM;	/* avoid --MORE--(100%) */
+  	}
+  
+***************
+*** 501,506
+  
+  	if (artpos == artsize)	/* did we just now reach EOF? */
+  	    return DA_NORM;	/* avoid --MORE--(100%) */
+  
+  /* not done with this article, so pretend we are a pager */
+  
+
+--- 507,513 -----
+  	if (artpos == artsize) {/* did we just now reach EOF? */
+  	    mode = oldmode;
+  	    return DA_NORM;	/* avoid --MORE--(100%) */
++ 	}
+  
+  /* not done with this article, so pretend we are a pager */
+  
+
+Index: help.c
+Prereq: 4.3
+*** help.c.old	Tue Sep 10 11:13:11 1985
+--- help.c	Tue Sep 10 11:13:17 1985
+***************
+*** 1,4
+! /* $Header: help.c,v 4.3 85/05/01 11:38:59 lwall Exp $
+   *
+   * $Log:	help.c,v $
+   * Revision 4.3  85/05/01  11:38:59  lwall
+
+--- 1,4 -----
+! /* $Header: help.c,v 4.3.1.2 85/09/10 11:05:39 lwall Exp $
+   *
+   * $Log:	help.c,v $
+   * Revision 4.3.1.2  85/09/10  11:05:39  lwall
+***************
+*** 1,6
+  /* $Header: help.c,v 4.3 85/05/01 11:38:59 lwall Exp $
+   *
+   * $Log:	help.c,v $
+   * Revision 4.3  85/05/01  11:38:59  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: help.c,v 4.3.1.2 85/09/10 11:05:39 lwall Exp $
+   *
+   * $Log:	help.c,v $
++  * Revision 4.3.1.2  85/09/10  11:05:39  lwall
++  * Improved %m in in_char().
++  * 
++  * Revision 4.3.1.1  85/05/10  11:33:10  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:38:59  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 267,273
+      (cmd = print_lines("\
+  l	News administrator's login name, if any\n\
+  L	Login name (yours)\n\
+! m	Current mode, first letter of (init,newsgroup,article,pager,misc)\n\
+  M	Number of article marked with M\n\
+  n	Newsgroups from current article\n\
+  N	Full name (yours)\n\
+
+--- 273,280 -----
+      (cmd = print_lines("\
+  l	News administrator's login name, if any\n\
+  L	Login name (yours)\n\
+! m	Current mode, first letter of (init, newsgroup, article, pager,\n\
+! 		Add, Catchup, Delete bogus, Mailbox, Resubscribe)\n\
+  M	Number of article marked with M\n\
+  n	Newsgroups from current article\n\
+  N	Full name (yours)\n\
+
+Index: ng.c
+Prereq: 4.3.1.5
+*** ng.c.old	Tue Sep 10 11:13:38 1985
+--- ng.c	Tue Sep 10 11:13:58 1985
+***************
+*** 1,4
+! /* $Header: ng.c,v 4.3.1.5 85/09/05 12:34:37 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.5  85/09/05  12:34:37  lwall
+
+--- 1,4 -----
+! /* $Header: ng.c,v 4.3.1.6 85/09/10 11:03:42 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.6  85/09/10  11:03:42  lwall
+***************
+*** 1,6
+  /* $Header: ng.c,v 4.3.1.5 85/09/05 12:34:37 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.5  85/09/05  12:34:37  lwall
+   * Catchup command could make unread article count too big.
+   * 
+
+--- 1,9 -----
+  /* $Header: ng.c,v 4.3.1.6 85/09/10 11:03:42 lwall Exp $
+   *
+   * $Log:	ng.c,v $
++  * Revision 4.3.1.6  85/09/10  11:03:42  lwall
++  * Improved %m in in_char().
++  * 
+   * Revision 4.3.1.5  85/09/05  12:34:37  lwall
+   * Catchup command could make unread article count too big.
+   * 
+***************
+*** 685,691
+        reask_catchup:
+  #ifdef VERBOSE
+  	IF(verbose)
+! 	    in_char("\nDo you really want to mark everything as read? [yn] ");
+  	ELSE
+  #endif
+  #ifdef TERSE
+
+--- 688,695 -----
+        reask_catchup:
+  #ifdef VERBOSE
+  	IF(verbose)
+! 	    in_char("\nDo you really want to mark everything as read? [yn] ",
+! 		'C');
+  	ELSE
+  #endif
+  #ifdef TERSE
+***************
+*** 689,695
+  	ELSE
+  #endif
+  #ifdef TERSE
+! 	    in_char("\nReally? [ynh] ");
+  #endif
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+
+--- 693,699 -----
+  	ELSE
+  #endif
+  #ifdef TERSE
+! 	    in_char("\nReally? [ynh] ", 'C');
+  #endif
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+
+Index: rcstuff.c
+Prereq: 4.3.1.3
+*** rcstuff.c.old	Tue Sep 10 11:11:15 1985
+--- rcstuff.c	Tue Sep 10 11:12:08 1985
+***************
+*** 1,4
+! /* $Header: rcstuff.c,v 4.3.1.3 85/05/29 09:13:25 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.3  85/05/29  09:13:25  lwall
+
+--- 1,4 -----
+! /* $Header: rcstuff.c,v 4.3.1.4 85/09/10 11:04:44 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.4  85/09/10  11:04:44  lwall
+***************
+*** 1,6
+  /* $Header: rcstuff.c,v 4.3.1.3 85/05/29 09:13:25 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.3  85/05/29  09:13:25  lwall
+   * %d that should be %ld.
+   * 
+
+--- 1,9 -----
+  /* $Header: rcstuff.c,v 4.3.1.4 85/09/10 11:04:44 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
++  * Revision 4.3.1.4  85/09/10  11:04:44  lwall
++  * Improved %m in in_char().
++  * 
+   * Revision 4.3.1.3  85/05/29  09:13:25  lwall
+   * %d that should be %ld.
+   * 
+***************
+*** 265,271
+  	    sprintf(promptbuf,"\nAdd %s? [yn] ",ngname);
+  #endif
+  reask_add:
+! 	in_char(promptbuf);
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+  #ifdef VERIFY
+
+--- 268,274 -----
+  	    sprintf(promptbuf,"\nAdd %s? [yn] ",ngname);
+  #endif
+  reask_add:
+! 	in_char(promptbuf,'A');
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+  #ifdef VERIFY
+***************
+*** 310,316
+  	      FLUSH;
+  #endif
+  reask_unsub:
+! 	in_char(promptbuf);
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+  #ifdef VERIFY
+
+--- 313,319 -----
+  	      FLUSH;
+  #endif
+  reask_unsub:
+! 	in_char(promptbuf,'R');
+  	putchar('\n') FLUSH;
+  	setdef(buf,"y");
+  #ifdef VERIFY
+***************
+*** 708,714
+  	}
+  #ifdef DELBOGUS
+  reask_bogus:
+! 	in_char("Delete bogus newsgroups? [ny] ");
+  	putchar('\n') FLUSH;
+  	setdef(buf,"n");
+  #ifdef VERIFY
+
+--- 711,717 -----
+  	}
+  #ifdef DELBOGUS
+  reask_bogus:
+! 	in_char("Delete bogus newsgroups? [ny] ", 'D');
+  	putchar('\n') FLUSH;
+  	setdef(buf,"n");
+  #ifdef VERIFY
+
+Index: respond.c
+Prereq: 4.3.1.4
+*** respond.c.old	Tue Sep 10 11:11:50 1985
+--- respond.c	Tue Sep 10 11:12:02 1985
+***************
+*** 1,4
+! /* $Header: respond.c,v 4.3.1.4 85/05/23 17:24:49 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.4  85/05/23  17:24:49  lwall
+
+--- 1,4 -----
+! /* $Header: respond.c,v 4.3.1.5 85/09/10 11:05:00 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.5  85/09/10  11:05:00  lwall
+***************
+*** 1,6
+  /* $Header: respond.c,v 4.3.1.4 85/05/23 17:24:49 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.4  85/05/23  17:24:49  lwall
+   * Now allows 'r' and 'f' on null articles.
+   * 
+
+--- 1,9 -----
+  /* $Header: respond.c,v 4.3.1.5 85/09/10 11:05:00 lwall Exp $
+   *
+   * $Log:	respond.c,v $
++  * Revision 4.3.1.5  85/09/10  11:05:00  lwall
++  * Improved %m in in_char().
++  * 
+   * Revision 4.3.1.4  85/05/23  17:24:49  lwall
+   * Now allows 'r' and 'f' on null articles.
+   * 
+***************
+*** 156,162
+  		"\nFile %s doesn't exist--\n	use mailbox format? [%s] ",
+  		  s,dflt);
+  	      reask_save:
+! 		in_char(cmd_buf);
+  		putchar('\n') FLUSH;
+  		setdef(buf,dflt);
+  #ifdef VERIFY
+
+--- 159,165 -----
+  		"\nFile %s doesn't exist--\n	use mailbox format? [%s] ",
+  		  s,dflt);
+  	      reask_save:
+! 		in_char(cmd_buf, 'M');
+  		putchar('\n') FLUSH;
+  		setdef(buf,dflt);
+  #ifdef VERIFY
+
+Index: rn.1
+Prereq: 4.3.1.4
+*** rn.1.old	Tue Sep 10 11:12:23 1985
+--- rn.1	Tue Sep 10 11:13:13 1985
+***************
+*** 1,4
+! ''' $Header: rn.1,v 4.3.1.4 85/07/23 18:26:40 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.4  85/07/23  18:26:40  lwall
+
+--- 1,4 -----
+! ''' $Header: rn.1,v 4.3.1.5 85/09/10 11:05:55 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.5  85/09/10  11:05:55  lwall
+***************
+*** 1,6
+  ''' $Header: rn.1,v 4.3.1.4 85/07/23 18:26:40 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
+  ''' Revision 4.3.1.4  85/07/23  18:26:40  lwall
+  ''' Added MAILCALL.
+  ''' 
+
+--- 1,9 -----
+  ''' $Header: rn.1,v 4.3.1.5 85/09/10 11:05:55 lwall Exp $
+  ''' 
+  ''' $Log:	rn.1,v $
++ ''' Revision 4.3.1.5  85/09/10  11:05:55  lwall
++ ''' Improved %m in in_char().
++ ''' 
+  ''' Revision 4.3.1.4  85/07/23  18:26:40  lwall
+  ''' Added MAILCALL.
+  ''' 
+***************
+*** 1138,1146
+  .nf
+  	i	Initializing.
+  	n	Newsgroup selection level.
+! 	a	Article selection level.
+! 	p	Pager level.
+! 	m	Miscellaneous questions.
+  .fi
+  .Ip %M 8
+  The number of articles marked to return via the \*(L'M\*(R' command.
+
+--- 1141,1161 -----
+  .nf
+  	i	Initializing.
+  	n	Newsgroup selection level.
+! 	a	Article selection level (What next?).
+! 	p	Pager level (MORE prompt).
+! 	A	Add this newsgroup?
+! 	C	Catchup confirmation.
+! 	D	Delete bogus newsgroups?
+! 	M	Use mailbox format?
+! 	R	Resubscribe to this newsgroup?
+! .fi
+! .Sp
+! Note that yes/no questions are all upper-case modes.
+! If, for example, you wanted to disallow defaults on all yes/no questions,
+! you could define the following macro:
+! .Sp
+! .nf
+! \e040	%(%m=[A-Z]?h: )
+  .fi
+  .Ip %M 8
+  The number of articles marked to return via the \*(L'M\*(R' command.
+
+Index: rn.c
+Prereq: 4.3.1.3
+*** rn.c.old	Tue Sep 10 11:11:07 1985
+--- rn.c	Tue Sep 10 11:11:15 1985
+***************
+*** 8,14
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.3 85/05/16 16:47:10 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.3  85/05/16  16:47:10  lwall
+
+--- 8,14 -----
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.4 85/09/10 11:05:13 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.4  85/09/10  11:05:13  lwall
+***************
+*** 11,16
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.3 85/05/16 16:47:10 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.3  85/05/16  16:47:10  lwall
+   * Catchup confirmation didn't grok -t.
+   * 
+
+--- 11,19 -----
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.4 85/09/10 11:05:13 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
++  * Revision 4.3.1.4  85/09/10  11:05:13  lwall
++  * Improved %m in in_char().
++  * 
+   * Revision 4.3.1.3  85/05/16  16:47:10  lwall
+   * Catchup confirmation didn't grok -t.
+   * 
+***************
+*** 338,344
+  reask_catchup:
+  #ifdef VERBOSE
+  		IF(verbose)
+! 		    in_char("\nDo you really want to mark everything as read? [yn] ");
+  		ELSE
+  #endif
+  #ifdef TERSE
+
+--- 341,347 -----
+  reask_catchup:
+  #ifdef VERBOSE
+  		IF(verbose)
+! 		    in_char("\nDo you really want to mark everything as read? [yn] ", 'C');
+  		ELSE
+  #endif
+  #ifdef TERSE
+***************
+*** 342,348
+  		ELSE
+  #endif
+  #ifdef TERSE
+! 		    in_char("\nReally? [ynh] ");
+  #endif
+  		    putchar('\n') FLUSH;
+  		    setdef(buf,"y");
+
+--- 345,351 -----
+  		ELSE
+  #endif
+  #ifdef TERSE
+! 		    in_char("\nReally? [ynh] ", 'C');
+  #endif
+  		    putchar('\n') FLUSH;
+  		    setdef(buf,"y");
+
+Index: term.c
+Prereq: 4.3.1.2
+*** term.c.old	Tue Sep 10 11:11:55 1985
+--- term.c	Tue Sep 10 11:12:18 1985
+***************
+*** 1,4
+! /* $Header: term.c,v 4.3.1.2 85/05/16 16:45:35 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3.1.2  85/05/16  16:45:35  lwall
+
+--- 1,4 -----
+! /* $Header: term.c,v 4.3.1.3 85/09/10 11:05:23 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3.1.3  85/09/10  11:05:23  lwall
+***************
+*** 1,6
+  /* $Header: term.c,v 4.3.1.2 85/05/16 16:45:35 lwall Exp $
+   *
+   * $Log:	term.c,v $
+   * Revision 4.3.1.2  85/05/16  16:45:35  lwall
+   * Forced \r to \n on input.
+   * Fix for terminfo braindamage regarding bc emulation.
+
+--- 1,9 -----
+  /* $Header: term.c,v 4.3.1.3 85/09/10 11:05:23 lwall Exp $
+   *
+   * $Log:	term.c,v $
++  * Revision 4.3.1.3  85/09/10  11:05:23  lwall
++  * Improved %m in in_char().
++  * 
+   * Revision 4.3.1.2  85/05/16  16:45:35  lwall
+   * Forced \r to \n on input.
+   * Fix for terminfo braindamage regarding bc emulation.
+***************
+*** 618,624
+  	return 1;
+      }
+      else {
+! 	size = read(0,addr,size)
+  #ifdef RAWONLY
+  	*addr &= 0177;
+  #endif
+
+--- 621,627 -----
+  	return 1;
+      }
+      else {
+! 	size = read(0,addr,size);
+  #ifdef RAWONLY
+  	*addr &= 0177;
+  #endif
+***************
+*** 847,853
+  }
+  
+  void
+! in_char(prompt)
+  char *prompt;
+  {
+      char oldmode = mode;
+
+--- 850,856 -----
+  }
+  
+  void
+! in_char(prompt, newmode)
+  char *prompt;
+  char newmode;
+  {
+***************
+*** 849,854
+  void
+  in_char(prompt)
+  char *prompt;
+  {
+      char oldmode = mode;
+  
+
+--- 852,858 -----
+  void
+  in_char(prompt, newmode)
+  char *prompt;
++ char newmode;
+  {
+      char oldmode = mode;
+  
+***************
+*** 857,863
+      fputs(prompt,stdout);
+      fflush(stdout);
+      eat_typeahead();
+!     mode = 'm';
+      getcmd(buf);
+      if (errno || *buf == '\f') {
+  	putchar('\n') FLUSH;		/* if return from stop signal */
+
+--- 861,867 -----
+      fputs(prompt,stdout);
+      fflush(stdout);
+      eat_typeahead();
+!     mode = newmode;
+      getcmd(buf);
+      if (errno || *buf == '\f') {
+  	putchar('\n') FLUSH;		/* if return from stop signal */
+
+

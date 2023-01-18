@@ -1,0 +1,345 @@
+Article 477 of net.sources.bugs:
+Relay-Version: version B 2.10.3 4.3bsd 1/17/86; site rdlvax.UUCP
+Path: rdlvax!psivax!sdcrdcf!lwall
+From: lwall@sdcrdcf.UUCP (Larry Wall)
+Newsgroups: net.news.b,net.sources.bugs
+Subject: rn 4.3 patch #29
+Message-ID: <2901@sdcrdcf.UUCP>
+Date: 24 Jul 86 21:54:52 GMT
+Organization: System Development Corporation R&D, Santa Monica
+Lines: 331
+Xref: rdlvax net.news.b:233 net.sources.bugs:477
+
+System: rn version 4.3
+Patch #: 29
+Priority: HIGH, if you're running 2.10.3, LOW otherwise
+Subject: Xrefs don't work in 2.10.3
+From: wan@gatech.UUCP (Peter N. Wan)
+
+Description:
+	This patch has already been posted to the net, but I thought I'd
+	go ahead and make it official.
+
+	The problem is that rn is ignoring Xref lines because it thinks
+	the Xref lines were generated on a different system, due to the
+	absence of the Relay-Version header line in news 2.10.3, which
+	rn checks against the Xref line to see if it matches.  Got that?
+
+Fix:	Uses the leading component of the Path: line instead to derive the
+	system name on which rnews was run.
+
+	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+	After installing this patch, you'll need to rerun Configure or edit
+	config.h (and compile) before Xrefs will work under 2.10.3.
+
+Index: patchlevel
+Prereq: 28
+1c1
+< Patch #: 28
+---
+> Patch #: 29
+
+Index: Configure
+Prereq: 4.3.1.5
+*** Configure.old	Thu Jul 24 14:43:46 1986
+--- Configure	Thu Jul 24 14:44:05 1986
+***************
+*** 3,9
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.5 85/05/23 11:23:22 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.5  85/05/23  11:23:22  lwall
+
+--- 3,9 -----
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.6 86/07/24 14:41:18 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.6  86/07/24  14:41:18  lwall
+***************
+*** 6,11
+  # $Header: Configure,v 4.3.1.5 85/05/23 11:23:22 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.5  85/05/23  11:23:22  lwall
+  # filexp flubs sed command.
+  # 
+
+--- 6,14 -----
+  # $Header: Configure,v 4.3.1.6 86/07/24 14:41:18 lwall Exp $
+  #
+  # $Log:	Configure,v $
++ # Revision 4.3.1.6  86/07/24  14:41:18  lwall
++ # Handles missing Relay-Version: from news 2.10.3 headers.
++ # 
+  # Revision 4.3.1.5  85/05/23  11:23:22  lwall
+  # filexp flubs sed command.
+  # 
+***************
+*** 113,118
+  douname=''
+  phostname=''
+  hostcmd=''
+  CONFIG=''
+  
+  echo "Beginning of configuration questions for rn kit."
+
+--- 116,122 -----
+  douname=''
+  phostname=''
+  hostcmd=''
++ norelay=''
+  CONFIG=''
+  
+  echo "Beginning of configuration questions for rn kit."
+***************
+*** 1349,1355
+      fi
+  done
+  
+! : check for 2.10.2
+  echo " "
+  if $contains ' [0-9][0-9]* [0-9]' "$myactive" >/dev/null 2>&1; then
+      echo "Looks like you are running at least 2.10.2 news."
+
+--- 1353,1359 -----
+      fi
+  done
+  
+! : check for 2.10.2 and above
+  echo " "
+  if $contains ' [0-9][0-9]* [0-9]' "$myactive" >/dev/null 2>&1; then
+      case "$norelay" in
+***************
+*** 1352,1357
+  : check for 2.10.2
+  echo " "
+  if $contains ' [0-9][0-9]* [0-9]' "$myactive" >/dev/null 2>&1; then
+      echo "Looks like you are running at least 2.10.2 news."
+      mininact=define
+  else
+
+--- 1356,1373 -----
+  : check for 2.10.2 and above
+  echo " "
+  if $contains ' [0-9][0-9]* [0-9]' "$myactive" >/dev/null 2>&1; then
++     case "$norelay" in
++     undef) dflt="n";;
++     *)     dflt="y";;
++     esac
++     $echo $n "Are you running 2.10.3 or above? [${dflt}] $c"
++     . myread
++     case "$ans" in
++     '') ans=$dflt;;
++     esac
++     case "$ans" in
++     n*)
++ 	norelay='undef'
+      echo "Looks like you are running at least 2.10.2 news."
+  	;;
+      *)  norelay='define' ;;
+***************
+*** 1353,1358
+  echo " "
+  if $contains ' [0-9][0-9]* [0-9]' "$myactive" >/dev/null 2>&1; then
+      echo "Looks like you are running at least 2.10.2 news."
+      mininact=define
+  else
+      echo "It doesn't look like you are running 2.10.2 news yet.  Are you planning"
+
+--- 1369,1377 -----
+      n*)
+  	norelay='undef'
+      echo "Looks like you are running at least 2.10.2 news."
++ 	;;
++     *)  norelay='define' ;;
++     esac
+      mininact=define
+  else
+      echo "It doesn't look like you are running 2.10.2 news yet.  Are you planning"
+***************
+*** 1362,1367
+      n*) mininact=undef ;;
+      *)  mininact=define ;;
+      esac
+  fi
+  
+  
+
+--- 1381,1387 -----
+      n*) mininact=undef ;;
+      *)  mininact=define ;;
+      esac
++     norelay='undef'
+  fi
+  
+  
+***************
+*** 1818,1823
+  douname='$douname'
+  phostname='$phostname'
+  hostcmd='$hostcmd'
+  CONFIG=true
+  EOT
+  
+
+--- 1838,1844 -----
+  douname='$douname'
+  phostname='$phostname'
+  hostcmd='$hostcmd'
++ norelay='$norelay'
+  CONFIG=true
+  EOT
+  
+***************
+*** 1904,1909
+  #$gethostname	GETHOSTNAME	/* do we have a gethostname function? */
+  #$douname	DOUNAME		/* do we have a uname function? */
+  #$phostname	PHOSTNAME "$hostcmd"	/* how to get host name with popen */
+  EOT
+  
+  CONFIG=true
+
+--- 1925,1931 -----
+  #$gethostname	GETHOSTNAME	/* do we have a gethostname function? */
+  #$douname	DOUNAME		/* do we have a uname function? */
+  #$phostname	PHOSTNAME "$hostcmd"	/* how to get host name with popen */
++ #$norelay	NORELAY		/* 2.10.3 doesn't have Relay-Version line */
+  EOT
+  
+  CONFIG=true
+
+Index: bits.c
+Prereq: 4.3
+*** bits.c.old	Thu Jul 24 14:43:08 1986
+--- bits.c	Thu Jul 24 14:43:12 1986
+***************
+*** 1,4
+! /* $Header: bits.c,v 4.3 85/05/01 11:36:15 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3  85/05/01  11:36:15  lwall
+
+--- 1,4 -----
+! /* $Header: bits.c,v 4.3.1.2 86/07/24 14:40:23 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3.1.2  86/07/24  14:40:23  lwall
+***************
+*** 1,6
+  /* $Header: bits.c,v 4.3 85/05/01 11:36:15 lwall Exp $
+   *
+   * $Log:	bits.c,v $
+   * Revision 4.3  85/05/01  11:36:15  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: bits.c,v 4.3.1.2 86/07/24 14:40:23 lwall Exp $
+   *
+   * $Log:	bits.c,v $
++  * Revision 4.3.1.2  86/07/24  14:40:23  lwall
++  * Gets host name from path instead of relay-version for news 2.10.3.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:31:41  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:36:15  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 391,396
+  
+  	    if (inews_site != Nullch)
+  		free(inews_site);
+  	    rver_buf = fetchlines(artnum,RVER_LINE);
+  	    if ((t = instr(rver_buf,"; site ")) == Nullch)
+  		inews_site = savestr(nullstr);
+
+--- 397,403 -----
+  
+  	    if (inews_site != Nullch)
+  		free(inews_site);
++ #ifndef NORELAY
+  	    rver_buf = fetchlines(artnum,RVER_LINE);
+  	    if ((t = instr(rver_buf,"; site ")) == Nullch)
+  #else NORELAY
+***************
+*** 393,398
+  		free(inews_site);
+  	    rver_buf = fetchlines(artnum,RVER_LINE);
+  	    if ((t = instr(rver_buf,"; site ")) == Nullch)
+  		inews_site = savestr(nullstr);
+  	    else {
+  		char new_site[128];
+
+--- 400,417 -----
+  #ifndef NORELAY
+  	    rver_buf = fetchlines(artnum,RVER_LINE);
+  	    if ((t = instr(rver_buf,"; site ")) == Nullch)
++ #else NORELAY
++ 
++ 	    /* In version 2.10.3 of news or afterwards, the Relay-Version
++ 	     * and Posting-Version header lines have been removed.  For
++ 	     * the code below to work as intended, I have modified it to
++ 	     * extract the first component of the Path header line.  This
++ 	     * should give the same effect as did the old code with respect
++ 	     * to the use of the Relay-Version site name.
++ 	     */
++ 	    rver_buf = fetchlines(artnum,PATH_LINE);
++ 	    if ((t = instr(rver_buf,"!")) == Nullch)
++ #endif NORELAY
+  		inews_site = savestr(nullstr);
+  	    else {
+  		char new_site[128];
+***************
+*** 397,402
+  	    else {
+  		char new_site[128];
+  
+  		cpytill(new_site,t + 7,'.');
+  		inews_site = savestr(new_site);
+  	    }
+
+--- 416,422 -----
+  	    else {
+  		char new_site[128];
+  
++ #ifndef NORELAY
+  		cpytill(new_site,t + 7,'.');
+  #else NORELAY
+  		cpytill(new_site,rver_buf,'!');
+***************
+*** 398,403
+  		char new_site[128];
+  
+  		cpytill(new_site,t + 7,'.');
+  		inews_site = savestr(new_site);
+  	    }
+  	    if (strNE(tmpbuf,inews_site)) {
+
+--- 418,426 -----
+  
+  #ifndef NORELAY
+  		cpytill(new_site,t + 7,'.');
++ #else NORELAY
++ 		cpytill(new_site,rver_buf,'!');
++ #endif NORELAY
+  		inews_site = savestr(new_site);
+  	    }
+  	    if (strNE(tmpbuf,inews_site)) {
+
+

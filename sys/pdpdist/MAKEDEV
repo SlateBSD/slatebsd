@@ -1,0 +1,292 @@
+#!/bin/sh -
+#
+# Copyright (c) 1980 Regents of the University of California.
+# All rights reserved.  The Berkeley software License Agreement
+# specifies the terms and conditions for redistribution.
+#
+#	@(#)MAKEDEV	4.27 (Berkeley) 4/15/86
+#
+# Device "make" file.  Valid arguments:
+#	std	standard devices
+#	local	configuration specific devices
+# Tapes:
+#	ht*	unibus tu77 & te16
+#	tm*	unibus tm11 & te10 emulations (e.g. Emulex tc-11)
+#	ts*	unibus ts11
+# Disks:
+#	hk*	unibus rk06 and rk07
+#	ra*	unibus uda50 w/ ra??
+#	rk*	unibus rk05
+#	rl*	unibus rl01/rl02
+#	rx*	unibus rx02
+#	si*	unibus cdc 9766 w/ si 9500
+#	xp*	unibus rm02/03/05, rp04/05/06, diva, eagle, cdc9766, fuji 160.
+# Terminal multiplexors:
+#	dz*	unibus dz11 and dz32
+#	dh*	unibus dh11 and emulations (e.g. Able dmax, Emulex cs-11)
+#	dmf*	unibus dmf32
+#	dhu*    unibus dhu11
+#	dmz*    unibus dmz32
+# Pseudo terminals:
+#	pty*	set of 16 master and slave pseudo terminals
+# Printers:
+#	lp*	unibus lp11 parallel interface
+#	va*	unibus varian parallel interface
+#	vp*	unibus versatec parallel interface
+# Call units:
+# Special purpose devices:
+#	dr*	unibus dr11
+#	ram*	memory disk
+umask 77
+for i
+do
+case $i in
+
+std)
+	/etc/mknod console	c 0 0
+#	/etc/mknod kUmem	c 1 3	; chmod 600 kUmem ;: untested
+	/etc/mknod kmem		c 1 1	; chmod 640 kmem ; chgrp kmem kmem
+	/etc/mknod mem		c 1 0	; chmod 640 mem ; chgrp kmem mem
+	/etc/mknod null		c 1 2	; chmod 666 null
+	/etc/mknod tty		c 9 0	; chmod 666 tty
+#	/etc/mknod klog		c 33 0	; chmod 600 klog
+	;;
+
+ht*|tm*|ts*)
+	umask 0 ; unit=`expr $i : '..\(.*\)'`
+	case $i in
+	ht*) blk=0; chr=6 ;;
+	tm*) blk=1; chr=7;;
+	ts*) blk=2; chr=8;;
+	esac
+	case $unit in
+	0|1|2|3)
+		four=`expr $unit + 4` ; eight=`expr $unit + 8`
+		twelve=`expr $unit + 12`; twenty=`expr $unit + 20`
+		/etc/mknod mt$unit	b $blk $unit
+		/etc/mknod mt$four	b $blk $four
+		/etc/mknod mt$eight	b $blk $eight
+		/etc/mknod mt$twelve	b $blk $twelve
+		/etc/mknod nmt$unit	b $blk $four ;: sanity w/pdp11 v7
+		/etc/mknod nmt$eight	b $blk $twelve ;: ditto
+		/etc/mknod nrmt$unit	c $chr $four ;: sanity w/pdp11 v7
+		/etc/mknod nrmt$eight	c $chr $twelve ;: ditto
+		/etc/mknod rmt$unit	c $chr $unit
+		/etc/mknod rmt$four	c $chr $four
+		/etc/mknod rmt$eight	c $chr $eight
+		/etc/mknod rmt$twelve	c $chr $twelve
+		if [ $i = ut ] 
+		then
+			/etc/mknod mt$twenty	b $blk $twenty
+			/etc/mknod rmt$twenty	c $chr $twenty
+		fi
+		;;
+	*)
+		echo bad unit for tape in: $1
+		;;
+	esac
+	umask 77
+	;;
+
+rk*|rl*)
+	# The 2.10BSD rk and rl drivers don't support partitions.  We create
+	# a single block and charater inode pair for each unit and
+	# call it rkNh and rlNh.
+	umask 2 ; unit=`expr $i : '..\(.*\)'`
+	case $i in
+	rk*) name=rk; blk=6; chr=15;;
+	rl*) name=rl; blk=7; chr=16;;
+	esac
+	/etc/mknod ${name}${unit}h b ${blk} ${unit}
+	/etc/mknod r${name}${unit}h c ${chr} ${unit}
+	chgrp operator ${name}${unit}h r${name}${unit}h
+	chmod 640 ${name}${unit}h r${name}${unit}h
+	;;
+
+rx*)
+	umask 2
+	name=rx; blk=8; chr=17
+	mknod ${name}0a b ${blk} 0
+	mknod ${name}1a b ${blk} 1
+	mknod ${name}0b b ${blk} 2
+	mknod ${name}1b b ${blk} 3
+	mknod r${name}0a b ${blk} 0
+	mknod r${name}1a b ${blk} 1
+	mknod r${name}0b b ${blk} 2
+	mknod r${name}1b b ${blk} 3
+	chgrp operator ${name}[01][ab] r${name}[01][ab]
+	chmod 640 ${name}[01][ab] r${name}[01][ab]
+	;;
+
+ram*)
+	# Note, this must come *before* the "ra*".  The entry "rram" is for
+	# auto fscks when ram is mentioned in /etc/fstab.
+	umask 2
+	/etc/mknod ram b 3 0
+	ln ram rram
+	chgrp operator ram
+	chmod 640 ram
+	umask 77
+	;;
+
+hk*|ra*|si*|xp*)
+	umask 2 ; unit=`expr $i : '..\(.*\)'`
+	case $i in
+	hk*) name=hk; blk=4; chr=13;;
+	ra*) name=ra; blk=5; chr=14;;
+	rx*) name=rx; blk=8; chr=17;;
+	si*) name=si; blk=9; chr=18;;
+	xp*) name=xp; blk=10; chr=19;;
+	esac
+	case $unit in
+	0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|\
+	17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)
+		/etc/mknod ${name}${unit}a	b $blk `expr $unit '*' 8 + 0`
+		/etc/mknod ${name}${unit}b	b $blk `expr $unit '*' 8 + 1`
+		/etc/mknod ${name}${unit}c	b $blk `expr $unit '*' 8 + 2`
+		/etc/mknod ${name}${unit}d	b $blk `expr $unit '*' 8 + 3`
+		/etc/mknod ${name}${unit}e	b $blk `expr $unit '*' 8 + 4`
+		/etc/mknod ${name}${unit}f	b $blk `expr $unit '*' 8 + 5`
+		/etc/mknod ${name}${unit}g	b $blk `expr $unit '*' 8 + 6`
+		/etc/mknod ${name}${unit}h	b $blk `expr $unit '*' 8 + 7`
+		/etc/mknod r${name}${unit}a	c $chr `expr $unit '*' 8 + 0`
+		/etc/mknod r${name}${unit}b	c $chr `expr $unit '*' 8 + 1`
+		/etc/mknod r${name}${unit}c	c $chr `expr $unit '*' 8 + 2`
+		/etc/mknod r${name}${unit}d	c $chr `expr $unit '*' 8 + 3`
+		/etc/mknod r${name}${unit}e	c $chr `expr $unit '*' 8 + 4`
+		/etc/mknod r${name}${unit}f	c $chr `expr $unit '*' 8 + 5`
+		/etc/mknod r${name}${unit}h	c $chr `expr $unit '*' 8 + 7`
+		/etc/mknod r${name}${unit}g	c $chr `expr $unit '*' 8 + 6`
+		chgrp operator ${name}${unit}[a-h] r${name}${unit}[a-h]
+		chmod 640 ${name}${unit}[a-h] r${name}${unit}[a-h]
+		;;
+	*)
+		echo bad unit for disk in: $i
+		;;
+	esac
+	umask 77
+	;;
+
+dz*)
+	unit=`expr $i : 'dz\(.*\)'`
+	case $unit in
+	0|1|2|3|4|5|6|7)
+		eval `echo $unit | awk ' { u = $1 } END {
+		    for (i = 0; i < 8; i++)
+			printf("/etc/mknod tty%02d c 2 %d; ",u*8+i,u*8+i); }'`
+		;;
+	*)
+		echo bad unit for dz in: $i
+		;;
+	esac
+	;;
+
+#
+# we may want dmz and dmf someday...
+# dhu*|dh*|dmf*|dmz*)
+dhu*|dh*)
+	case $i in
+#	dmz*)	name=dmz; major=37; count=24;
+#		unit=`expr $i : "$name\(.*\)"`
+#		case $unit in
+#		0) ch=a ;; 1) ch=b ;; 2) ch=c ;; 3) ch=e ;;
+#		4) ch=f ;; 5) ch=g ;;
+#		*) echo bad unit for $name in: $i ;;
+#		esac;;
+#	dmf*)	name=dmf; major=22; count=8;
+#		unit=`expr $i : "$name\(.*\)"`
+#		case $unit in
+#		0) ch=A ;; 1) ch=B ;; 2) ch=C ;; 3) ch=E ;;
+#		4) ch=F ;; 5) ch=G ;; 6) ch=H ;; 7) ch=I ;;
+#		*) echo bad unit for $name in: $i ;;
+#		esac;;
+	dhu*)	name=dhu; major=4; count=16;
+		unit=`expr $i : "$name\(.*\)"`;
+		case $unit in
+		0) ch=S ;; 1) ch=T ;; 2) ch=U ;; 3) ch=V ;;
+		4) ch=W ;; 5) ch=X ;; 6) ch=Y ;; 7) ch=Z ;;
+		*) echo bad unit for $name in: $i ;;
+		esac;;
+	dh*)	name=dh; major=3; count=16;
+		unit=`expr $i : "$name\(.*\)"`
+		case $unit in
+		0) ch=h ;; 1) ch=i ;; 2) ch=j ;; 3) ch=k ;;
+		4) ch=l ;; 5) ch=m ;; 6) ch=n ;; 7) ch=o ;;
+		*) echo bad unit for $name in: $i ;;
+		esac;;
+	esac
+	eval `echo $ch $unit $major $count |
+	  awk ' { ch = $1; u = $4 * $2; m = $3; cnt = $4 } END {
+	    for (i = 0; i < cnt; i++)
+	      if (i < 10)
+		printf("/etc/mknod tty%s%x c %d %d; ",ch,i,m,u+i);
+	      else
+		printf("/etc/mknod tty%s%c c %d %d; ",ch,87+i,m,u+i); }'`
+	;;
+
+# we may want va and vp someday...
+# lp*|va*|vp*)
+lp*)
+	case $i in
+	lp*) name=lp; major=5;;
+#	va*) name=va; major=10;;
+#	vp*) name=vp; major=6;;
+	esac
+	unit=`expr $i : "$name\(.*\)"`
+	case $unit in
+	0|1|2|3|4|5|6|7)
+		/etc/mknod $i c $major $unit;
+		chmod 666 $i
+		;;
+	*)
+		echo bad unit for $name in: $i
+		;;
+	esac
+	;;
+
+pty*)
+	class=`expr $i : 'pty\(.*\)'`
+	case $class in
+	0) offset=0 name=p;;
+	1) offset=16 name=q;;
+	2) offset=32 name=r;;
+	3) offset=48 name=s;;
+	4) offset=64 name=t;;
+	5) offset=80 name=u;;
+	*) echo bad unit for pty in: $i;;
+	esac
+	case $class in
+	0|1|2|3|4|5)
+		umask 0
+		eval `echo $offset $name | awk ' { b=$1; n=$2 } END {
+			for (i = 0; i < 16; i++)
+				printf("/etc/mknod tty%s%x c 11 %d; \
+					/etc/mknod pty%s%x c 10 %d; ", \
+					n, i, b+i, n, i, b+i); }'`
+		umask 77
+		;;
+	esac
+	;;
+
+dr*)
+	unit=`expr $i : '..\(.*\)'`
+	case $i in
+	dr*) name=dr; chr=12;;
+	esac
+	case $unit in
+	0|1|2|3|4|5|6|7)
+		umask 0
+		/etc/mknod ${name}${unit} c ${chr} ${unit}
+		umask 77
+		;;
+	*)
+		echo bad unit for ${name} in: $i
+		;;
+	esac
+	;;
+
+local)
+	sh MAKEDEV.local
+	;;
+esac
+done

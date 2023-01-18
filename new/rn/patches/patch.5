@@ -1,0 +1,95 @@
+System: rn version 4.3
+Patch #: 5
+Priority: LOW
+Subject: after exiting newsgroup with 'Q', space won't reenter newsgroup
+>From: lwall@sdcrdcf.UUCP (Larry Wall)
+
+Description:
+	When you exit a newsgroup with 'Q', which leaves you in the same
+	newsgroup at the newsgroup selection level, the default command
+	remains 'n' or '^N', despite what the prompt says.  Typing space
+	then does not have the expected result.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	Warning: this patch is not reversed.  If the patch program says
+	it is, then this patch has already been applied, and you should
+	not apply it again.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 4
+1c1
+< Patch #: 4
+---
+> Patch #: 5
+
+Index: rn.c
+Prereq: 4.3
+*** rn.c.old	Mon May 13 09:36:19 1985
+--- rn.c	Mon May 13 09:36:25 1985
+***************
+*** 8,14
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3 85/05/01 11:47:56 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3  85/05/01  11:47:56  lwall
+
+--- 8,14 -----
+   *      2.0: 09/01/83
+   */
+  
+! static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.2 85/05/13 09:34:53 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3.1.2  85/05/13  09:34:53  lwall
+***************
+*** 11,16
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3 85/05/01 11:47:56 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
+   * Revision 4.3  85/05/01  11:47:56  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 11,22 -----
+  static char rnid[] = "@(#)$Header: rn.c,v 4.3.1.2 85/05/13 09:34:53 lwall Exp $";
+  
+  /* $Log:	rn.c,v $
++  * Revision 4.3.1.2  85/05/13  09:34:53  lwall
++  * Fixed default after do_newsgroup() returns from Q command.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:38:08  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:47:56  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 461,466
+  			ng++;
+  			break;
+  		    case NG_ASK:
+  			goto reask_newsgroup;
+  		    case NG_MINUS:
+  			ng = recent_ng;	/* recall previous newsgroup */
+
+--- 467,473 -----
+  			ng++;
+  			break;
+  		    case NG_ASK:
++ 			dfltcmd = "ynq";
+  			goto reask_newsgroup;
+  		    case NG_MINUS:
+  			ng = recent_ng;	/* recall previous newsgroup */
+
+

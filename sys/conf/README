@@ -1,0 +1,29 @@
+	This directory contains prototypes of the files necessary to remaking
+the kernel.  The kernel is not compiled or loaded in this directory, but in
+individual directories per machine.  To set up a directory for a new machine,
+copy the file GENERIC to a file with the same name as the machine, and edit it
+to describe the desired kernel and the machine's hardware configuration.  Then,
+run the script "./config", giving it the file name as an argument.  Config
+will create a directory ../machinename and will copy or create the necessary
+files in it.
+	You will probably need to change the overlay definitions in the
+Makefile, if you are going to run an overlaid kernel, but most of the work
+of configuring a system will be done.
+	There is one possible problem that you need to be aware of.  Running
+the shell script config generates the file localopts.h in the system include
+files directory, "../h".  If you change your configuration, config will
+overwrite your old version of that file.  Therefore, if you want to return
+to the old version of your system, you'll have to recover the file before
+you try and remake the old system.  To make this easy, config saves a copy
+in the new kernel directory.  Also, since several application programs use
+localopts.h, you should recompile all source directories after reconfiguring
+your system.  (The real solution is to split localopts.h into two parts, one
+for the kernel and one for everyone else, and put the kernel's part in the
+kernel directory.)
+	The directory VAX.compile contains a C preprocessor that defines
+"pdp11" and a C compiler that knows where to find said preprocessor.  If you
+compile and install VAX.compile/cpp as VAX.compile/CPP and VAX.compile/cc.c
+as VAX.compile/CC, then do "./config VAX", you can compile the entire kernel
+on a larger machine; obviously, this is more of a test for syntax/load errors
+than anything else.  If you're interested, it usually took me about 5 minutes
+to compile the entire networking kernel on a VAX 8600.

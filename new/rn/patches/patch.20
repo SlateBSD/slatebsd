@@ -1,0 +1,178 @@
+System: rn version 4.3
+Patch #: 20
+Priority: LOW
+Subject: kill files are boring at low speed
+>From: phil@amdcad.UUCP (Phil Ngai)
+
+Description:
+	The stuff that's printed out when KILL processing is being done
+	is boring to watch at low baud rates.  The following patch suppresses
+	most of the output when -t is in effect.  It still prints a dot for
+	each line of the KILL file, and the numbers of any articles junked.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source
+directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 19
+1c1
+< Patch #: 19
+---
+> Patch #: 20
+
+Index: kfile.c
+Prereq: 4.3.1.2
+*** kfile.c.old	Wed May 29 09:12:59 1985
+--- kfile.c	Wed May 29 09:13:03 1985
+***************
+*** 1,4
+! /* $Header: kfile.c,v 4.3.1.2 85/05/10 14:21:29 lwall Exp $
+   *
+   * $Log:	kfile.c,v $
+   * Revision 4.3.1.2  85/05/10  14:21:29  lwall
+
+--- 1,4 -----
+! /* $Header: kfile.c,v 4.3.1.3 85/05/29 09:11:52 lwall Exp $
+   *
+   * $Log:	kfile.c,v $
+   * Revision 4.3.1.3  85/05/29  09:11:52  lwall
+***************
+*** 1,6
+  /* $Header: kfile.c,v 4.3.1.2 85/05/10 14:21:29 lwall Exp $
+   *
+   * $Log:	kfile.c,v $
+   * Revision 4.3.1.2  85/05/10  14:21:29  lwall
+   * Prevented THRU from setting art < absfirst.
+   * 
+
+--- 1,9 -----
+  /* $Header: kfile.c,v 4.3.1.3 85/05/29 09:11:52 lwall Exp $
+   *
+   * $Log:	kfile.c,v $
++  * Revision 4.3.1.3  85/05/29  09:11:52  lwall
++  * Suppressed some killing messages on -t.
++  * 
+   * Revision 4.3.1.2  85/05/10  14:21:29  lwall
+   * Prevented THRU from setting art < absfirst.
+   * 
+***************
+*** 51,56
+  mention(str)
+  char *str;
+  {
+  #ifdef NOFIREWORKS
+      no_sofire();
+  #endif
+
+--- 54,61 -----
+  mention(str)
+  char *str;
+  {
++ #ifdef VERBOSE
++     IF(verbose) {
+  #ifdef NOFIREWORKS
+  	no_sofire();
+  #endif
+***************
+*** 52,58
+  char *str;
+  {
+  #ifdef NOFIREWORKS
+!     no_sofire();
+  #endif
+      standout();
+      fputs(str,stdout);
+
+--- 57,63 -----
+  #ifdef VERBOSE
+      IF(verbose) {
+  #ifdef NOFIREWORKS
+! 	no_sofire();
+  #endif
+  	standout();
+  	fputs(str,stdout);
+***************
+*** 54,63
+  #ifdef NOFIREWORKS
+      no_sofire();
+  #endif
+!     standout();
+!     fputs(str,stdout);
+!     un_standout();
+!     putchar('\n');
+      fflush(stdout);
+  }
+  
+
+--- 59,74 -----
+  #ifdef NOFIREWORKS
+  	no_sofire();
+  #endif
+! 	standout();
+! 	fputs(str,stdout);
+! 	un_standout();
+! 	putchar('\n');
+!     }
+!     ELSE
+! #endif
+! #ifdef TERSE
+! 	putchar('.');
+! #endif
+      fflush(stdout);
+  }
+  
+***************
+*** 144,151
+  	oldfirst = firstart;
+  	firstart = starting;
+  	clear();
+! 	if (message)
+! 	    fputs(message,stdout) FLUSH;
+  	if (localkfp)
+  	    intr = do_kfile(localkfp,entering);
+  	if (globkfp && !intr)
+
+--- 155,165 -----
+  	oldfirst = firstart;
+  	firstart = starting;
+  	clear();
+! #ifdef VERBOSE
+! 	IF(verbose)
+! 	    if (message)
+! 		fputs(message,stdout) FLUSH;
+! #endif
+  	if (localkfp)
+  	    intr = do_kfile(localkfp,entering);
+  	if (globkfp && !intr)
+***************
+*** 153,160
+  	if (entering && localkfp && !intr)
+  	    setthru(lastart);
+  	putchar('\n') FLUSH;
+! 	if (entering)
+! 	    get_anything();
+  	if (anytokill)			/* if there was anything to kill */
+  	    forcelast = FALSE;		/* allow for having killed it all */
+  	firstart = oldfirst;
+
+--- 167,177 -----
+  	if (entering && localkfp && !intr)
+  	    setthru(lastart);
+  	putchar('\n') FLUSH;
+! #ifdef VERBOSE
+! 	IF(verbose)
+! 	    if (entering)
+! 		get_anything();
+! #endif
+  	if (anytokill)			/* if there was anything to kill */
+  	    forcelast = FALSE;		/* allow for having killed it all */
+  	firstart = oldfirst;
+
+

@@ -1,0 +1,84 @@
+System: rn version 4.3
+Patch #: 26
+Priority: LOW
+Subject: Catch command can throw off unread article count
+>From: msb@lsuc.UUCP (Mark Brader)
+
+Description:
+	If more articles are found for a newsgroup after a catchup command
+	has been executed, the count of unread articles will be off.  This
+	is a hangover from when catchup always threw you out of the newsgroup,
+	so it didn't bother keeping track of unread articles because it knew
+	it would be recomputed later.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 25
+1c1
+< Patch #: 25
+---
+> Patch #: 26
+
+Index: ng.c
+Prereq: 4.3.1.4
+*** ng.c.old	Thu Sep  5 12:38:27 1985
+--- ng.c	Thu Sep  5 12:39:17 1985
+***************
+*** 1,4
+! /* $Header: ng.c,v 4.3.1.4 85/07/23 18:19:46 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.4  85/07/23  18:19:46  lwall
+
+--- 1,4 -----
+! /* $Header: ng.c,v 4.3.1.5 85/09/05 12:34:37 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.5  85/09/05  12:34:37  lwall
+***************
+*** 1,6
+  /* $Header: ng.c,v 4.3.1.4 85/07/23 18:19:46 lwall Exp $
+   *
+   * $Log:	ng.c,v $
+   * Revision 4.3.1.4  85/07/23  18:19:46  lwall
+   * Added MAILCALL environment variable.
+   * 
+
+--- 1,9 -----
+  /* $Header: ng.c,v 4.3.1.5 85/09/05 12:34:37 lwall Exp $
+   *
+   * $Log:	ng.c,v $
++  * Revision 4.3.1.5  85/09/05  12:34:37  lwall
++  * Catchup command could make unread article count too big.
++  * 
+   * Revision 4.3.1.4  85/07/23  18:19:46  lwall
+   * Added MAILCALL environment variable.
+   * 
+***************
+*** 721,727
+  	    goto reask_catchup;
+  	}
+  	for (i = firstart; i <= lastart; i++) {
+! 	    ctl_set(i);		/* mark as read */
+  	}
+  #ifdef DELAYMARK
+  	if (dmfp)
+
+--- 724,730 -----
+  	    goto reask_catchup;
+  	}
+  	for (i = firstart; i <= lastart; i++) {
+! 	    oneless(i);		/* mark as read */
+  	}
+  #ifdef DELAYMARK
+  	if (dmfp)
+
+

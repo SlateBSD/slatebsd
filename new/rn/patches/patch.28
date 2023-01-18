@@ -1,0 +1,114 @@
+Article 476 of net.sources.bugs:
+Relay-Version: version B 2.10.3 4.3bsd 1/17/86; site rdlvax.UUCP
+Path: rdlvax!psivax!sdcrdcf!lwall
+From: lwall@sdcrdcf.UUCP (Larry Wall)
+Newsgroups: net.news.b,net.news.adm,net.sources.bugs
+Subject: rn 4.3 patch #28
+Message-ID: <2900@sdcrdcf.UUCP>
+Date: 24 Jul 86 21:28:35 GMT
+References: <1474@ptsfa.UUCP>
+Reply-To: lwall@sdcrdcf.UUCP (Larry Wall)
+Organization: System Development Corporation R&D, Santa Monica
+Lines: 98
+Xref: rdlvax net.news.b:232 net.news.adm:488 net.sources.bugs:476
+
+System: rn version 4.3
+Patch #: 28
+Priority: MEDIUM
+Subject: Won't add new newsgroups that don't have a spool directory yet.
+From: dsp@ptsfa.UUCP (Dave St. Pierre)
+
+Description:
+
+	rn and inews seem to be in conflict as to what should be in a
+	well-formed newgroup. inews updates the active file but doesn't
+	run the mkdir until the first article arrives. rn announces
+
+	"No mod.mac.binaries!"
+
+	and for all intents and purposes ignores that newsgroup until you
+	later "manually" add it to your .newsrc (like with the 'g' command).
+
+	This has been a tolerable situation in the past but with 150 or so
+	newgroups about to flood the net, and not all of them having an article
+	tagged with it, we're going to have a few unhappy rn readers.
+
+	Rick feels that it's rn's problem. Larry may or may not disagree.
+	The fix was rather trivial to inews (call mknewsg in c_newgroup)
+	and may be equally easy in rn. Can one of the two come up with an
+	"official" fix?
+
+Fix:	This oughta do it.  In this case, it deletes a call.
+
+	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 27
+1c1
+< Patch #: 27
+---
+> Patch #: 28
+
+Index: rcstuff.c
+Prereq: 4.3.1.4
+*** rcstuff.c.old	Thu Jul 24 14:10:38 1986
+--- rcstuff.c	Thu Jul 24 14:10:46 1986
+***************
+*** 1,4
+! /* $Header: rcstuff.c,v 4.3.1.4 85/09/10 11:04:44 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.4  85/09/10  11:04:44  lwall
+
+--- 1,4 -----
+! /* $Header: rcstuff.c,v 4.3.1.5 86/07/24 14:09:10 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.5  86/07/24  14:09:10  lwall
+***************
+*** 1,6
+  /* $Header: rcstuff.c,v 4.3.1.4 85/09/10 11:04:44 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.4  85/09/10  11:04:44  lwall
+   * Improved %m in in_char().
+   * 
+
+--- 1,9 -----
+  /* $Header: rcstuff.c,v 4.3.1.5 86/07/24 14:09:10 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
++  * Revision 4.3.1.5  86/07/24  14:09:10  lwall
++  * Removed check for spool directory existence in get_ng.
++  * 
+   * Revision 4.3.1.4  85/09/10  11:04:44  lwall
+   * Improved %m in in_char().
+   * 
+***************
+*** 245,252
+      set_ngname(what);
+      ng = find_ng(ngname);
+      if (ng == nextrcline) {		/* not in .newsrc? */
+! 	if (eaccess(ngdir,0) ||
+! 	    (softptr[ng] = findact(buf,ngname,strlen(ngname),0L)) < 0 ) {
+  	    dingaling();
+  #ifdef VERBOSE
+  	    IF(verbose)
+
+--- 248,254 -----
+      set_ngname(what);
+      ng = find_ng(ngname);
+      if (ng == nextrcline) {		/* not in .newsrc? */
+! 	if ((softptr[ng] = findact(buf,ngname,strlen(ngname),0L)) < 0 ) {
+  	    dingaling();
+  #ifdef VERBOSE
+  	    IF(verbose)
+
+

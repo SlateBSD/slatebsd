@@ -1,0 +1,119 @@
+System: rn version 4.3
+Patch #: 16
+Priority: LOW
+Subject: filexp feeds confusing command to sed
+>From: 5432dh@homxb.UUCP (David Himber), barto@celerity.UUCP (David Barto)
+
+Description:
+	Oops.  I fixed this for the previous version and it somehow unfixed
+	itself.  Oh well.
+
+	Filexp feeds a command to sed of the form "s/~/$HOME/", but since
+	HOME contains slashes, it won't work.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	NOTE: if you haven't run Configure yet, patch won't find filexp.
+	That's okay.  Just interrupt and you're done.  If it does find
+	and patch filexp, you should copy filexp to your rnlib directory.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 15
+1c1
+< Patch #: 15
+---
+> Patch #: 16
+
+Index: Configure
+Prereq: 4.3.1.4
+*** Configure.old	Thu May 23 11:25:40 1985
+--- Configure	Thu May 23 11:27:18 1985
+***************
+*** 3,9
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.4 85/05/20 17:13:11 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.4  85/05/20  17:13:11  lwall
+
+--- 3,9 -----
+  # If these # comments don't work, trim them.  Don't worry about the other
+  # shell scripts, Configure will trim # comments from them for you.
+  #
+! # $Header: Configure,v 4.3.1.5 85/05/23 11:23:22 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.5  85/05/23  11:23:22  lwall
+***************
+*** 6,11
+  # $Header: Configure,v 4.3.1.4 85/05/20 17:13:11 lwall Exp $
+  #
+  # $Log:	Configure,v $
+  # Revision 4.3.1.4  85/05/20  17:13:11  lwall
+  # Makes sure -lcurses is really a terminfo library.
+  # Puts single instead of double quotes around defs in config.sh.
+
+--- 6,14 -----
+  # $Header: Configure,v 4.3.1.5 85/05/23 11:23:22 lwall Exp $
+  #
+  # $Log:	Configure,v $
++ # Revision 4.3.1.5  85/05/23  11:23:22  lwall
++ # filexp flubs sed command.
++ # 
+  # Revision 4.3.1.4  85/05/20  17:13:11  lwall
+  # Makes sure -lcurses is really a terminfo library.
+  # Puts single instead of double quotes around defs in config.sh.
+***************
+*** 570,576
+  : expand filename
+  case \$1 in
+  ~/*|~)
+!     $echo \$1 | $sed "s/~/\${HOME-\$LOGDIR}/"
+      ;;
+  ~*)
+      if $test -f /bin/csh; then
+
+--- 573,579 -----
+  : expand filename
+  case \$1 in
+  ~/*|~)
+!     $echo \$1 | $sed "s|~|\${HOME-\$LOGDIR}|"
+      ;;
+  ~*)
+      if $test -f /bin/csh; then
+
+NOTE: if patch says "File to patch: ", then you haven't run Configure.
+Just interrupt and you're done.
+
+Index: filexp
+*** filexp.old	Thu May 23 11:25:39 1985
+--- filexp	Thu May 23 11:26:04 1985
+***************
+*** 2,8
+  : expand filename
+  case $1 in
+  ~/*|~)
+!     /bin/echo $1 | /bin/sed "s/~/${HOME-$LOGDIR}/"
+      ;;
+  ~*)
+      if /bin/test -f /bin/csh; then
+
+--- 2,8 -----
+  : expand filename
+  case $1 in
+  ~/*|~)
+!     /bin/echo $1 | /bin/sed "s|~|${HOME-$LOGDIR}|"
+      ;;
+  ~*)
+      if /bin/test -f /bin/csh; then
+
+

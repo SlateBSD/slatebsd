@@ -1,0 +1,2751 @@
+
+
+
+
+
+
+
+
+
+
+                           UUSSEENNEETT VVeerrssiioonn BB IInnssttaallllaattiioonn
+
+
+
+                                   _M_a_t_t _G_l_i_c_k_m_a_n
+
+                             _C_o_m_p_u_t_e_r _S_c_i_e_n_c_e _D_i_v_i_s_i_o_n
+             _D_e_p_a_r_t_m_e_n_t _o_f _E_l_e_c_t_r_i_c_a_l _E_n_g_i_n_e_e_r_i_n_g _a_n_d _C_o_m_p_u_t_e_r _S_c_i_e_n_c_e_s
+                              _U_n_i_v_e_r_s_i_t_y _o_f _C_a_l_i_f_o_r_n_i_a
+                             _B_e_r_k_e_l_e_y, _C_a_l_i_f_o_r_n_i_a _9_4_7_2_0
+
+
+
+                      _R_e_v_i_s_e_d _b_y _M_a_r_k _H_o_r_t_o_n _f_o_r _v_e_r_s_i_o_n _2._1_0
+                       _R_e_v_i_s_e_d _b_y _R_i_c_k _A_d_a_m_s _f_o_r _v_e_r_s_i_o_n _2._1_1
+
+
+
+
+            11..  IInnttrroodduuccttiioonn
+
+                 This document is intended to help a USENET site install
+            and  maintain  the  network news software.  Please ask ques-
+            tions of Rick Adams*; such questions will help to point  out
+            areas that need to be addressed here.
+
+                 The overall order of things to do is:
+
+            (a)  Find somebody to link up with.  You need a network con-
+                 nection of some kind, for example, ARPANET or UUCP.  If
+                 you must use UUCP and have  no  connections,  you  must
+                 have  at  least  a  dialup and preferably a dialer, and
+                 find someone willing to call your machine.  The  USENET
+                 directory  may  be  helpful  in finding some other site
+                 geographically near yours to hook up to.
+
+            __________
+            * ARPANET: rick@seismo.CSS.GOV, UUCP: seismo!rick
+
+
+            USENET Version B Installation                              1
+
+
+
+
+            USENET Version B Installation                              2
+
+
+            (b)  Create a _l_o_c_a_l_i_z_e._s_h script to make  local  changes  to
+                 the  makefile  and  _d_e_f_s._h files. (Section 2 gives more
+                 details about creating _l_o_c_a_l_i_z_e._s_h.) Once  you're  fin-
+                 ished editing _l_o_c_a_l_i_z_e._s_h, create a _d_e_f_s._h and _M_a_k_e_f_i_l_e
+                 tailored for your site with the command
+                                     sh localize.sh
+                 Inspect _d_e_f_s._h and _M_a_k_e_f_i_l_e to ensure that all your lo-
+                 cal customizations got into your final versions. If you
+                 saw a "?" when you ran _l_o_c_a_l_i_z_e._s_h, one or both of  the
+                 files  is  certainly  wrong. It's a good idea to anchor
+                 the patterns in _l_o_c_a_l_i_z_e._s_h's _e_d(1) scripts, especially
+                 in its _M_a_k_e_f_i_l_e-editing lines. For instance, use //^^UUUUXX--
+                 FFLLAAGGSS// instead of //UUUUXXFFLLAAGGSS//.
+
+            (c)  Compile the software using the _m_a_k_e(1) command.
+
+            (d)  _S_u(1) and type "make  install".   This  will  copy  the
+                 files  out to the right place and make directories con-
+                 taining most of the important files.  It will configure
+                 you  in  with  a  connection to _o_o_p_s_v_a_x via UUCP links.
+                 This is undoubtedly wrong, so you will have to  config-
+                 ure links as needed.  If this is your initial installa-
+                 tion or you are upgrading from  a  version  older  than
+                 2.11, do "make update".  This will cause various checks
+                 to be performed on  important  files  in  LLIIBBDDIIRR.   The
+                 results  will  be reported to you.  If you are not sure
+                 if you should do "make update", do  it.   It  will  not
+                 hurt anything if you have already done it.
+
+            (e)  After editing the configuration table, get your contact
+                 at  the  other end of the link to add you to their net-
+                 news _s_y_s file.
+
+            (f)  Post a message to the ttoo.._s_y_s_n_a_m_e_s_y_s_n_a_m_e newsgroup which should
+                 be  set up to go only to the site you are linked to, as
+                 a test.  Have the other person send a message  to  your
+                 system using the same mechanism.  If this doesn't work,
+                 find  the  problem  and  fix  it.   (Please  don't  use
+                 mmiisscc..tteesstt
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              3
+
+
+                 unless there is no alternative.  It  is  almost  always
+                 possible  to use tteesstt, or ttoo.._s_y_s_n_a_m_e_s_y_s_n_a_m_e or some _l_o_c_a_l_l_o_c_a_l..tteesstt
+                 group, instead of mmiisscc..tteesstt.)
+
+            (g)  Fill out a USENET directory form (the file  _d_i_r_f_o_r_m  in
+                 the  _m_i_s_c  directory).  Post a copy to the USENET news-
+                 group nneewwss..nneewwssiittee and mail a copy to _c_b_o_s_g_d!_u_u_c_p_m_a_p.
+
+            (h)  Format the document "_H_o_w _t_o _R_e_a_d _t_h_e _N_e_t_w_o_r_k _N_e_w_s" (the
+                 file  _h_o_w_t_o._m_n in the _d_o_c directory), the document "_H_o_w
+                 _t_o _U_s_e _U_S_E_N_E_T _E_f_f_e_c_t_i_v_e_l_y" (the file _m_a_n_n_e_r._m_n  in  the
+                 _d_o_c  directory)  and  the document "_C_o_p_y_r_i_g_h_t _L_a_w" (the
+                 file _c_o_p_y_r_i_g_h_t._m_n in the _d_o_c directory) and  post  them
+                 to  your ggeenneerraall newsgroup with a long expiration date.
+                 You can use _i_n_e_w_s(1) or _p_o_s_t_n_e_w_s(1) to do this.
+
+            (i)  It will probably be necessary to fix your uucp commands
+                 to allow _r_n_e_w_s and to support the --zz and --nn options (if
+                 you are lucky enought to have the source).
+
+            22..  IInnssttaallllaattiioonn
+
+            22..11..  CCoonnffiigguurraattiioonn
+
+                 Local configuration of the USENET  version  B  software
+            requires  you  to  edit  a few files.  Most importantly, the
+            _d_e_f_s._h and _M_a_k_e_f_i_l_e files must be created  from  their  tem-
+            plates  _d_e_f_s._d_i_s_t  and  _M_a_k_e_f_i_l_e._d_s_t.   You  should create a
+            shell script called _l_o_c_a_l_i_z_e._s_h which copies the  files  and
+            makes  local  changes  to the copies.  Even for a completely
+            vanilla site, some changes will be necessary.  For  example,
+            your  script  should start with _l_o_c_a_l_i_z_e._v_7 or _l_o_c_a_l_i_z_e._u_s_g.
+            You should  include  the  name  of  the  local  organization
+            (MMYYOORRGG)  and  the uid of the local news super user (RROOOOTTIIDD).
+            You should also choose how your hostname will be determined.
+            If  you  are a USG site, define UUNNAAMMEE in _d_e_f_s._h.  If you are
+            running 4.[23] BSD, define GGHHNNAAMMEE in _d_e_f_s._h.   If  you  have
+            your  UUCP  name  in  a file, define UUUUNNAAMMEE in _d_e_f_s._h to the
+            name
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              4
+
+
+            of that  file.   Otherwise,  news  will  look  in  the  file
+            /_u_s_r/_i_n_c_l_u_d_e/_w_h_o_a_m_i._h for a line of the form
+
+                            #define sysname your-sysname
+
+                 If you are running System 3 or System 5, you are a  USG
+            site.  Otherwise, unless you are in AT&T, you are probably a
+            V7 site.  The previously  mentioned  defines  are  the  only
+            modifications  that  are  _n_e_c_e_s_s_a_r_y  to install news at your
+            site.  However, you will probably want to change some of the
+            ones  listed  below.   If  your  compiler  does  not  accept
+            "(void)", the simplest thing to do is  add  "-Dvoid=int"  to
+            the CCFFLLAAGGSS line in the _M_a_k_e_f_i_l_e.
+
+                 A  sample  localize  shell  script  can  be  found   in
+            _l_o_c_a_l_i_z_e._s_a_m_p_l_e.  The most important parameters are:
+
+            22..11..11..  RROOOOTTIIDD
+
+                 The numerical uid of the person who is the  news  super
+            user.   This  should not be set to 0.  Normally it is set to
+            the uid of the news contact person for the site.  If  it  is
+            not  defined,  the  uid  of  NNOOTTIIFFYY  will  be  looked  up in
+            /_e_t_c/_p_a_s_s_w_d and used instead.
+
+            22..11..22..  NN__UUMMAASSKK
+
+                 Mask for _u_m_a_s_k(2) system call.   Set  it  to  something
+            like  022  for a secure system.  Unsecure systems might want
+            002 or 000.  This mask  controls  the  mode  of  news  files
+            created  by the software.  Insecure modes would allow people
+            to edit the files directly.
+
+            22..11..33..  DDFFLLTTEEXXPP
+
+                 The default number of seconds after  which  an  article
+            will  expire.   Two weeks (1,209,600 seconds) is the default
+            choice.  If you wish to  expire  articles  faster  than  two
+            weeks,  it is recommended that you use the --ee flag to expire
+            instead
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              5
+
+
+            of decreasing DDFFLLTTEEXXPP.
+
+            22..11..44..  HHIISSTTEEXXPP
+
+                 Articles which were posted more than  HHIISSTTEEXXPP  ago  are
+            considered  too  old  and are moved into the jjuunnkk directory.
+            This is because they are too old to be in the history  file,
+            so it is impossible to tell if they really should be accept-
+            ed or are endlessly looping around the network.   (This  was
+            theoretically  possible  before this feature was added.) The
+            articles are removed after DDFFLLTTEEXXPP seconds, but  a  copy  of
+            their  "Message-ID"  is kept in the history file for HHIISSTTEEXXPP
+            seconds (the default is 4 weeks).  If you are a  _l_e_a_f  node,
+            you do not need to have HHIISSTTEEXXPP longer than DDFFLLTTEEXXPP.  Howev-
+            er, major nodes with more than one  news  feed  should  have
+            HHIISSTTEEXXPP set to the default 4 weeks if possible.
+
+
+            22..11..55..  DDFFLLTTSSUUBB
+
+                 The default subscription list.   If  a  user  does  not
+            specify  any list of newsgroups, this will be used.  Popular
+            choices are aallll and ggeenneerraall,aallll..ggeenneerraall.
+
+            22..11..66..  TTMMAAIILL
+
+                 This is the version of  the  Berkeley  _M_a_i_l(1)  program
+            that has the --TT option.  If left undefined, the --MM option to
+            _r_e_a_d_n_e_w_s(1) will be disabled.
+
+            22..11..77..  AADDMMSSUUBB
+
+                 This newsgroup  (or  newsgroup  list)  will  always  be
+            selected  unless  the  user  specifies a newsgroup list that
+            doesn't include AADDMMSSUUBB on the command  line.   That  is,  as
+            long  as the user doesn't use the --nn flag to _r_e_a_d_n_e_w_s on the
+            command line, AADDMMSSUUBB will always be selected.  This is  usu-
+            ally  set  to  ggeenneerraall,,aallll..aannnnoouunnccee.   (The  intent  of this
+            parameter is to have  certain  newsgroups  which  users  are
+            required
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              6
+
+
+            to subscribe to.  A typical site might require ggeenneerraall.)
+
+            22..11..88..  PPAAGGEE
+
+                 The default program to which articles should  be  piped
+            for paging.  This can be disabled or changed by the environ-
+            ment variable PPAAGGEERR.  If you have it, the  Berkeley  _m_o_r_e(1)
+            command  should  be  used,  since  the  ++  option allows the
+            headers to be skipped.
+
+            22..11..99..  NNOOTTIIFFYY
+
+                 If defined, this character string will  be  used  as  a
+            user  name  to  send mail to in the event of certain control
+            messages  of  interest.   (Currently  these  are   nneewwggrroouupp,
+            rrmmggrroouupp,  sseennddssyyss,  cchheecckkggrroouuppss, and sseenndduuuunnaammee.) As distri-
+            buted, mail will be sent to user _u_s_e_n_e_t.  It is  recommended
+            you create such a mailbox (have it forwarded to yourself) if
+            possible, since this makes it easier  for  another  site  to
+            contact  the  site  administrator for your site.  If you are
+            unable to do this (_e._g., you are not  the  super  user)  you
+            should  change  this name to yourself.  Also, messages about
+            missing or extra newsgroups are mailed to this user  by  the
+            cchheecckkggrroouuppss control message.
+
+            22..11..1100..  DDFFTTXXMMIITT
+
+                 This is the default command to use to transmit news  if
+            no  explicit command is given in the fourth field of the _s_y_s
+            file.  It normally includes _u_u_x(1) with the --zz option.   You
+            should  install this modification to UUCP at once; otherwise
+            your users will be bombarded with  annoying  _u_u_x  completion
+            messages.   However,  you  can turn this off to get news in-
+            stalled.
+
+            22..11..1111..  UUXXMMIITT
+
+                 This is the default command  used  if  the  UU  flag  is
+            present  in  the  flags portion of a _s_y_s file line.  In this
+            case,
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              7
+
+
+            the second "%s" refers to the name of a  file  in  the  news
+            spool  area,  not  a temporary file.  It can usually only be
+            used when local modifications are made to the  uucp  system,
+            such as the --cc option to _u_u_x.
+
+            22..11..1122..  DDFFTTEEDDIITTOORR
+
+                 This is the full path name of the default editor to use
+            during  followups and replies.  It should be set to the most
+            popular text editor on your system.  As  distributed,  _v_i(1)
+            is used.
+
+            22..11..1133..  UUUUPPRROOGG
+
+                 If this is defined, it will be used as a command to run
+            when  the sseenndduuuunnaammee control message is sent around.  Other-
+            wise the command _u_u_n_a_m_e(1) will be run.  Normally, this pro-
+            gram should be placed in LLIIBBDDIIRR.
+
+            22..11..1144..  MMAANNUUAALLLLYY
+
+                 If this is defined, incoming rrmmggrroouupp messages will  not
+            automatically  remove  the  group.  News will instead mail a
+            message to NNOOTTIIFFYY advising that the group should be removed.
+            If  you  define  MMAANNUUAALLLLYY,  you  should have NNOOTTIIFFYY defined.
+            MMAANNUUAALLLLYY is defined by default to protect  you  against  ac-
+            cidental or malicious removal of an important newsgroup.
+
+            22..11..1155..  NNOONNEEWWGGRROOUUPPSS
+
+                 If this is defined, incoming nneewwggrroouupp messages will not
+            automatically  create  the  group.  News will instead mail a
+            message to NNOOTTIIFFYY advising that the group should be created.
+            If  you  define NNOONNEEWWGGRROOUUPPSS, you should have NNOOTTIIFFYY defined.
+            NNOONNEEWWGGRROOUUPPSS is undefined by default to make it easier to au-
+            tomatically maintain the news system.
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              8
+
+
+            22..11..1166..  BBAATTCCHH
+
+                 If set, this is the name of a program that will be used
+            to unpack batched articles (those beginning with the charac-
+            ter "#").  Batched articles normally are files reading
+
+                         #! rnews 1234
+                         article containing 1234 characters
+                         #! rnews 4321
+                         article containing 4321 characters
+                         . . .
+
+            Batching is _s_t_r_o_n_g_l_y recommended for increased efficiency on
+            both sides.
+
+            22..11..1177..  SSPPOOOOLLNNEEWWSS
+
+                 If this is defined, all incoming news (_i_n_e_w_s or  _r_n_e_w_s)
+            will  be  placed  in the directory SSPPOOOOLLDDIIRR/._r_n_e_w_s for later
+            processing by _r_n_e_w_s -_U.  This is useful when you want to ap-
+            pear  to  accept incoming news as soon as it arrives (to get
+            it out of the _u_u_x_q_t queue for example), but  want  to  defer
+            the  actual  processing  until later. If you define this op-
+            tion, make sure you invoke _r_n_e_w_s -_U from  _c_r_o_n_t_a_b  regularly
+            or you may wonder where your news is going!
+
+            22..11..1188..  LLOOCCAALLNNAAMMEE
+
+                 Most systems have a full name database  on  line  some-
+            where,  showing for each user what their full name is.  Most
+            often this is in the gecos field of  /_e_t_c/_p_a_s_s_w_d.   If  your
+            system  has  such a database, LLOOCCAALLNNAAMMEE should be left unde-
+            fined.  If not, define LLOOCCAALLNNAAMMEE, and articles  posted  will
+            only  receive  full names from local user information speci-
+            fied in _N_A_M_E or $_H_O_M_E$_H_O_M_E/._n_a_m_e by the user.  If you have a non-
+            standard  gcos  format  (not  _f_i_n_g_e_r(1)  or  RJE) it will be
+            necessary to make local changes to _f_u_l_l_n_a_m_e._c as appropriate
+            on your system.
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                              9
+
+
+            22..11..1199..  IINNTTEERRNNEETT
+
+                 If this is defined, replies  will  use  the  "From"  or
+            "Reply-To" headers of the news article.  Otherwise, leave it
+            disabled and replies will use the "Path" header.
+
+                 You can define this option even if your site  does  not
+            understand internet style headers. The file LLIIBBDDIIRR/_m_a_i_l_p_a_t_h_s
+            contains a line beginning with "internet".  The rest of this
+            line  is  a string for printf to use to route your mail to a
+            site that does understand internet style  headers.  If  your
+            site  understands  internet style headers, this string would
+            just be "%s".  If not, it might  look  like  "seismo!%s"  if
+            _s_e_i_s_m_o was your nearest site that understands that format.
+
+            22..11..2200..  MMYYDDOOMMAAIINN
+
+                 When generating internet addresses, this domain will be
+            appended  to  the  local  site  name to form mailing address
+            domains.  For example, on system _u_c_b_v_a_x with user  _r_o_o_t,  if
+            MMYYDDOOMMAAIINN  is  set  to ".UUCP", addresses generated will read
+            "root@ucbvax.UUCP".  If MMYYDDOOMMAAIINN is ".Berkeley.EDU", the ad-
+            dress  would be "root@ucbvax.Berkeley.EDU".  If your site is
+            in more than one  domain,  use  your  primary  domain.   The
+            domain  always  begins with a period. If your site name con-
+            tains the domain, everything after the  first  "."  will  be
+            stipped off to get the news host name, so you still must de-
+            fine your domain name with MMYYDDOOMMAAIINN.
+
+            22..11..2211..  CCHHEEAAPP
+
+                 Do not _c_h_o_w_n(1) spool files to _n_e_w_s.  This  will  cause
+            the  owner  of  the  file  to be the person that started the
+            _i_n_e_w_s process.  This is used for obscure accounting  reasons
+            on some systems.
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             10
+
+
+            22..11..2222..  OOLLDD
+
+                 Define this if any of your USENET neighbors run 2.9  or
+            earlier versions of B news.  It will cause all headers writ-
+            ten to contain two extra lines, "Article-I.D." and "Posted",
+            for  downward  compatibility.   Once all your neighbors have
+            converted, you can save disk space and transmission costs by
+            turning  this off.  It is strongly encouraged that they con-
+            vert.  2.11  is  _m_u_c_h  faster  than  2.9.   The  performance
+            difference is dramatic.
+
+            22..11..2233..  UUNNAAMMEE
+
+                 Define this if the _u_n_a_m_e(2) system  call  is  available
+            locally,  even though you are not a USG system.  USG systems
+            always have _u_n_a_m_e(2) available and ignore this setting.
+
+            22..11..2244..  GGHHNNAAMMEE
+
+                 Define this if the  4.[23]  BSD  _g_e_t_h_o_s_t_n_a_m_e(2)  system
+            call  is  available.  If neither UUNNAAMMEE or GGHHNNAAMMEE is defined,
+            _i_n_e_w_s will determine the name of the local system by reading
+            /_u_s_r/_i_n_c_l_u_d_e/_w_h_o_a_m_i._h.
+
+            22..11..2255..  UUUUNNAAMMEE
+
+                 Define this to be the name of the  file  in  which  you
+            store  your  UUCP  name.  (If  you store your UUCP name in a
+            file.)
+
+            22..11..2266..  VV77MMAAIILL
+
+                 Define this if your system uses  V7  mail  conventions.
+            The  V7  mail  convention is that a mailbox contains several
+            messages concatenated, each message beginning  with  a  line
+            reading  "From  _u_s_e_r  _d_a_t_e"  and ending in a blank line.  If
+            this is defined, articles saved will have these lines  added
+            so that mail can be used to look at saved news.
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             11
+
+
+            22..11..2277..  SSOORRTTAACCTTIIVVEE
+
+                 Define this if you want the news  groups  presented  in
+            the  order of each person's ._n_e_w_s_r_c(5) instead of the aaccttiivvee
+            file.
+
+            22..11..2288..  ZZAAPPNNOOTTEESS
+
+                 Define this if you want old style notesfile id's in the
+            body  of  the article to be converted into "Nf-ID" fields in
+            the header and "Orphaned Responses" to be rejected.
+
+            22..11..2299..  DDIIGGPPAAGGEE
+
+                 If this is defined, _v_n_e_w_s(1) will  attempt  to  process
+            the  subarticles of a digest instead of treating the article
+            as one big file.
+
+            22..11..3300..  DDOOXXRREEFFSS
+
+                 Define this if you are using _r_n(1).  _R_n uses  this  op-
+            tion to keep from showing the same article twice.
+
+            22..11..3311..  MMUULLTTIICCAASSTT
+
+                 If your transport mechanism supports  multi-casting  of
+            messages, define this.  Currently ACSNET is the only network
+            that can handle this.
+
+            22..11..3322..  BBSSDD44__22
+
+                 Define this if you are running 4.2 or 4.3 BSD UNIX*.
+
+            22..11..3333..  BBSSDD44__11CC
+
+                 Define this if you are running 4.1C BSD UNIX.
+
+
+
+
+            __________
+            *UNIX is a Trademark of Bell Laboratories.
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             12
+
+
+            22..11..3344..  LLOOCCKKFF
+
+                 Define this if your system supports the _l_o_c_k_f()  system
+            call  as  defined  in the _S_y_s_t_e_m _V _I_n_t_e_r_f_a_c_e _D_e_f_i_n_i_t_i_o_n.  Be
+            warned, many System V UNIX systems do not  comply  with  the
+            _S_V_I_D.
+
+            22..11..3355..  AALLWWAAYYSSAALLIIAASS
+
+                 Normally, the LLIIBBDDIIRR/_a_l_i_a_s_e_s file is processed only for
+            newsgroups  that are not found in the LLIIBBDDIIRR/_a_c_t_i_v_e file. If
+            this is defined, the LLIIBBDDIIRR/_a_l_i_a_s_e_s will  be checked for AALLLL
+            newsgroups. This is useful for a transition period when mas-
+            sive newsgroup renaming is occurring, but should normally be
+            undefined as it is computationally expensive.
+
+            22..11..3366..  SSEENNDDMMAAIILL
+
+                 Use this program  instead  of  _r_e_c_m_a_i_l(8)  for  sending
+            mail.
+
+            22..11..3377..  MMMMDDFF
+
+                 Use MMDF instead of _r_e_c_m_a_i_l for sending mail.
+
+            22..11..3388..  MMYYOORRGG
+
+                 This should be set to the name  of  your  organization.
+            Please  keep  the  name  short,  because it will be printed,
+            along with the electronic address and full name of  the  au-
+            thor  of  each message.  Forty characters is probably a good
+            upper bound on the length.  If the city and state or country
+            of  your organization are not obvious, please try to include
+            them.  If the organization name begins with a "/",  it  will
+            be taken as the name of a file.  The first line in that file
+            will be used as the organization.   This  permits  the  same
+            binary  to  be used on many different machines.  A good file
+            name would be LLIIBBDDIIRR/_o_r_g_a_n_i_z_a_t_i_o_n.  For example, an  organi-
+            zation  might  read  "AT&T  Bell  Labs,  Murray Hill", "U.C.
+            Berkeley",
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             13
+
+
+            "MIT", or "Computer Corp. of America, Cambridge, Mass".
+
+            22..11..3399..  HHIIDDDDEENNNNEETT
+
+                 If you want all your news to look like it came  from  a
+            single  machine  instead of from every machine on your local
+            network, define HHIIDDDDEENNNNEETT to be the name of the machine  you
+            wish  to  pretend  to  be.   Make sure that you have you own
+            machine defined as _M_E in the sysfile or you may get some un-
+            necessary article retransmission.
+
+            22..11..4400..  NNIICCEENNEESSSS
+
+                 If NNIICCEENNEESSSS is defined, _r_n_e_w_s does a _n_i_c_e(2) to priori-
+            ty NNIICCEENNEESSSS before processing news.
+
+            22..11..4411..  FFAASSCCIISSTT
+
+                 If this is defined, _i_n_e_w_s checks to see if the  posting
+            user  is  allowed  to  post  to the given newsgroup.  If the
+            username is not in the file LLIIBBDDIIRR/_a_u_t_h_o_r_i_z_e_d then  the  de-
+            fault newsgroup pattern in the symbol FFAASSCCIISSTT is used.
+
+                 The format of the file _a_u_t_h_o_r_i_z_e_d is:
+
+                 user:allowed groups
+
+            For example:
+
+                 root:all.all,all
+                 naughty_person:junk,talk.politics.misc
+                 operator:!all.all,general,test,comp.unix.questions
+
+                 An open environment could have FFAASSCCIISSTT set to  aallll  and
+            then individual entries could be made in the authorized file
+            to prevent certain individuals from posting to such  a  wide
+            area.
+
+                 Note that a distribution of aallll does _n_o_t mean to  allow
+            postings  only  to local groups - aallll includes aallll..aallll.  Use
+            aallll,!aallll..aallll
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             14
+
+
+            to get that behavior
+
+            22..11..4422..  SSMMAALLLL__AADDDDRREESSSS__SSPPAACCEE
+
+                 Define this if your machine has  16  bit  (or  smaller)
+            pointers.  If you are on a PDP-11*,  this  is  automatically
+            defined.
+
+            22..11..4433..  OORRGGDDIISSTTRRIIBB
+
+                 This can be defined to be the name of the  distribution
+            that  is  "local" to your organization. If a control message
+            arrives with OORRGGDDIISSTTRRIIBB as the distribution, it is  believed
+            and  acted  upon.  This is useful for organizations with one
+            "main"  news  machine  and  several  subordinate  ones.  All
+            machines  in  that  organization  could  define NNOONNEEWWGGRROOUUPPSS,
+            MMAANNUUAALLLLYY and also OORRGGDDIISSTTRRIIBB.  Then, when a control  message
+            arrives  at  the main machine, it would be mailed to NNOOTTIIFFYY.
+            If that person determined that it was a legitimate  message,
+            they  could resubmit the message to their local machine with
+            a distribution of OORRGGDDIISSTTRRIIBB.  They would not have to submit
+            this message to the other machines, as they would believe it
+            because of the distribution. They would reject  the  control
+            message if it had any other distribution.
+
+            22..22..  MMaakkeeffiillee
+
+                 There are also a few  parameters  in  the  _M_a_k_e_f_i_l_e  as
+            well.  These are:
+
+            22..22..11..  OOSSTTYYPPEE
+
+                 This is the type of UNIX  system  you  are  using.   It
+            should  be either VV77 or UUSSGG.  Any BSD system is V7. Any Sys-
+            tem 3 or System 5 system is USG.  This is  normally  set  by
+            _l_o_c_a_l_i_z_e._s_h.
+            __________
+            *PDP-11 is a Trademark of  Digital  Equipment  Corpora-
+            tion.
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             15
+
+
+            22..22..22..  NNEEWWSSUUSSRR
+
+                 This is the owner (user name) of _i_n_e_w_s.  If you  are  a
+            superuser,  you should probably create a new user id (tradi-
+            tionally _n_e_w_s) and use this id.  If you are not a superuser,
+            you  can  use  your  own  user  id.  If you are able to, you
+            should create a mail alias _u_s_e_n_e_t  and  have  mail  to  this
+            alias  forwarded to you.  This will make it easier for other
+            sites to find the right person in the presence  of  changing
+            jobs  and  out  of  date  or  nonexistent  directory  pages.
+            NNEEWWSSUUSSRR and RROOOOTTIIDD do not need to represent the same user.
+
+            22..22..33..  NNEEWWSSGGRRPP
+
+                 This is the group (name) to which _i_n_e_w_s  belongs.   The
+            same considerations as NNEEWWSSUUSSRR apply.
+
+            22..22..44..  SSPPOOOOLLDDIIRR
+
+                 This directory contains subdirectories  in  which  news
+            articles will be stored.  It is normally /_u_s_r/_s_p_o_o_l/_n_e_w_s.
+
+                 For each newsgroup (_e._g.  ccoommpp..uunniixx) there  will  be  a
+            subdirectory  /_u_s_r/_s_p_o_o_l/_n_e_w_s/_c_o_m_p/_u_n_i_x containing articles,
+            whose   file   names   are   sequential    numbers,    _e._g.,
+            /_u_s_r/_s_p_o_o_l/_n_e_w_s/_c_o_m_p/_u_n_i_x/_1, etc.
+
+                 Each article file is in a mail-compatible  format.   It
+            begins  with  a  number of header lines, followed by a blank
+            line, followed by the body of the article.  The  format  has
+            deliberately  been  chosen to be compatible with the ARPANET
+            standard for mail documented in RFC 822.
+
+                 You should place news in  an  area  of  the  disk  with
+            enough  free  space  to  hold the news you intend to keep on
+            line.  The total volume of news in the network  wide  groups
+            currently  runs  about  1 Mbyte per day.  If you expire news
+            after the default 2 weeks, you will need about 14 Mbytes  of
+            disk  space (plus some extra as a safety margin and to allow
+            for
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             16
+
+
+            increased traffic in the future).  If you only receive  some
+            of  the  newsgroups, or expire news after a different inter-
+            val, these figures can be adjusted accordingly.
+
+            22..22..55..  BBAATTCCHHDDIIRR
+
+                 This directory will contain the  list  of  articles  to
+            send to each system.  It is normally /_u_s_r/_s_p_o_o_l/_b_a_t_c_h.
+
+            22..22..66..  LLIIBBDDIIRR
+
+                 This directory will contain various system  files.   It
+            is normally /_u_s_r/_l_i_b/_n_e_w_s.
+
+            22..22..77..  BBIINNDDIIRR
+
+                 This is the  directory  in  which  _r_e_a_d_n_e_w_s,  _p_o_s_t_n_e_w_s,
+            _v_n_e_w_s,  and  _c_h_e_c_k_n_e_w_s(1) are to be installed.  This is nor-
+            mally /_u_s_r/_b_i_n.  If you decide to  set  BBIINNDDIIRR  to  a  local
+            binary directory, you should consider that the _r_n_e_w_s command
+            must be in a directory that can be  found  by  _u_u_x_q_t,  which
+            normally only searches /_b_i_n and /_u_s_r/_b_i_n.
+
+            22..22..88..  UUUUXXFFLLAAGGSS
+
+                 These are the flags with which _u_u_x will be called.
+
+            22..22..99..  LLNNRRNNEEWWSS
+
+                 This is the program used to link _r_n_e_w_s and  _i_n_e_w_s.   If
+            you  have  symbolic links, you can replace the "ln" with "ln
+            -s".
+
+            22..22..1100..  SSCCCCSSIIDD
+
+                 If this is defined, sccs ids will be included  in  each
+            file. If you are short on address space, don't define this.
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             17
+
+
+            33..  FFIILLEESS
+
+                 This section lists the files  in  LLIIBBDDIIRR  and  comments
+            briefly what they do.
+
+            33..11..  aaccttiivvee
+
+                 This is a list of active newsgroups.  It  is  automati-
+            cally  updated as new newsgroups come in.  The order here is
+            the order news is initially presented by  _r_e_a_d_n_e_w_s,  so  you
+            can  edit  this  file to put important newsgroups first.  If
+            you have SSOORRTTAACCTTIIVVEE defined, after the first time  the  user
+            invokes  _r_e_a_d_n_e_w_s,  it will be presented in the order of the
+            user's ._n_e_w_s_r_c.  Each line of the active file contains  four
+            fields,  separated  by  a  space:  the  newsgroup  name, the
+            highest local article number (for the most recently received
+            article),  the  lowest local article number that has not yet
+            expired, and a single character used  to  determine  if  the
+            user  can  post  to that newsgroup.  If the character is "y"
+            the user is permitted to post articles to  that  group.   If
+            the character is "n" the user is not permitted to post arti-
+            cles to that group.  If the character is "m"  the  newsgroup
+            is moderated and may not be posted to directly. Instead, ar-
+            ticles posted to that newsgroup are automatically mailed  to
+            the moderator of that group.  (This field takes the place of
+            the _n_g_f_i_l_e in  earlier  versions  of  news.)  Local  article
+            numbers  begin  at 1 and count sequentially within the news-
+            group  as  articles  are  received.   They  do  not  usually
+            correspond to local article numbers on other sites.  The ar-
+            ticle numbers are always stored as a five digit number (with
+            leading zeros) to allow updating of the file in place.
+
+                 The active file should contain aallll  active  world  wide
+            newsgroups.  You should use the _s_y_s file to keep out unwant-
+            ed newsgroups.
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             18
+
+
+            33..22..  aalliiaasseess
+
+                 This file is used to map bad  newsgroup  names  to  the
+            correct  ones.   (For  example,  rreecc..jjookkeess  is  mapped  into
+            rreecc..hhuummoorr).  Each line consists of two fields  separated  by
+            white  space.   If the first field is found in the newsgroup
+            list of the incoming article, it is changed  to  the  second
+            field.   This change takes place in the article before it is
+            passed on to other systems, not just locally.
+
+            33..33..  bbaattcchh
+
+                 This program reads a list of filenames of articles  and
+            outputs  the  articles  themselves.  It is typically used by
+            the shell script _s_e_n_d_b_a_t_c_h.
+
+            33..44..  ccaaeessaarr
+
+                 This is a program to  do  Caesar  decoding  of  rotated
+            text, on a line by line basis.  The standard input is copied
+            to the standard output, rotating each line  according  to  a
+            static  single  letter frequency table.  If an integer argu-
+            ment is given (_e._g., 13), every line is rotated by that  ar-
+            gument,  without regard to letter frequencies.  This program
+            is invoked by the DD _r_e_a_d_n_e_w_s command.  It is  also  used  by
+            _p_o_s_t_n_e_w_s  with the "13" argument to encode selected material
+            for posting.
+
+            33..55..  cchheecckkggrroouuppss
+
+                 _C_h_e_c_k_g_r_o_u_p_s is a shell file  to  aid  in  automatically
+            checking  the  accuracy of your active file.  It is executed
+            by the cchheecckkggrroouuppss control message and mails a list  of  out
+            of date newsgroups to the person defined by NNOOTTIIFFYY.  It also
+            updates the _n_e_w_s_g_r_o_u_p_s file that is used by  _p_o_s_t_n_e_w_s  as  a
+            helpfile for newsgroup selection.
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             19
+
+
+            33..66..  ccoommpprreessss
+
+                 This program does a modified Lempel-Ziv  data  compres-
+            sion.  It  is  used  by  the compressed batching scheme.  It
+            averages 50% compression on a typical batch of news.
+
+            33..77..  ddiissttrriibbuuttiioonnss
+
+                 This is a list of distributions that are valid for your
+            site.  Each line has two fields separated by the first space
+            on the line.  The first field is the name of  the  distribu-
+            tion  (_e._g.,  uussaa,  nnaa,  etc.).   The  second  field is text
+            describing the distribution.  As distributed, this  file  is
+            only  correct for sites in the USA.  You should examine this
+            file and add or delete the appropriate distributions.
+
+            33..88..  eennccooddee
+
+                 This program transforms an 8-bit  binary  file  into  a
+            file suitable for sending over a link that only allows 7-bit
+            characters. It is used by sseennddbbaattcchh --cc77..
+
+            33..99..  eerrrrlloogg
+
+                 This file contains the "important" error messages found
+            in  the  log file.  These errors usually indicate that some-
+            thing was wrong  with  an  article.   This  file  should  be
+            watched  closely.   The  _l_o_g file contains much more verbose
+            information and it is often difficult to  detect  errors  in
+            it.
+
+            33..1100..  eexxppiirree
+
+                 This program expires old articles and archives them  if
+            archiving  is selected.  It is typically run once a day from
+            _c_r_o_n(8).
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             20
+
+
+            33..1111..  hheellpp
+
+                 This contains a list of commands printed when an  ille-
+            gal command is typed to _r_e_a_d_n_e_w_s.
+
+            33..1122..  hhiissttoorryy
+
+                 A list of every article that has come in to  your  sys-
+            tem.   It  is  used  to reject articles that come in for the
+            second time (presumably via a different  path).   This  file
+            will grow but is cleaned out by the _e_x_p_i_r_e(8) command.
+
+            33..1133..  hhiissttoorryy..dd
+
+                 On  USG  systems,  this  directory  contains  10  files
+            (history.[0-9])  which  are used as part of a simple hashing
+            algorithm to speed up history searches.   Since  V7  systems
+            have DBM, this is not used on V7 systems.
+
+            33..1144..  hhiissttoorryy..ddiirr,,hhiissttoorryy..ppaagg
+
+                 These two files are used on V7 systems as a hashed ver-
+            sion of _h_i_s_t_o_r_y, containing the message id's of all articles
+            in history.  They are only used if --DDDDBBMM and --llddbbmm appear in
+            _M_a_k_e_f_i_l_e.
+
+            33..1155..  iinneewwss
+
+                 This is the program that actually  sends  and  receives
+            news.   All other news submitting programs interface eventu-
+            ally with it.  It is not intended to be used directly  by  a
+            human, so it is no longer in BBIINNDDIIRR.
+
+            33..1166..  lloogg
+
+                 If present, a log of articles processed and error  con-
+            ditions  is kept here.  This file grows without limit unless
+            cleaned out periodically.  The _t_r_i_m_l_i_b script in _m_i_s_c can be
+            invoked by _c_r_o_n(8) daily or weekly to keep the log short.
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             21
+
+
+            33..1177..  mmaaiillppaatthhss
+
+                 This file contains the mail paths to a Usenet  _b_a_c_k_b_o_n_e
+            site  and  a  site  that  can handle _i_n_t_e_r_n_e_t style mail ad-
+            dresses.  Each line consists of two fields. The first  field
+            is either the keyword _b_a_c_k_b_o_n_e or the keyword _i_n_t_e_r_n_e_t.  The
+            second field is a string to be used by printf  to  create  a
+            mail path.  As distributed, they are almost certainly wrong.
+            You will need to modify the paths so  they  work  from  your
+            site.
+
+                 As an example, suppose that your site's  closest  _b_a_c_k_-
+            _b_o_n_e  site  was  _s_e_i_s_m_o and the closest site that understood
+            the _i_n_t_e_r_n_e_t mail syntax was _d_e_c_u_a_c.   Your  _m_a_i_l_p_a_t_h_s  file
+            would look like:
+
+                 backbone        seismo!%s
+                 internet        decuac!%s
+
+                 The _b_a_c_k_b_o_n_e path is  used  when  posting  articles  to
+            moderated groups. A mail alias exists on almost all backbone
+            sites to forward mail to the proper moderator for the group.
+            The mail aliases should always be up to date on these sites,
+            so when a group changes moderators, only the backbone  sites
+            need  to  update any files. The mail alias is the newsgroups
+            name with "." changed to "-".  Using the above example _m_a_i_l_-
+            _p_a_t_h_s  file,  a  submission  to  comp.sources.unix  would be
+            mailed to seismo!comp-sources-unix, where it would  be  for-
+            warded to the current moderator for that group.
+
+                 The _i_n_t_e_r_n_e_t keyword is used when the  IINNTTEERRNNEETT  option
+            is  defined  for  replying  to  news  articles. A site whose
+            mailer does not understand _i_n_t_e_r_n_e_t syntax can (and  should)
+            define IINNTTEERRNNEETT so that mailed replies use the _F_r_o_m: line of
+            the article instead of the unreliable _P_a_t_h: line.
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             22
+
+
+            33..1188..  nneewwssggrroouuppss
+
+                 This file is displayed by _p_o_s_t_n_e_w_s when a user  hits  ??
+            in  response to its request for newsgroups.  It is also used
+            by _v_n_e_w_s when it displays the newsgroup name.  It is updated
+            automatically by the cchheecckkggrroouuppss control message.
+
+            33..1199..  nnoottiiffyy
+
+                 This file allows a site administrator to declare  which
+            types  of  control messages they wish to notification on and
+            which they don't.  The format  is  two  words  separated  by
+            white space.  The first word is the name of the control mes-
+            sage type (like cchheecckkggrroouuppss).  The second word  (if  it  ex-
+            ists)  is  the  address to mail the notification to.  If the
+            second word does not exist then it is assumed that  no  mail
+            is  desired  from  this  type  of  control  message.  If the
+            LLIIBBDDIIRR/_n_o_t_i_f_y file doesn't contain any recognizable  control
+            message  types  or is empty, then it is assumed that no mail
+            is desired from any type of control message.
+
+                 The key word "all" may be used to select  what  address
+            all  known  control  message types should be sent to.  Since
+            parsing of the file is sequential, the key word "all"  could
+            be  first  in  the file and specific declarations specifying
+            differing addresses could follow which  would  override  any
+            previous  listing.   This  example of LLIIBBDDIIRR/_n_o_t_i_f_y declares
+            that mail will be sent to "usenet" for all  control  message
+            types except the sseennddssyyss type. SSeennddssyyss messages will be sent
+            to "security".
+
+            # Comments are ok since unrecognized message types are ignored.
+            all     usenet
+            sendsys security
+
+            This example will only send mail to "usenet" for the  cchheecckk--
+            ggrroouuppss  type  of  control message.  All others will not have
+            any mail associated with them.
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             23
+
+
+            # Comments are ok since unrecognized message types are ignored.
+            checkgroups     usenet
+
+            (This overrides the NNOOTTIIFFYY option in _d_e_f_s._h).  Having a null
+            file is useful if one person administers several systems and
+            does not want multiple copies of control  message  notifica-
+            tions.
+
+            33..2200..  ooaaccttiivvee,, oohhiissttoorryy,, oohhiissttoorryy..ddiirr,, oohhiissttoorryy..ppaagg
+
+                 These are copies of the corresponding _a_c_t_i_v_e,  _h_i_s_t_o_r_y,
+            _h_i_s_t_o_r_y._d_i_r,  and _h_i_s_t_o_r_y._p_a_g files before _e_x_p_i_r_e ran.  They
+            are kept in case something happens to the originals.
+
+            33..2211..  rreeccmmaaiill
+
+                 This program can serve as a link between news and  your
+            local  mailer.   If you have _s_e_n_d_m_a_i_l(8), don't use _r_e_c_m_a_i_l.
+            _S_e_n_d_m_a_i_l is much more useful.
+
+            33..2222..  rreeccnneewwss
+
+                 A program which allows you to send  mail  to  get  news
+            posted.   You usually need to run _s_e_n_d_m_a_i_l or _d_e_l_i_v_e_r_m_a_i_l(8)
+            to be able to use this.
+
+            33..2233..  rreeccoorrddiinngg
+
+                 A list of newsgroup classes and  filenames  to  display
+            recordings  for.   The recording feature is analogous to the
+            recordings played in some areas when you dial directory  as-
+            sistance,  trying  to  be annoying and make you think twice.
+            Recordings on certain newsgroups are intended to remind  the
+            user  of  the  rules for the newsgroup, or, in the case of a
+            company worried about letting proprietary  information  out,
+            reminding authors that anything they say is seen outside the
+            company and so proprietary information should not be includ-
+            ed.
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             24
+
+
+                 The file contains one line  per  recording.   The  line
+            contains  two fields, separated by a space.  The first field
+            is the newsgroup class (_e._g., ttaallkk..aallll), the second field is
+            the  name  of  the file containing the recorded message.  If
+            the file name does not  begin  with  a  slash,  it  will  be
+            searched for in LLIIBBDDIIRR.  Sample recording files can be found
+            in the _m_i_s_c directory.
+
+            33..2244..  rrmmggrroouupp
+
+                 This shell file should be used  to  remove  any  groups
+            that are no longer used.
+
+            33..2255..  sseennddbbaattcchh
+
+                 This shell file is used to  send  batched  articles  to
+            other  systems.   It is typically run from _c_r_o_n(8).  See the
+            manual page for more details.
+
+            33..2266..  sseennddnneewwss
+
+                 A program to send news internally from one computer  to
+            another.   It  is  useful  if  you  must  use  mail links to
+            transmit articles.
+
+            33..2277..  sseeqq
+
+                 This file contains the current sequence number for your
+            system.  It is used to generate unique article id's.
+
+            33..2288..  ssyyss
+
+                 This file contains a list of all your neighbors,  which
+            newsgroups they get, and how to send news to them.  The for-
+            mat is documented below.
+
+            33..2299..  uunnbbaattcchh
+
+                 This program is used to unbatch  the  incoming  batched
+            news and feed each article to _r_n_e_w_s.  It's horrible and will
+            go
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             25
+
+
+            away in the future.
+
+            33..3300..  uusseerrss
+
+                 A list of users that have read news on your system.
+
+            33..3311..  uuuurreecc
+
+                 A program to receive news sent by _s_e_n_d_n_e_w_s(8).
+
+            33..3322..  vvnneewwss..hheellpp
+
+                 This is the helpfile used by _v_n_e_w_s.
+
+            44..  SSeettttiinngg UUpp LLiinnkkss
+
+                 There are two basic types of links for exchanging news:
+            those that use mail and those that don't.  The ones that use
+            mail are more indirect, yet more versatile, while  the  ones
+            that  don't  are  simpler.   The default method does not use
+            mail, so that is discussed first.
+
+            44..11..  NNoonn--mmaaiill LLiinnkkss
+
+                 The basic theory behind a non-mail  link  is  that  the
+            _r_n_e_w_s program is invoked on the remote system with the arti-
+            cle being transmitted as the standard input.  This is possi-
+            ble  on several networks, but the most common implementation
+            is via the UUCP network.  Using the _u_u_x command, the command
+            which is forked to the shell looks like:
+
+                       uux - -r -z remotesys!rnews < article
+
+            This is the default transmission method.  In order to set up
+            such  a  link,  obviously a UUCP link with the remote system
+            must be in effect.  In addition, _r_n_e_w_s must be available and
+            executable  by  _u_u_x_q_t on the remote machine.  In most cases,
+            this means that _r_n_e_w_s must be in /_u_s_r/_b_i_n so  _u_u_x  can  find
+            it.    Also,   the   list   of  allowed  UUCP  commands  (in
+            /_u_s_r/_s_r_c/_u_s_r._b_i_n/_u_u_c_p/_u_u_x_q_t._c    or    /_u_s_r/_l_i_b/_u_u_c_p/_L._c_m_d_s,
+            depending
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             26
+
+
+            on the version of UUCP) should be checked to make sure  that
+            _r_n_e_w_s is an allowed command.
+
+                 Other networks that allow remote execution include  the
+            BERKNET,  BLICN  (_u_s_e_n_d(1)), many Ethernets, and the NSC hy-
+            perchannel (_n_u_s_e_n_d(1)).  It is important,  however,  that  a
+            spooling  mechanism  be  available.   Otherwise, if system _A
+            tries to send an article to system _B via a remote  execution
+            command, and _B is down, the article could be lost.  Spooling
+            arranges that the system will try again when  _B  comes  back
+            up.
+
+            44..22..  MMaaiill LLiinnkkss
+
+                 When using mail to transmit articles, two  intermediary
+            programs  are  necessary.   These are _s_e_n_d_n_e_w_s and _u_u_r_e_c(8).
+            The idea is that when system _A wants to send an  article  to
+            system _B, the _s_y_s file on system _A has an entry for system _B
+            such as:
+
+                             LLIIBBDDIIRR/sendnews -a rnews@B
+
+            which runs _s_e_n_d_n_e_w_s on the article.  The --aa option specifies
+            that the mail should be formatted for the ARPANET.  _S_e_n_d_n_e_w_s
+            packages the article and mails it  to  "rnews@B".   Somehow,
+            the  B system is expected to make sure that all mail to user
+            "rnews" is fed as input to the program _u_u_r_e_c.  This  program
+            unpackages it and invokes _r_n_e_w_s.
+
+                 The best way to get mail to "rnews" fed into  _u_u_r_e_c  is
+            to  use _s_e_n_d_m_a_i_l or _d_e_l_i_v_e_r_m_a_i_l, if you are on a system run-
+            ning them.  Create an alias in /_u_s_r/_l_i_b/_a_l_i_a_s_e_s as follows:
+
+                               rnews: "|LLIIBBDDIIRR/uurec"
+
+            and _s_e_n_d_m_a_i_l will handle it.  If you do not have a  facility
+            for  forwarding  mail  to  a  program,  you can gimmick your
+            mailer to watch for it (using _p_o_p_e_n(3S), this is  easy)  or,
+            if  you  don't  want  to  do  any  programming, you can have
+            _c_r_o_n(8)
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             27
+
+
+            invoke _u_u_r_e_c every hour with /_u_s_r/_s_p_o_o_l/_m_a_i_l/_r_n_e_w_s as  stan-
+            dard input.  This solution is messier because _u_u_r_e_c must po-
+            tentially deal with multiple messages,  something  that  has
+            never been tested.
+
+            55..  FFoorrmmaatt ooff tthhee _s_y_s_s_y_s ffiillee
+
+                 To set up a link to another site, edit the _s_y_s file  in
+            LLIIBBDDIIRR.   This  file  is  similar to the _L._s_y_s file of UUCP.
+            Each line contains four fields,  separated  by  colons:  The
+            system  name  of a site to which you forward news.  Normally
+            all systems you have links to will be included.  You  should
+            also  have a line for your own system.  If this field is _M_E,
+            it will be used as if it were your local  system  name.   If
+            the  system  name is followed by a "/", the article will not
+            be forwarded to this system if it has already passed through
+            any  of the (comma separated) list of sites immediately fol-
+            lowing the "/".  For example, if the sysline was:
+
+            yoursite/sitea,siteb,sitec:world,comp,sci,news,rec,misc,na,usa,to.yoursite::
+
+            the incoming article would only be forwarded to _y_o_u_r_s_i_t_e  if
+            it  had  not  already been to any of _s_i_t_e_a, _s_i_t_e_b, or _s_i_t_e_c.
+            This is normally used to reduce the number of duplicate  ar-
+            ticles received at a site that has multiple main newsfeeds.
+
+            (2)  The newsgroups to be forwarded to that site.  This is a
+                 pattern  of the same kind as a subscription list.  Gen-
+                 erally, you will list classes of newsgroups,  that  is,
+                 using  aallll  for  everything.  A typical forwarding list
+                 for a new site would be
+
+              world,comp,sci,news,rec,misc,soc,talk,na,usa,to._s_y_s_n_a_m_e
+
+                 where _s_y_s_n_a_m_e is the name of the  remote  system.   (Of
+                 course, if you are not in the USA or North America, you
+                 would remove those distributions and replace them  with
+                 the ones appropriate for you.) In particular, you don't
+                 want to  forward  aallll  since  local  newsgroups  (those
+                 without
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             28
+
+
+                 dots) should not be sent.  For the line describing your
+                 own  system,  this  field describes the newsgroups your
+                 site will accept from remote sites.  Thus,  if  another
+                 site insists on sending you a newsgroup you don't want,
+                 for example rreecc..hhuummoorr, include !!rreecc..hhuummoorr here.
+
+            (3)  This field contains flags describing the connection.
+
+            AA    indicates that the other site is running an  A  version
+                 of netnews.
+
+            BB    indicates a B version.  Leaving it empty defaults to BB.
+                 If you are reading this document, you have a B version.
+                 Some existing sites run  A  versions.   If  you  aren't
+                 sure, ask your contact at the other site, with whom you
+                 should be talking to set this up anyway.
+
+            FF    indicates that the fourth field is the name of a  file.
+                 The  full path name of a file containing the article in
+                 SSPPOOOOLL will be appended to  this  file.  If  the  fourth
+                 field  is  blank, the filename BBAATTCCHHDDIIRR/_s_y_s_n_a_m_e, (where
+                 _s_y_s_n_a_m_e is specified in the first field) will be used.
+
+            LL    prevents transmission unless the article was created on
+                 this site.  If a number follows the LL (_e._g., LL33), sites
+                 less than that number of hops away will  be  considered
+                 local.  (It is recommended that you feed an LL link to a
+                 backbone site, to ensure that your submissions will  be
+                 more  likely  to get to the entire network, even in the
+                 event of a local problem.  Please make sure that a mail
+                 link exists too, so you can get replies.)
+
+            HH    can be used to interpolate the history  file  into  the
+                 command.
+
+            SS    says to execute the transmission command  directly  in-
+                 stead of forking a shell.
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             29
+
+
+            UU    arranges that the parameter to the optional "%s" in the
+                 command  field  to  be  filled in with a permanent file
+                 name from SSPPOOOOLL instead of a temporary customized  file
+                 name.
+
+            MM    says to use multi-casting. Multi-casting  is  described
+                 in an appendix.
+
+            II    automatically defines the FF flag. However, it puts  the
+                 article's  _M_e_s_s_a_g_e-_I_d  into  the  file  instead  of the
+                 filename containing the article. This is used with  the
+                 _i_h_a_v_e/_s_e_n_d_m_e control messages.
+
+            mm    (lower case mm not upper case MM) modifies the  newsgroup
+                 pattern  match  to  only  return true if it matches the
+                 pattern in the second field AND the group is moderated.
+                 For example, if your _s_y_s file looked like:
+
+            avax:world,comp,sci:mF:/usr/spool/batch/avax.sendimmediately
+            avax:world,comp,sci,rec,talk,misc,soc,to.avax:F
+
+                 any moderated articles in the newsgroups  ccoommpp  or  ssccii
+                 would be placed in the file _a_v_a_x._s_e_n_d_i_m_m_e_d_i_a_t_e_l_y in the
+                 SSPPOOOOLL directory.  All other news for that machine would
+                 be  placed  in  the file _a_v_a_x.  You could then transmit
+                 the articles in _a_v_a_x._s_e_n_d_i_m_m_e_d_i_a_t_e_l_y  more  often  than
+                 the rest of the news.
+
+            uu    works like mm except that it only  matches  un-moderated
+                 newsgroups.
+
+            NN    indicates  that  news  should   be   sent   using   the
+                 ihave/sendme  protocol.   It  should not really be used
+                 anymore as II is much more efficient.
+
+            (4)  This field is the command to be run to send news to the
+                 remote  site.   The article will be on the standard in-
+                 put.  Leaving this field blank means an  ordinary  UUCP
+                 link is being used, that is, the command defaults to
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             30
+
+
+                             uux - -r -z sysname!rnews
+
+                 The -- option tells _u_u_x to expect input from  the  stan-
+                 dard  input.  The --zz option is nonstandard - you should
+                 add it (see the _m_i_n_u_s._z files in the uucp source direc-
+                 tory).   It  shuts  off  the annoying message you would
+                 otherwise get mailed to you telling you that your arti-
+                 cle  was broadcast successfully.  To avoid using the --zz
+                 option, change the source or put the _u_u_x command in the
+                 fourth  field.  The --rr option tells _u_u_x not to call the
+                 other system once the job is queued.  This turns out to
+                 ease  the  load on the system, at the expense of making
+                 news be transmitted a bit slower.   The  news  will  be
+                 sent when the next call is made; usually this means the
+                 next time mail is sent to or from your system.  If this
+                 turns  out to be unreasonably long, put a line in _c_r_o_n_-
+                 _t_a_b to run
+
+                         /usr/lib/uucp/uucico -r1 -ssysname
+
+                 every hour or so.
+
+                 Here is a sample _s_y_s file for a site _m_y_v_a_x with connec-
+            tions  to  _y_o_u_r_v_a_x  where _m_y_v_a_x also passes news on to _d_o_w_n_-
+            _s_t_r_e_a_m.  We assume that _m_y_v_a_x and _d_o_w_n_s_t_r_e_a_m exchange a  lo-
+            cal  newsgroup  class  llnngg..aallll  as  well as the network wide
+            newsgroups.  News to _d_o_w_n_s_t_r_e_a_m is batched.  We also  assume
+            that  _m_y_v_a_x  and _y_o_u_r_v_a_x are in the USA, while _d_o_w_n_s_t_r_e_a_m is
+            in Canada.
+
+                 myvax:world,comp,sci,rec,news,misc,soc,talk,na,usa,lng,to
+                 yourvax:world,comp,sci,rec,news,misc,soc,talk,na,usa,to.yourvax
+                 downstream:world,comp,sci,rec,news,misc,soc,talk,na,lng,to.downstream:F
+
+            66..  PPoossttiinngg MMeetthhooddss
+
+                 The basic method is _p_o_s_t_n_e_w_s.  This program will prompt
+            you  for the title, newsgroups, and distribution, then place
+            you in the editor.   (The  system  default  EEDDIITTOORR  is  used
+            unless
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             31
+
+
+            the environment variable EEDDIITTOORR is set, overriding the  sys-
+            tem default.) The text should be typed after the blank line.
+            The title and newsgroups are available for  editing  at  the
+            top of the buffer.  Other header lines can be added, such as
+            an expiration date or a distribution.  When  you  write  out
+            the  file and exit from the editor, you will be prompted for
+            what to do next. Your choices are: wwrite the  message  to  a
+            file, ssend the message, llist the message or eedit it again.
+
+                 Another method is to use mail.  This can only  be  done
+            on systems that allow mail to a given name to be fed into an
+            arbitrary program as input.  This is easily  done  with  the
+            Berkeley  _d_e_l_i_v_e_r_m_a_i_l  or _s_e_n_d_m_a_i_l program, and not with any
+            other mailer the author is familiar with.  (It may be possi-
+            ble  to  painfully set this up with MMDF, provided the news-
+            group name is no more than 8 characters long.) To use  mail,
+            set up an alias such as the following:
+
+                     sci.physics: "|LLIIBBDDIIRR/recnews sci.physics"
+
+            Whenever a user sends mail to ssccii..pphhyyssiiccss,  this  starts  up
+            the  given  shell command which calls rreeccnneewwss with one argu-
+            ment, the name of the newsgroup.  You  need  to  create  one
+            alias for each newsgroup, and to keep the list up to date as
+            new newsgroups are created.  _R_e_c_n_e_w_s(8) will in turn  invoke
+            _i_n_e_w_s.
+
+                 Note that there are problems with _r_e_c_n_e_w_s.  There is no
+            way  to use it to post to multiple newsgroups without creat-
+            ing separate articles (something  frowned  upon  because  it
+            forces people to read the same thing more than once).  Also,
+            there is no way to make the  recording  feature  (to  remind
+            people  to  not  accidently divulge proprietary information)
+            work when recnews is used.
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             32
+
+
+            77..  VVaarriioouuss ccoonnssiiddeerraattiioonnss
+
+            77..11..  SSppoooolliinngg
+
+                 If _e_x_p_i_r_e is already running and _i_n_e_w_s or _r_n_e_w_s is  in-
+            voked, the incoming article will be saved in SSPPOOOOLLDDIIRR/._r_n_e_w_s
+            for later processing by _r_n_e_w_s -_U.  This is  to  prevent  the
+            incoming  article  from  getting "lost" and not being in the
+            history file.  _E_x_p_i_r_e automatically runs _r_n_e_w_s  -_U  when  it
+            has  finished.   If  you  have defined SSPPOOOOLLNNEEWWSS, you should
+            also invoke _r_n_e_w_s -_U from crontab on a regular basis.
+
+                 If you are not using  some  type  of  "system"  locking
+            (_e._g.  _f_l_o_c_k() or _l_o_c_k_f()) you must make sure that the vari-
+            ous lock files are removed when the system is rebooted after
+            a  crash. You can put a line in /_e_t_c/_r_c to remove these lock
+            files. The most important one is LLIIBBDDIIRR/_a_c_t_i_v_e._l_o_c_k.
+
+            77..22..  SSeettuuiidd bbiittss
+
+                 The current intended state of  affairs  is  that  _i_n_e_w_s
+            runs  setuid to NNEEWWSSUUSSRR.  The _r_e_a_d_n_e_w_s and _v_n_e_w_s programs do
+            not need to be setuid.  This makes it possible to write your
+            own  interface  to read news instead of using _r_e_a_d_n_e_w_s.  (As
+            distributed, _i_n_e_w_s is also setgid.  I know of no good reason
+            for this.)
+
+            77..33..  MMooddeess ooff SSppooooll DDiirreeccttoorriieess
+
+                 All the files should be writable by NNEEWWSSUUSSRR.   However,
+            due to a glitch, you will probably have to make the SSPPOOOOLLDDIIRR
+            and its subdirectories mode 777.  It could be 755 except for
+            one  problem.  When a new newsgroup comes in, _i_n_e_w_s will at-
+            tempt to _m_k_d_i_r(1) a new subdirectory  of  SSPPOOOOLLDDIIRR  for  the
+            newsgroup.   Since  both  _i_n_e_w_s  and _m_k_d_i_r are setuid, _m_k_d_i_r
+            will use the uid of the person  who  ran  _i_n_e_w_s  instead  of
+            NNEEWWSSUUSSRR  when  checking  for  permissions.  If the directory
+            mode isn't 777 the check will fail.  4.[23] BSD sites do not
+            have  this  problem  as  _m_k_d_i_r()  is  a system call and will
+            create
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             33
+
+
+            the  directory  with  the  "correct"  ownership.   Here  are
+            several  alternatives  if  you  don't  want  a 777 directory
+            around:
+
+            77..33..11..  FFiixx RReeaall UUiidd
+
+                 If _i_n_e_w_s is always run by _c_r_o_n or as _r_o_o_t, the real uid
+            can be arranged to be _r_o_o_t or NNEEWWSSUUSSRR.  This is a poor solu-
+            tion since it makes the local creation of new newsgroups re-
+            quire  super  user  permissions, and is a potential security
+            hole.  If this approach is taken, care must be taken to  en-
+            sure that the owner of the created directory is NNEEWWSSUUSSRR.
+
+            77..33..22..  CChhaannggee tthhee KKeerrnneell
+
+                 _I_n_e_w_s will do:  sseettuuiidd((ggeetteeuuiidd(())))  (see  _s_e_t_u_i_d(2)  and
+            _g_e_t_e_u_i_d(2))  before it forks the _m_k_d_i_r.  If your system per-
+            mits this call, there will be no  problem.   In  particular,
+            Berkeley 4.0 UNIX and later systems allow this.  An alterna-
+            tive change to the kernel is to  automatically  stack  uids:
+            when  a  setuid  program is run, set the new real uid to the
+            old effective uid.
+
+            77..33..33..  GGrroouuppss
+
+                 You could have _i_n_e_w_s be setgid to NNEEWWSSGGRRPP and all files
+            writable  by  the  group.  This approach has been tested and
+            the problem turns out to be that the _m_k_d_i_r command uses  the
+            _a_c_c_e_s_s(2)  system  call  to check permissions.  Since _a_c_c_e_s_s
+            uses the real gid, you run into the same problem.
+
+            77..33..44..  AAnnootthheerr _M_k_d_i_r_M_k_d_i_r
+
+                 You could create a version  of  _m_k_d_i_r  that  does  less
+            checking and put it in a directory that can only be accessed
+            by NNEEWWSSUUSSRR (mode 700, owned by NNEEWWSSUUSSRR).   Have  _i_n_e_w_s  fork
+            this _m_k_d_i_r.
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             34
+
+
+            77..44..  EExxppiirraattiioonn ddaatteess
+
+                 To get articles to expire automatically, put a line  in
+            _c_r_o_n_t_a_b to run
+
+                                   LLIIBBDDIIRR/expire
+
+            every night.  This command deletes all expired news.  The --aa
+            _n_e_w_s_g_r_o_u_p_s  option  causes  all  expired news to be archived
+            under /_u_s_r/_s_p_o_o_l/_o_l_d_n_e_w_s depending on which  newsgroups  are
+            selected.  (See _e_x_p_i_r_e(8) for details.)
+
+                 Sometimes news is not expired when it  should  be.   Be
+            sure  to  check that _e_x_p_i_r_e has permissions to unlink files,
+            and that it is properly setuid to NNEEWWSSUUSSRR.  You can manually
+            invoke  _e_x_p_i_r_e with the --vv (verbose) option to find out what
+            it's doing.  Adding levels of verbosity (_e._g., --vv66) will get
+            more and more output.
+
+            77..55..  VVeerrssiioonn ttoo VVeerrssiioonn
+
+                 Version B will understand incoming news in either  ver-
+            sion  A or B format, automatically (presuming OOLLDD is defined
+            in defs.h).  Version B will generate either format,  depend-
+            ing on the flag in the third field of the _s_y_s line.  Version
+            A will not understand version B format.  Thus, it is  possi-
+            ble  for  two version B sites to communicate using version A
+            format.  This will work but is not a good  idea,  since  the
+            translation  from  B to A loses information (such as the ex-
+            piration date) which will not be there when translated  back
+            to version B.
+
+                 News from versions A and 2.9 B do not  conform  to  the
+            USENET  interchange  standard.   2.10 B (and later) supports
+            the standard and will communicate with either  A  or  2.9  B
+            news.   A  news is written (losing other header information)
+            if A is in the flags for the system.   If  OOLLDD  is  defined,
+            2.10  will  write  out  headers  with  both standard ("Date"
+            "Message-ID") and 2.9  ("Posted"  "Article-I.D.")  lines  so
+            that
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             35
+
+
+            either B system will properly handle the article.   Incoming
+            news  is  recognized  by the first letter (AA for A news), or
+            the lack of an "@" in the "From" line (2.9).  Missing fields
+            are  constructed  as well as possible from the available in-
+            formation.
+
+            77..66..  UUssiinngg tthhee nneewwss rreeaaddiinngg pprrooggrraamm rrnn
+
+                 You must have installed all posted patches to _r_n up  to
+            and including #30. Otherwise, _r_n will not work properly with
+            news 2.11.
+
+            77..77..  DDiissttrriibbuuttiioonnss
+
+                 News 2.11 is much more particular about  handling  dis-
+            tributions  than previous versions. In particular, make sure
+            that you have the distribution _w_o_r_l_d in every line  of  your
+            _s_y_s  file unless you are specifically limiting the distribu-
+            tion and are sure you know what you are doing.
+
+            88..  CCoonnttrrooll MMeessssaaggeess
+
+                 Some news systems will send you articles that  are  not
+            for  human consumption.  They are messages to your news sys-
+            tem called _c_o_n_t_r_o_l  _m_e_s_s_a_g_e_s.   Such  messages  contain  the
+            "Control"  header.   Older  systems  use newsgroups matching
+            aallll..aallll..ccttll, and this will still work,  although  the  "Con-
+            trol" header is preferred.  Since the newsgroup name is used
+            for distribution only, and is not checked to ensure it's  in
+            the  active  file,  such  newsgroup names can still be used.
+            This makes it possible to post network wide control messages
+            with   wwoorrlldd..mmssgg..ccttll   (or   restricted  broadcast  such  as
+            bbttll..mmssgg..ccttll)  or   messages   for   a   particular   system:
+            ttoo..uuccbbvvaaxx..ccttll.  Messages are canceled, however, with a "Con-
+            trol" line in a message to the same newsgroup(s) as the ori-
+            ginal message.
+
+                 A control message contains a command and zero  or  more
+            arguments  (much  like  a UNIX program).  The subject of the
+            article
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             36
+
+
+            contains the command and arguments.  The body of the article
+            is  usually  ignored,  although some messages can use it for
+            additional text information.
+
+            88..11..  iihhaavvee//sseennddmmee
+
+                 Two control messages are iihhaavvee and sseennddmmee.  These  mes-
+            sages allow two participating sites to set up a link so that
+            one site will tell the other site it has a given article and
+            wait  for a request before it actually sends it.  The normal
+            case is to send an entire article to a  system,  which  con-
+            sults  the  history  file  to see if the article has already
+            been seen, and then throws it away if it has been  seen  be-
+            fore.
+
+                 Use of these control messages  can  cut  down  on  this
+            wasted  transmission,  but if you have a polled UUCP connec-
+            tion, they can slow down receipt of news due to polling  de-
+            lays.  It is up to each connected pair of sites whether they
+            want to use this protocol.  The choice is controlled by  the
+            II  flag  in  the  _s_y_s file.  In the case of a leaf node (one
+            with only one neighbor) there is no advantage to this proto-
+            col.   Even  if both sites are able to initiate a connection
+            (have dialers or the link is hard wired) the  --rr  option  on
+            the _u_u_x can cause 2 hour or more delays in propagating news.
+            If transmission time and phone bills  dominate  your  costs,
+            and you are sending news to several sites, and large article
+            bodies dominate the costs (rather than the headers  and  the
+            time  spent by UUCP negotiating transmission) it is probably
+            worthwhile to use _i_h_a_v_e/_s_e_n_d_m_e.  If your costs are dominated
+            by  CPU  load  from UUCP, or if you send news to a site that
+            cannot get it from anywhere else, you probably do  not  want
+            to use this protocol.  The decision can be made independent-
+            ly for each site in your _s_y_s file.
+
+                 To use the ihave/sendme protocol, you should have the II
+            flag  defined in the sys file for the remote site. For exam-
+            ple:
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             37
+
+
+            elsie:world,na,usa,comp,sci,news,rec,soc,misc,talk,to.elsie:IF
+
+                 Note that the fourth field must be blank.
+
+                 Normally, a message arrives at this site, is  found  to
+            be  ok  (i.e.  it hasn't already been received), and is con-
+            sidered for retransmission to other sites. If the system you
+            are sending to has the flag defined, the Message-ID is saved
+            in the file specified in the sys entry.
+
+                 After a period of time,
+
+                                 sendbatch -i elsie
+
+            is run by _c_r_o_n(8).  It takes this file,  makes  it  into  an
+            iihhaavvee control message, and sends it to the other site.  When
+            the message is received on the other site,  the  Message-IDs
+            are  looked up, and if any of the messages have not been re-
+            ceived, they are put into a sseennddmmee control message. When the
+            iihhaavvee  message  has been fully processed, the sseennddmmee message
+            is sent to the site that sent the iihhaavvee message.
+
+                 When the orignal site receives the sseennddmmee  message,  it
+            sends the requested articles in the format designated by the
+            _s_y_s file (the II flag is ignored in this case).  In this  ex-
+            ample,  it  would write into the file //uussrr//ssppooooll//bbaattcchh//_e_l_s_i_e
+            for later processing by _s_e_n_d_b_a_t_c_h.
+
+            88..22..  nneewwggrroouupp
+
+                 This message has one or two arguments, the  name  of  a
+            newsgroup  to  be  created  and the second optional argument
+            _m_o_d_e_r_a_t_e_d.  This allows special action to be  taken  locally
+            when  a new newsgroup is created.  It is generated by the --CC
+            option to _i_n_e_w_s.  By default, the newsgroup is added to  the
+            active  file, and mail is sent to the local contact advising
+            that this has happened.  The directory will be created  when
+            a message for that newsgroup arrives.  If NNOONNEEWWGGRROOUUPPSS is de-
+            fined, the newsgroup will not be created and NNOOTTIIFFYY will  be
+            sent
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             38
+
+
+            mail explaining how to do  it  manually.   See  the  routine
+            "c_newgroup" in _c_o_n_t_r_o_l._c if you want something different to
+            happen.  (Note that, although the body of the  message  con-
+            tains  a brief description of the purpose of the group, this
+            body is usually thrown away by existing  software.)  If  the
+            second  argument  is the keyword _m_o_d_e_r_a_t_e_d, the newsgroup is
+            created moderated, else it is unmoderated.
+
+            88..33..  rrmmggrroouupp
+
+                 This message has one argument, the name of a  newsgroup
+            to  be removed.  It is used for network-wide cancellation of
+            a newsgroup.  If MMAANNUUAALLLLYY is not defined, it will remove the
+            articles,  directory,  and  active  file line for the group.
+            There is a shell script _r_m_g_r_o_u_p that  does  essentially  the
+            same  thing  as  this message, but the shell script only re-
+            moves the group locally.  We recommend that you leave  MMAANNUU--
+            AALLLLYY  defined, and when you receive mail advising you of the
+            demise of the newsgroup, you run _r_m_g_r_o_u_p by hand.  This will
+            prevent accidental or malicious removal of a good newsgroup.
+
+            88..44..  ccaanncceell
+
+                 This message cancels a given article.  It takes one ar-
+            gument,  the message id of the article to cancel.  It should
+            be broadcast to the same newsgroup as the original  article.
+            If  the  article  to be canceled is not present, the control
+            message will not be propagated to downstream sites.
+
+            88..55..  sseennddssyyss
+
+                 The _s_y_s file is mailed to the originator  of  the  mes-
+            sage.   There  are  no  arguments.   This is used for making
+            maps.  Since your _s_y_s file is public information, you should
+            not remove or change this control message.
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             39
+
+
+            88..66..  sseenndduuuunnaammee
+
+                 The _u_u_n_a_m_e program is run and the output is  mailed  to
+            the  originator  of  the  message.   There are no arguments.
+            This was used for making UUCP maps.  It is  of  questionable
+            use  any more.  If you do not run UUCP or have sites in your
+            _L._s_y_s which are a secret, you may wish to edit  this.   Note
+            that  only  the output of _u_u_n_a_m_e is mailed, not the contents
+            of _L._s_y_s (which news does not have access  to  anyway).   If
+            you  do  make  a  change,  you should arrange that some mail
+            still is sent out to the originator of the message,  so  the
+            originator will know your site received it.  See the code in
+            routine "c_senduuname" in _c_o_n_t_r_o_l._c.
+
+            88..77..  vveerrssiioonn
+
+                 The local version name/number of the  netnews  software
+            is mailed back to the originator of the control message.
+
+            88..88..  cchheecckkggrroouuppss
+
+                 This control message is an  attempt  at  semi-automatic
+            maintenance of the list of active news groups.  This control
+            messages takes the body of the article  and  pipes  it  into
+            _L_I_B_D_I_R_L_I_B_D_I_R/_c_h_e_c_k_g_r_o_u_p_s.       As      mentioned      previously,
+            _L_I_B_D_I_R_L_I_B_D_I_R/_c_h_e_c_k_g_r_o_u_p_s will update the newsgroups file, add  any
+            missing  newsgroups,  and mail a message to NNOOTTIIFFYY about any
+            old newsgroups that should be removed.  It is expected  that
+            the  person who maintains the list of active newsgroups will
+            broadcast this control message on a regular basis.
+
+            88..99..  OOtthheerr MMeessssaaggeess
+
+                 Any unrecognized message will cause an error message to
+            be  mailed to the local news administrator.  Additional mes-
+            sages may be defined as time goes on, such  as  messages  to
+            automatically  update  directories  or  maps.  You should be
+            willing to go into the code (_c_o_n_t_r_o_l._c) and add messages  as
+            they become standardized.
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             40
+
+
+            99..  MMaaiinntteennaannccee
+
+                 There are some things you  should  do  periodically  to
+            keep  your news system running smoothly.  We hope to eventu-
+            ally automate all or most of this, but right now some of  it
+            must be done by hand.
+
+                 The _h_i_s_t_o_r_y and _l_o_g files in your LLIIBBDDIIRR directory will
+            grow.  You should make sure that they are cleaned up period-
+            ically.  The _L_I_B_D_I_R_L_I_B_D_I_R/_e_x_p_i_r_e program will  remove  lines  from
+            history  corresponding to deleted articles, but it is a good
+            idea to check the file every few weeks to make  sure  it  is
+            not going wild.  Be sure not to completely lose your history
+            file when you clean it up, in case another neighbor tries to
+            send you an article you recently got.  (If you only get news
+            from one site it is safe to clean it out completely.)
+
+                 The log file is not automatically cleaned  out  by  any
+            netnews  software,  and will grow quickly.  The _m_i_s_c/_t_r_i_m_l_i_b
+            script can be installed in _L_I_B_D_I_R_L_I_B_D_I_R/_t_r_i_m_l_i_b, and invoked regu-
+            larly by _c_r_o_n(8).
+
+                 You should also clean out old newsgroups  that  are  no
+            longer  active.   To remove a newsgroup mmiisscc..ffoooo, you should
+            run the shell script _r_m_g_r_o_u_p with mmiisscc..ffoooo as the  argument.
+            That is,
+
+                              LLIIBBDDIIRR/rmgroup misc.foo
+
+                 Note that clearing  up  UUCP  constipation  is  another
+            thing  you'll have to do if you have flaky hardware or phone
+            lines.  If you have more than one  connection,  chances  are
+            that  UUCP  will  get  clogged up when one of your neighbors
+            goes down for more  than  a  few  hours.   Various  spooling
+            schemes  are being worked on to help make the news/uucp sys-
+            tem more robust, but one thing you can and should do, if you
+            find  your  /_u_s_r/_s_p_o_o_l/_u_u_c_p directory getting too big, is to
+            install a subdirectory fix  to  UUCP.   A  quick  and  dirty
+            version
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             41
+
+
+            of this is  available  from  Duke,  which  traps  the  file-
+            oriented  system  calls  at  the assembly language level and
+            maps, for example, D.fooA1234 into D.foo/D.fooA1234.   Since
+            the  C.  and  D._l_o_c_a_l directories still get big, in practice
+            this can still create some big directories, but  the  direc-
+            tories tend to be a factor of 5 smaller, resulting in a fac-
+            tor of 25 improvement to speed (since a directory  traversal
+            for  all files is quadratic on UNIX).  Right now, unless you
+            have the uucp distributed with 4.3  BSD  or  the  so  called
+            _H_o_n_e_y_D_a_n_B_e_r uucp, UUCP is the weak link in netnews distribu-
+            tion, and you should certainly keep an eye on it.
+
+            1100..  CCrreeaattiinngg NNeeww NNeewwssggrroouuppss
+
+                 As system news administrator, you are  able  to  create
+            newsgroups.   To create a newsgroup, first make sure this is
+            the right thing to do.  Normally a suggestion is first post-
+            ed  to  nneewwss..ggrroouuppss,wwhhaatteevveerr..rreellaatteeddggrroouupp  for  a world wide
+            newsgroup (wwhhaatteevveerr..rreellaatteeddggrroouupp should be the  group  which
+            you  are  proposing to sub-divide.  For instance, to propose
+            creating rreecc..aarrttss..ttvv..ssooaappss, post  the  original  article  to
+            rreecc..aarrttss..ttvv,nneewwss..ggrroouuppss.)  Followups are made to nneewwss..ggrroouuppss
+            _o_n_l_y.  (You can force this by putting the line:
+
+                              Followup-To: news.groups
+
+            in the headers of your original posting.)  If  it  is  esta-
+            blished  that there is general interest in such a group, and
+            a name is agreed on, then someone creates it by  typing  the
+            command
+
+                            inews -d local -C _n_e_w_s_g_r_o_u_p
+
+            This will create the active  entry  locally.  The  directory
+            will  be  created  automatically  when the first article for
+            that newsgroup is received.  It will also prompt you  for  a
+            paragraph describing the group and start up an _i_n_e_w_s to post
+            a newgroup control message announcing the group.
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             42
+
+
+                 You must be the super user to  use  the  --CC  option  to
+            _i_n_e_w_s.   (That is, your uid must match RROOOOTTIIDD.  It is recom-
+            mended that you change RROOOOTTIIDD to your own uid so  you  don't
+            have  to _s_u to create newsgroups.) If you change the distri-
+            bution to be something other than local, the newgroups  mes-
+            sage will be sent to the specified distribution.
+
+            1111..  CCoonnvveerrssiioonn ffrroomm AA ttoo BB
+
+                 If you are currently running version A on your  system,
+            note that B is incompatible with A.  The files are stored in
+            a different format (headers have mail like field names now).
+            The  directory organization is different (each newsgroup has
+            a subdirectory of its own, and the file  names  are  numbers
+            rather than _s_i_t_e._i_d pairs).  There are no _b_i_t_m_a_p, _u_i_n_d_e_x, or
+            _n_i_n_d_e_x files to be trashed (which articles have been read is
+            stored  in  each users ._n_e_w_s_r_c file).  The user interface is
+            slightly different (news/_n_e_t_n_e_w_s(1) is now called  _r_e_a_d_n_e_w_s,
+            news  is posted using _i_n_e_w_s, subscription is done by editing
+            ._n_e_w_s_r_c, the sense of the --cc option  is  reversed,  news  is
+            presented  in  newsgroup  order,  the  --aa and --tt options now
+            probably need --xx as well, and there are many minor changes).
+
+                 We decided not to provide a  program  to  convert  from
+            version  A to version B.  Rather, the following strategy was
+            adopted for conversion:
+
+            (1)  Install the new news in  a  different  spool  directory
+                 from   the   old   one.    For  example,  you  can  use
+                 /_u_s_r/_s_p_o_o_l/_n_e_w_n_e_w_s.  You can  change  to  the  standard
+                 name  later if you want.  Get it to work for local mes-
+                 sages.
+
+            (2)  Post an article to newsgroup ggeenneerraall with the old  news
+                 announcing  the  change.   Make available documentation
+                 such as the accompanying paper _H_o_w _t_o _R_e_a_d _t_h_e  _N_e_t_w_o_r_k
+                 _N_e_w_s  to  the users.  This article will be the last one
+                 in the old news.
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             43
+
+
+            (3)  _C_h_m_o_d the old news directory to 555 to prevent any more
+                 news  from  being posted.  (Actually, this will prevent
+                 the bitfile from being updated, so it may not be a good
+                 idea.)
+
+            (4)  Replace the old _r_n_e_w_s program with the new  _r_n_e_w_s  pro-
+                 gram.
+
+            (5)  Test it by having your neighbor send you a message.
+
+            (6)  Wait a reasonable period for everyone to have read  the
+                 final  article  with the old news.  Perhaps a few weeks
+                 is right.
+
+            (7)  Uninstall the old news.
+
+                 Users will have to invoke _r_e_a_d_n_e_w_s instead  of  _n_e_t_n_e_w_s
+            to read news.  Depending on your old method of posting, this
+            could be changed too.  (If you were using mail, it does  not
+            need  to  be changed.) They will also have to fix their sub-
+            scriptions.  In general, they can type
+
+                                     netnews -s
+
+            to see what they subscribe to on the old  system,  and  then
+            create  a  file  in their home directory called ._n_e_w_s_r_c con-
+            taining
+
+                           options -n _t_h_e_i_r _s_u_b_s_c_r_i_p_t_i_o_n
+
+            The format of the subscription pattern matching is the  same
+            as  in A except that AALLLL is replaced by aallll (change to lower
+            case).  Something along the lines of this could be  used  to
+            automate this:
+
+            (echo -n "options -s" ; netnews -s | sed s/ALL/all/) > .newsrc
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             44
+
+
+            1122..  CCoonnvveerrssiioonn ffrroomm 22..99 ttoo 22..1111
+
+                 Conversion from 2.9 to 2.11 is not nearly  as  involved
+            as an A to B conversion.  The user interface does not change
+            much, and the user ._n_e_w_s_r_c files are not affected.  However,
+            it  is  recommended that you do the conversion during a time
+            when no news is received, so that incoming news will not get
+            lost.  One way to ensure this is to make /_u_s_r/_b_i_n/_r_n_e_w_s be a
+            shell script which saves the article in /usr/spool/innews/$$$$
+            ($$$$  is  the  process id of the particular shell and will be
+            unique for each article).
+
+                 The first  step  to  conversion  is  to  customize  the
+            sources.   In the past, you had to take a fresh distribution
+            and edit the _d_e_f_s._h file and _M_a_k_e_f_i_l_e to suit local  prefer-
+            ences.   If you had many local changes, or didn't record the
+            local changes, upgrading could be annoying.  2.11 provides a
+            mechanism  to automate these changes.  Create a shell script
+            in the src  directory  called  _l_o_c_a_l_i_z_e._s_h.   (You  can  use
+            _l_o_c_a_l_i_z_e._s_a_m_p_l_e  as  a  template.)  This shell script should
+            copy _d_e_f_s._d_i_s_t to _d_e_f_s._h, and copy _M_a_k_e_f_i_l_e._d_s_t to _M_a_k_e_f_i_l_e.
+            It  should  _c_h_m_o_d  any  files that need to be changed (often
+            _M_a_k_e_f_i_l_e and _d_e_f_s._h) to a writable mode.  Then it should in-
+            voke _e_d(1) on the files, making any necessary local changes.
+
+                 The next step is to compile the software, with _m_a_k_e(1).
+            It may be necessary to update the _l_o_c_a_l_i_z_e._s_h file until you
+            are satisfied with the compilation.   Note  that  after  any
+            change  to  the  _M_a_k_e_f_i_l_e  in  _l_o_c_a_l_i_z_e._s_h,  you  should run
+            _l_o_c_a_l_i_z_e._s_h by hand.  Otherwise, although make will  run  it
+            for  you,  it will then continue to do the make with the old
+            _M_a_k_e_f_i_l_e.
+
+                 When the software  is  compiled,  you  should  run  the
+            _c_v_t._a_c_t_i_v_e._s_h  shell  script,  with the _l_i_b and _s_p_o_o_l direc-
+            tories as parameters.  This will create a new active file in
+            _L_I_B_D_I_R_L_I_B_D_I_R/_a_c_t_i_v_e.  Then run _c_v_t._l_i_n_k_s._s_h with the _l_i_b and _s_p_o_o_l
+            directories as parameters.  Then run _c_v_t._n_a_m_e_s._s_h  with  the
+            _l_i_b
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             45
+
+
+            and _s_p_o_o_l directories  as  parameters.   Old  news  will  be
+            linked into the new hierarchy while leaving links in the old
+            hierarchy.  If you were using the default library and  spool
+            directories, you would do the following:
+
+                 sh cvt.active.sh LLIIBBDDIIRR /usr/spool/news
+                 sh cvt.links.sh LLIIBBDDIIRR /usr/spool/news
+                 sh cvt.names.sh LLIIBBDDIIRR /usr/spool/news
+
+                 The next step is to back up the old binaries:
+
+                 mv BBIINNDDIIRR/rnews BBIINNDDIIRR/ornews
+                 ...
+
+            and to install 2.11 with
+
+                                    make install
+
+            Once it is installed, any incoming news will be placed  into
+            the  new  hierarchy  but not the old one.  The critical time
+            window is between running the three shell files and  instal-
+            ling  the new software - any incoming news between these two
+            points will appear in only the old hierarchy and be lost  to
+            the new software.  If any significant time elapses here, you
+            should divert _r_n_e_w_s  into  a  separate  spool  directory  as
+            described above.
+
+                 It is crucial that you run _e_x_p_i_r_e before any  new  news
+            arrives.   _E_x_p_i_r_e will update several key files automatical-
+            ly.
+
+                 Finally, test things by posting articles to ttoo.._n_e_i_g_h_b_o_r_n_e_i_g_h_b_o_r
+            newsgroups and watching some incoming news, and announce the
+            change to your users.
+
+                 When you are satisfied that the conversion was success-
+            ful,  run  the shell file _c_v_t._c_l_e_a_n._s_h which will remove the
+            old 2.9 news hierarchy.
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             46
+
+
+            1133..  CCoonnvveerrttiinngg ffrroomm 22..1100..xx ttoo 22..1111
+
+                 Converting from version 2.10 or later to 2.11  requires
+            no special intervention. All files are updated automatically
+            when you do "make update".
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             47
+
+
+            AAppppeennddiixx AA:: SSeettttiinngg uupp aa CCoommpprreesssseedd,, BBaattcchheedd NNeewwssffeeeedd
+
+                 First, BBAATTCCHH must have been #_d_e_f_i_n_e'd  when  you  built
+            the  news  system.  To check, look in the file _d_e_f_s._h in the
+            news source directory.  BBAATTCCHH should be defined as a program
+            name  (by default, _u_n_b_a_t_c_h).  If it's undefined or commented
+            out, define it, re-make the news system, and install the new
+            software.
+
+                 You'll also need a working _c_o_m_p_r_e_s_s program.   Use  the
+            one  shipped  with this news distribution, which is based on
+            version 4.0.  Your news neighbors should be running a compa-
+            tible  version of compress.  Versions 3.0 and 4.0 are compa-
+            tible with each other, but both are incompatible  with  ver-
+            sions 2.0 and earlier.
+
+                 Update your _s_y_s file.  First, add the  FF  flag  to  the
+            other   news   system's   line.    For   instance,  if  your
+            compressed-and-batched news feed is named _f_r_o_b_o_z_z,  and  its
+            _s_y_s file entry looks like:
+
+                 frobozz:world,comp,sci,rec,misc,soc,talk,news,na,usa,ca,to.frobozz
+
+            then add the FF flag as the third (colon-separated) field:
+
+                 frobozz:world,comp,sci,rec,misc,soc,talk,news,na,usa,ca,to.frobozz:F
+
+            Now the pathnames of articles to be sent will be stashed  in
+            a  file.   This file can be specified in the fourth field of
+            the _s_y_s entry.  Normally, you can just use  the  default  of
+            _B_A_T_C_H_D_I_R_B_A_T_C_H_D_I_R/_s_y_s_t_e_m, (where _B_A_T_C_H_D_I_R_B_A_T_C_H_D_I_R is usually /_u_s_r/_s_p_o_o_l/_b_a_t_c_h
+            and _s_y_s_t_e_m is the name of the remote system, in this example
+            _f_r_o_b_o_z_z).   A  name of that form is necessary: the _s_e_n_d_b_a_t_c_h
+            script, which sends the batched news, looks for a file  name
+            of  this  form to decide if there's news for the remote sys-
+            tem.
+
+                 Your completed _s_y_s  file  line  should  look  something
+            like:
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             48
+
+
+                 frobozz:world,comp,sci,rec,misc,soc,talk,news,na,usa,to.frobozz:F
+
+                 In  your _c_r_o_n_t_a_b file, find or create at least two news
+            lines:  one  that runs nightly, and one that runs every hour
+            or so.  The nightly-run script should run _e_x_p_i_r_e,  trim  log
+            files,  and  perhaps compile weekly statistics that you post
+            to a local-area newsgroup one day a  week.   The  hourly-run
+            script  should  complete  the  transmitting task with a line
+            like:
+
+                                sendbatch -c frobozz
+
+            Make sure the script knows how to get to  the  directory  in
+            which _s_e_n_d_b_a_t_c_h lives.  You can either mention the directory
+            in the script's PPAATTHH-setting line, or replace _s_e_n_d_b_a_t_c_h with
+            its  full  pathname.  _S_e_n_d_b_a_t_c_h reads the files mentioned in
+            /_u_s_r/_s_p_o_o_l/_b_a_t_c_h/_f_r_o_b_o_z_z,    batches    them,     optionally
+            compresses  them,  sends  them to the remote system, and ar-
+            ranges for remote processing.
+
+                 This remote processing can be directed by another  file
+            in  BBAATTCCHHDDIIRR.   Make  an  executable file with a name of the
+            form     _B_A_T_C_H_D_I_R_B_A_T_C_H_D_I_R/_s_y_s_t_e_m.cmd     (for     this      example,
+            /_u_s_r/_s_p_o_o_l/_b_a_t_c_h/_f_r_o_b_o_z_z._c_m_d).   Put a line in it specifying
+            the command that the remote system should execute to  unpack
+            the  news  batches  that  your system will send.  An example
+            _f_r_o_b_o_z_z._c_m_d would be:
+
+                          uux - -r -z -n -gd frobozz!rnews
+
+                 Now your system will transmit compressed batches.   The
+            receiving  side of the business is handled largely by a pro-
+            gram called _r_n_e_w_s, which will call other programs in  LLIIBBDDIIRR
+            to do additional processing on the incoming batches.
+
+                 Make sure there is an executable file called  _r_n_e_w_s  in
+            the  BBIINNDDIIRR directory (check the _M_a_k_e_f_i_l_e for its actual lo-
+            cation).  It must be reachable by UUCP or by whatever  tran-
+            sport  you'll  use  to transfer the netnews.  If you defined
+            BBIINNDDIIRR
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             49
+
+
+            as /_u_s_r/_b_i_n, you should have no problems because  _u_u_x_q_t  can
+            already  get there.  If you defined it as a different direc-
+            tory, you may have to teach _u_u_x_q_t to look in that directory;
+            accomplishing  this varies from system to system.  On 4.[23]
+            BSD, add the directory to the PPAATTHH== line of your UUCP _L._c_m_d_s
+            file.   On  System V, on the _r_n_e_w_s line of your _L._c_m_d_s file,
+            add a comma followed by the remote  system's  name  on  that
+            line.   If yours is in /_u_s_r/_b_i_n/_n_e_w_s/_r_n_e_w_s, your _L._c_m_d_s file
+            will look like:
+
+                 [For 4.[23]BSD]
+                 PATH=/bin:/usr/bin:/usr/bin/news
+                 rnews
+
+                 [For System V]
+                 /usr/bin/news/rnews,frobozz
+
+            Other systems have  a  similar  file  in  the  /_u_s_r/_l_i_b/_u_u_c_p
+            directory  by which you can specify added programs and paths
+            different from the defaults.   HP-UX,  for  example,  has  a
+            /_u_s_r/_l_i_b/_u_u_c_p/_C_O_M_M_A_N_D_S  file which expands _u_u_x_q_t's horizons.
+            _H_o_n_e_y_D_a_n_B_e_r uucp (_a._k._a AT&T Basic Networking Utilities) has
+            a  _P_e_r_m_i_s_s_i_o_n_s file that controls what is executed.  In more
+            restrictive cases, paths are compiled into  _u_u_x_q_t.   If  you
+            can't modify any UUCP files, just put _r_n_e_w_s in /_u_s_r/_b_i_n.
+
+                 Tell the person at the other end of  your  newsfeed  to
+            use  _s_e_n_d_b_a_t_c_h  -_c  to send you news.  Once that's in place,
+            watch your UUCP _L_O_G_F_I_L_E and your news _l_o_g and  _e_r_r_l_o_g  files
+            to ensure that news is being correctly received and unpacked
+            on your system.
+
+                 Older compressed batching systems will try to exec _c_u_n_-
+            _b_a_t_c_h instead of _r_n_e_w_s.  If you are still communicating with
+            these, leave _c_u_n_b_a_t_c_h in BBIINNDDIIRR  until  they  have  upgraded
+            their software.
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             50
+
+
+            AAppppeennddiixx BB:: MMUULLTTIICCAASSTT
+
+                 If this is defined (in _d_e_f_s._h) then two new flag  char-
+            acters  become defined in the _s_y_s file.  The first, and most
+            important, of these is the MM flag.
+
+                 If the MM flag is set on some line in the _s_y_s file, then
+            the fourth field (transfer command) is redefined to become a
+            _m_u_l_t_i_c_a_s_t name.  That is simply another system name, expect-
+            ed  to  be  found in the first field of some line in the _s_y_s
+            file (textually following the line containing the MM flag).
+
+                 When a news item is being retransmitted, if  it  should
+            (according  to  the  subscription  list) be sent to a system
+            that has the MM flag set, then instead of a command being run
+            immediately  to transmit the news, the news system remembers
+            the system name,  along  with  the  multicast  name  (fourth
+            field).
+
+                 Eventually the multicast system name is  found  in  the
+            first  field  of  a sys file line.  If its subscription list
+            allows transmission of this news item, then its command will
+            be executed.  This command may have up to two "%s" substitu-
+            tions in it.  The second of those is replaced by the name of
+            a file containing the news item (used with the UU flag).  The
+            first is subjected to rather special treatment.   The  whole
+            "word"  (delimited  by  white space) containing that "%s" is
+            duplicated as many times as there were systems  with  the  MM
+            flag set that referenced this multicast name (which might be
+            0 times, causing that "word" to be  omitted).   In  each  of
+            these duplicates, the "%s" is replaced by the name of a sys-
+            tem.  Note the multicast system name itself is not  included
+            in this process.  Then the command is executed as usual.
+
+                 The second flag available if the news system  is  built
+            with  MMUULLTTIICCAASSTT defined is OO.  If this flag is set, then the
+            sys file line will be ignored unless the system  name  is  a
+            multicast  name  from some earlier line with the MM flag, and
+            the
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             51
+
+
+            news item is to be sent to that (earlier) system.  This  al-
+            lows  the  subscription  list  for the multicast system name
+            (which is likely to be a fake system name, invented just for
+            this  purpose)  to  be  given  a very wide subscription list
+            (like aallll) without any unusual effects.
+
+                 Here is an example.  Assume that you  wish  to  forward
+            ccoommpp..uunniixx to four people by mail.  You could do this as ...
+
+                 fred:comp.unix::mail fred
+                 harry:comp.unix::mail harry
+                 jane:comp.unix::mail jane
+                 tony:comp.unix::mail tony
+
+            however this causes the mail program to be started 4  times,
+            once  for each recipient.  On some systems starting the mail
+            program is a very expensive operation.  If MMUULLTTIICCAASSTT is  de-
+            fined, an alternative method is
+
+                 fred:comp.unix:M:tony
+                 harry:comp.unix:M:tony
+                 jane:comp.unix:M:tony
+                 tony:comp.unix::mail tony %s
+
+            This would cause just one command to be run: "mail tony fred
+            harry  jane".  Note that "tony" must still be explicitly in-
+            cluded in the argument list to the mail  command;  the  "%s"
+            does  not  expand to include the multicast "system name" it-
+            self.
+
+                 A more useful way of doing this, which does not  assume
+            that  all  the mail readers will want to read the same news-
+            groups is as follows.
+
+
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             52
+
+
+                 fred:comp.unix:M:Mail
+                 harry:sci.physics,sci.astro:M:Mail
+                 jane:comp.unix.wizards,soc.women:M:Mail
+                 tony:comp.unix,comp.unix.wizards,rec.humor:M:Mail
+                 Mail:all:O:mail %s
+
+                 Now, if a news item in group  ccoommpp..uunniixx  was  received,
+            the command
+
+                                   mail fred tony
+
+            would be executed.  If the news were in both  ccoommpp..uunniixx  and
+            ccoommpp..uunniixx..wwiizzaarrddss then the command would be
+
+                                mail fred jane tony
+
+                 If a news item in ssccii..mmeedd (which no-one gets  by  mail)
+            arrives,  then  the  "Mail" line will be ignored, because of
+            the OO flag.  "Mail" is a fake system invented  just  so  its
+            "transfer command" can be used to send news to the other re-
+            cipients.
+
+                 The same kind of  technique  can  be  used  for  normal
+            transfer  of news to other systems if your transport network
+            supports a facility to send to many  other  systems  in  one
+            command.   (That is, if it has a multicast facility.) SunIII
+            (the network used in Australia) has this ability, so a typi-
+            cal Australian _s_y_s file looks like
+
+                 emuvax:world,aus,comp.sci:M:FakeName
+                 kremlin:world,aus,comp,sci:M:FakeName
+                 kanga:world,aus,comp.unix:M:FakeName
+                 FakeName:all:OUS:/bin/sendfile -NRSareporter -d%s -x%s
+
+                 A news item in aauuss..ggeenneerraall causes the following command
+
+            /bin/sendfile -NRSareporter -demuvax -dkremlin -dkanga -x/usr/spool/...
+
+            to be executed.  Just one command is run to send the news to
+            three remote systems.
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             53
+
+
+                 If a multicast system has the FF flag set, then the name
+            of  a file containing the news is appended to the file whose
+            name is in the fourth field, as  usual.   But  on  the  same
+            line, separated by spaces, will be appended the names of all
+            the systems that referenced this multicast system.
+
+                 For example, if the Australian  site  wanted  to  batch
+            news, instead of sending it directly, it would simply change
+            the last line of its _s_y_s file to
+
+                     FakeName:all:F:/usr/spool/batched/allsites
+
+                 Then a news item in mmiisscc..jjoobbss would cause the following
+            line to be appended to /_u_s_r/_s_p_o_o_l/_b_a_t_c_h_e_d/_a_l_l_s_i_t_e_s
+
+                   /usr/spool/news/misc/jobs/5542 emuvax kremlin
+
+                 This can then be processed later, in something like the
+            normal  manner.   (Unfortunately no commands to do this pro-
+            cessing are yet available.)
+
+                 Caution: when MMUULLTTIICCAASSTT is defined, the first  "%s"  in
+            all  transfer  commands is used for multicast, regardless of
+            whether or not the system name is  ever  used  as  the  last
+            field  of  some line with the MM flag set.  To use the UU flag
+            in such a case, a dummy "%s" should be used, it will  simply
+            be omitted from the command that is executed.
+
+                 As an example, if a _s_y_s file line without MMUULLTTIICCAASSTT de-
+            fined was:
+
+                foovax:comp,world,na,usa:U:uux - foovax!foonews <%s
+
+            with MMUULLTTIICCAASSTT defined, it would need to be changed to:
+
+               foovax:comp,world,na,usa:U:uux - foovax!foonews %s <%s
+
+                 Additional caution: The numbers of  system  names  that
+            may be used in this way are quite severly restricted.  Typi-
+            cally there may only be about 10 multicast system names, and
+            each
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             54
+
+
+            of those is restricted to sending to no more than  about  20
+            systems.   These  limits  are  dynamic (that is, the numbers
+            counted are the number of multicast  systems  receiving  any
+            single  news  item,  and  the number of systems that each of
+            those will actually cause this particular news  item  to  be
+            sent  to).  These limits should easily suffice for real news
+            sending to remote systems; however they are  not  likely  to
+            suffice if you want to mail news to everyone on your host.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             55
+
+
+            AAppppeennddiixx CC:: IInnssttaalllliinngg nneewwss oonn aa EEuunniiccee ssyysstteemm
+
+                 Eunice does not have links.  To get around this problem
+            without  wasting megabytes of disk space, links are simulat-
+            ed.  Each article is stored under the directory  correspond-
+            ing  to the first group on the Newsgroups line.  The remain-
+            ing directories contain a short file giving the name of  the
+            real  file.  _R_e_a_d_n_e_w_s  and  _v_n_e_w_s  know  how to follow these
+            links; so does _r_n if it is compiled with LLIINNKKAARRTT defined (_r_n
+            is not included in this distibution).
+
+                 If you expire different groups at different  times,  an
+            article  disappears  when  the first group in the Newsgroups
+            line expires, even if it's cross posted to a group  you  re-
+            tain longer.  Also, the archival option for _e_x_p_i_r_e (-a flag)
+            does not work.
+
+                 Eunice does not have the set-user-id bit.  Instead, the
+            VMS  feature  allowing  installation of privileged images is
+            used.   inews  and  rnews  must  be  installed  with  SYSPRV
+            privilege.   To  allow VMS to install _i_n_e_w_s (_r_n_e_w_s is a copy
+            of it), it must be linked with the /_n_o_t_r_a_c_e  flag.   Despite
+            the documentation, this only seems to work if the VMS linker
+            is used on VMS-format object files,  as  of  Eunice  version
+            4.2.  So it is VERY IMPORTANT to type _v_m_s_o_b_j before building
+            news.
+
+                 The DCL command file _e_u_n_i_n_s_t_a_l._c_o_m installs  _i_n_e_w_s  and
+            _r_n_e_w_s  with  the proper privileges.  It is run by  "make in-
+            stall" as the last step.  It is possible that it  will  fail
+            because  your  system  does  not have sufficient global page
+            table space or known file list entries.  See the Eunice  in-
+            stallation  manual  to  learn  how to increase the values of
+            these parameters (you will have to reboot the system).
+
+                 The _e_u_n_i_n_s_t_a_l._c_o_m script must be  run  every  time  the
+            system    is   booted.    I   suggest   invoking   it   from
+            /etc/suchmod.com.
+
+            News Version B2.10.3                        October 27, 1986
+
+
+
+
+            USENET Version B Installation                             56
+
+
+                 It is crucial that LLIIBBDDIIRR/_a_c_t_i_v_e and LLIIBBDDIIRR/_s_e_q  be  in
+            Unix format, as opposed to VMS format.  Use _e_t_c/_v_m_s_t_o_u_n_i_x to
+            assure this.
+
+                 Not all options have been tested; if you select options
+            other  than those set by the localize.vms script (except for
+            obvious things like etc) I  can't  guarantee  that  it  will
+            work.   In  particular, I haven't attempted to define SSPPOOOOLL--
+            NNEEWWSS or MMUULLTTIICCAASSTT.  That doesn't mean they won't work,  just
+            that I haven't tried them.
+
+                 If you choose to run compressed batching,  I  recommend
+            that you put _c_u_n_b_a_t_c_h in your _L._c_m_d_s file and have your news
+            feed send compressed batches the  "old"  way,  because  this
+            saves  an exec, and forks and execs are so expensive on Eun-
+            ice (the new way is for the first line to be #cunbatch,  and
+            have _r_n_e_w_s exec _c_u_n_b_a_t_c_h).
+
+                 If you have questions on Eunice and news contact:
+
+                        Joe Buck, Entropic Processing, Inc.
+
+                        seismo!epiwrl!epimass!jbuck
+                        hplabs!oliveb!epimass!jbuck
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            News Version B2.10.3                        October 27, 1986
+
+

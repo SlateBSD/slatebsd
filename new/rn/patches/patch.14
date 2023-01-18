@@ -1,0 +1,467 @@
+System: rn version 4.3
+Patch #: 14
+Priority: ENHANCEMENT
+Subject: rn -c speedup
+>From: mark@cbosgd.UUCP (Mark Horton), lwall@sdcrdcf.UUCP (Larry Wall)
+
+Description:
+	Mark mentioned that he didn't want to put "rn -c" into his
+	system-wide login profile because it was kind of slow, and he
+	suggested that it might be speedupable.  Okay, here it is.
+	The following patches make "rn -c" run between two and three
+	times faster on our machine.  These figures are for comparison
+	only and may vary depending on the environment and your driving
+	habits.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+	(Has anyone really made it this far without patch?)
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 13
+1c1
+< Patch #: 13
+---
+> Patch #: 14
+
+Index: init.c
+Prereq: 4.3
+*** init.c.old	Tue May 21 13:38:34 1985
+--- init.c	Tue May 21 13:38:37 1985
+***************
+*** 1,4
+! /* $Header: init.c,v 4.3 85/05/01 16:16:13 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3  85/05/01  16:16:13  lwall
+
+--- 1,4 -----
+! /* $Header: init.c,v 4.3.1.2 85/05/21 14:22:46 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3.1.2  85/05/21  14:22:46  lwall
+***************
+*** 1,6
+  /* $Header: init.c,v 4.3 85/05/01 16:16:13 lwall Exp $
+   *
+   * $Log:	init.c,v $
+   * Revision 4.3  85/05/01  16:16:13  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: init.c,v 4.3.1.2 85/05/21 14:22:46 lwall Exp $
+   *
+   * $Log:	init.c,v $
++  * Revision 4.3.1.2  85/05/21  14:22:46  lwall
++  * Sped up "rn -c" by avoiding unnecessary initialization.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:33:39  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  16:16:13  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 80,86
+      
+      /* now make sure we have a current working directory */
+  
+!     cwd_check();
+      
+      /* now that we know where to save things, cd to news directory */
+  
+
+--- 86,93 -----
+      
+      /* now make sure we have a current working directory */
+  
+!     if (!checkflag)
+! 	cwd_check();
+      
+      /* now that we know where to save things, cd to news directory */
+  
+***************
+*** 96,102
+  
+      /* get info on last rn run, if any */
+  
+!     last_init(tcbuf);
+  
+      free(tcbuf);			/* recover 1024 bytes */
+  
+
+--- 103,110 -----
+  
+      /* get info on last rn run, if any */
+  
+!     if (!checkflag)
+! 	last_init(tcbuf);
+  
+      free(tcbuf);			/* recover 1024 bytes */
+  
+***************
+*** 102,108
+  
+      /* make sure we are the right version */
+  
+!     version_check();
+  
+      /* make sure we are the sole possessors of .newsrc */
+  
+
+--- 110,117 -----
+  
+      /* make sure we are the right version */
+  
+!     if (!checkflag)
+! 	version_check();
+  
+      /* make sure we are the sole possessors of .newsrc */
+  
+***************
+*** 106,112
+  
+      /* make sure we are the sole possessors of .newsrc */
+  
+!     lock_check();
+  
+      /* check for news news */
+  
+
+--- 115,122 -----
+  
+      /* make sure we are the sole possessors of .newsrc */
+  
+!     if (!checkflag)
+! 	lock_check();
+  
+      /* check for news news */
+  
+***************
+*** 110,116
+  
+      /* check for news news */
+  
+!     newsnews_check();
+  
+      /* open active file, etc. */
+  
+
+--- 120,127 -----
+  
+      /* check for news news */
+  
+!     if (!checkflag)
+! 	newsnews_check();
+  
+      /* open active file, etc. */
+  
+***************
+*** 214,220
+  	tmpfp = fopen(lockname,"r");
+  	if (tmpfp != Nullfp) {
+  	    int processnum;
+! 
+  	    fgets(buf,LBUFLEN,tmpfp);
+  	    fclose(tmpfp);
+  	    processnum = atoi(buf);
+
+--- 225,231 -----
+  	tmpfp = fopen(lockname,"r");
+  	if (tmpfp != Nullfp) {
+  	    int processnum;
+!     
+  	    fgets(buf,LBUFLEN,tmpfp);
+  	    fclose(tmpfp);
+  	    processnum = atoi(buf);
+***************
+*** 285,291
+  {
+      char *newsnewsname = filexp(NEWSNEWSNAME);
+  
+!     if (!checkflag && (tmpfp = fopen(newsnewsname,"r")) != Nullfp) {
+  	fstat(tmpfp->_file,&filestat);
+  	if (filestat.st_mtime > lasttime) {
+  	    while (fgets(buf,sizeof(buf),tmpfp) != Nullch)
+
+--- 296,302 -----
+  {
+      char *newsnewsname = filexp(NEWSNEWSNAME);
+  
+!     if ((tmpfp = fopen(newsnewsname,"r")) != Nullfp) {
+  	fstat(tmpfp->_file,&filestat);
+  	if (filestat.st_mtime > lasttime) {
+  	    while (fgets(buf,sizeof(buf),tmpfp) != Nullch)
+
+Index: intrp.c
+Prereq: 4.3.1.3
+*** intrp.c.old	Tue May 21 13:39:24 1985
+--- intrp.c	Tue May 21 13:39:37 1985
+***************
+*** 1,4
+! /* $Header: intrp.c,v 4.3.1.3 85/05/17 10:37:11 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.3  85/05/17  10:37:11  lwall
+
+--- 1,4 -----
+! /* $Header: intrp.c,v 4.3.1.4 85/05/21 13:35:21 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.4  85/05/21  13:35:21  lwall
+***************
+*** 1,6
+  /* $Header: intrp.c,v 4.3.1.3 85/05/17 10:37:11 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
+   * Revision 4.3.1.3  85/05/17  10:37:11  lwall
+   * Fixed & substitution to capitalize last name too.
+   * 
+
+--- 1,9 -----
+  /* $Header: intrp.c,v 4.3.1.4 85/05/21 13:35:21 lwall Exp $
+   *
+   * $Log:	intrp.c,v $
++  * Revision 4.3.1.4  85/05/21  13:35:21  lwall
++  * Sped up "rn -c" by not doing unnecessary initialization.
++  * 
+   * Revision 4.3.1.3  85/05/17  10:37:11  lwall
+   * Fixed & substitution to capitalize last name too.
+   * 
+***************
+*** 83,91
+  
+      spool = savestr(filexp(SPOOL));	/* usually /usr/spool/news */
+      
+-     getwd(tcbuf);			/* find working directory name */
+-     origdir = savestr(tcbuf);		/* and remember it */
+-     
+      /* get environmental stuff */
+  
+      /* get home directory */
+
+--- 86,91 -----
+  
+      spool = savestr(filexp(SPOOL));	/* usually /usr/spool/news */
+      
+      /* get environmental stuff */
+  
+      /* get home directory */
+***************
+*** 105,110
+      if (logname == Nullch)
+  	logname = savestr(getlogin());
+  #endif
+  
+      /* get the real name of the person (%N) */
+      /* Must be done after logname is read in because BERKNAMES uses that */
+
+--- 105,115 -----
+      if (logname == Nullch)
+  	logname = savestr(getlogin());
+  #endif
++     
++     if (checkflag)			/* that getwd below takes ~1/3 sec. */
++ 	return;				/* and we do not need it for -c */
++     getwd(tcbuf);			/* find working directory name */
++     origdir = savestr(tcbuf);		/* and remember it */
+  
+      /* get the real name of the person (%N) */
+      /* Must be done after logname is read in because BERKNAMES uses that */
+
+Index: rcstuff.c
+Prereq: 4.3
+*** rcstuff.c.old	Tue May 21 13:38:02 1985
+--- rcstuff.c	Tue May 21 13:38:10 1985
+***************
+*** 1,4
+! /* $Header: rcstuff.c,v 4.3 85/05/01 11:45:56 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3  85/05/01  11:45:56  lwall
+
+--- 1,4 -----
+! /* $Header: rcstuff.c,v 4.3.1.2 85/05/17 11:40:08 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3.1.2  85/05/17  11:40:08  lwall
+***************
+*** 1,6
+  /* $Header: rcstuff.c,v 4.3 85/05/01 11:45:56 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
+   * Revision 4.3  85/05/01  11:45:56  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: rcstuff.c,v 4.3.1.2 85/05/17 11:40:08 lwall Exp $
+   *
+   * $Log:	rcstuff.c,v $
++  * Revision 4.3.1.2  85/05/17  11:40:08  lwall
++  * Sped up "rn -c" by not mallocing unnecessarily.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:37:18  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:45:56  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 84,90
+  	else
+  	    softptr[newng] = 0;
+  	some_buf[--length] = '\0';	/* wipe out newline */
+! 	if (some_buf == buf) {
+  	    rcline[newng] = savestr(some_buf);
+  					/* make a semipermanent copy */
+  	}
+
+--- 90,98 -----
+  	else
+  	    softptr[newng] = 0;
+  	some_buf[--length] = '\0';	/* wipe out newline */
+! 	if (checkflag)			/* no extra mallocs for -c */
+! 	    rcline[newng] = some_buf;
+! 	else if (some_buf == buf) {
+  	    rcline[newng] = savestr(some_buf);
+  					/* make a semipermanent copy */
+  	}
+***************
+*** 110,116
+  	    continue;
+  	}
+  	for (s = rcline[newng]; *s && *s != ':' && *s != NEGCHAR; s++) ;
+! 	if (!*s) {
+  #ifndef lint
+  	    rcline[newng] = saferealloc(rcline[newng],(MEM_SIZE)length+2);
+  #endif lint
+
+--- 118,124 -----
+  	    continue;
+  	}
+  	for (s = rcline[newng]; *s && *s != ':' && *s != NEGCHAR; s++) ;
+! 	if (!*s && !checkflag) {
+  #ifndef lint
+  	    rcline[newng] = saferealloc(rcline[newng],(MEM_SIZE)length+2);
+  #endif lint
+
+Index: sw.c
+Prereq: 4.3
+*** sw.c.old	Tue May 21 13:38:54 1985
+--- sw.c	Tue May 21 13:38:57 1985
+***************
+*** 1,4
+! /* $Header: sw.c,v 4.3 85/05/01 11:50:54 lwall Exp $
+   *
+   * $Log:	sw.c,v $
+   * Revision 4.3  85/05/01  11:50:54  lwall
+
+--- 1,4 -----
+! /* $Header: sw.c,v 4.3.1.2 85/05/21 13:36:23 lwall Exp $
+   *
+   * $Log:	sw.c,v $
+   * Revision 4.3.1.2  85/05/21  13:36:23  lwall
+***************
+*** 1,6
+  /* $Header: sw.c,v 4.3 85/05/01 11:50:54 lwall Exp $
+   *
+   * $Log:	sw.c,v $
+   * Revision 4.3  85/05/01  11:50:54  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: sw.c,v 4.3.1.2 85/05/21 13:36:23 lwall Exp $
+   *
+   * $Log:	sw.c,v $
++  * Revision 4.3.1.2  85/05/21  13:36:23  lwall
++  * Sped up "rn -c" by not doing unnecessary initialization.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:40:38  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:50:54  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 25,30
+  {
+      register int i;
+  
+      interp(*tcbufptr,1024,GLOBINIT);
+      sw_file(tcbufptr,FALSE);
+      safecpy(*tcbufptr,getenv("RNINIT"),1024);
+
+--- 31,38 -----
+  {
+      register int i;
+  
++     if (argc >= 2 && strEQ(argv[1],"-c"))
++ 	checkflag=TRUE;			/* so we can optimize for -c */
+      interp(*tcbufptr,1024,GLOBINIT);
+      sw_file(tcbufptr,FALSE);
+      safecpy(*tcbufptr,getenv("RNINIT"),1024);
+***************
+*** 161,166
+  	    break;
+  #endif
+  	case '/':
+  #ifdef SETENV
+  	    setenv("SAVEDIR",  upordown ? "%p/%c" : "%p" );
+  	    setenv("SAVENAME", upordown ? "%a"    : "%^C");
+
+--- 169,176 -----
+  	    break;
+  #endif
+  	case '/':
++ 	    if (checkflag)
++ 		break;
+  #ifdef SETENV
+  	    setenv("SAVEDIR",  upordown ? "%p/%c" : "%p" );
+  	    setenv("SAVENAME", upordown ? "%a"    : "%^C");
+***************
+*** 177,182
+  	    docheckwhen = atoi(s);
+  	    break;
+  	case 'd': {
+  	    s++;
+  	    if (*s == '=') s++;
+  	    if (cwd) {
+
+--- 187,194 -----
+  	    docheckwhen = atoi(s);
+  	    break;
+  	case 'd': {
++ 	    if (checkflag)
++ 		break;
+  	    s++;
+  	    if (*s == '=') s++;
+  	    if (cwd) {
+***************
+*** 237,242
+  	    char *t;
+  	    int flag = (*s == 'h' ? HT_HIDE : HT_MAGIC);
+  	    
+  	    s++;
+  	    len = strlen(s);
+  	    for (t=s; *t; t++)
+
+--- 249,256 -----
+  	    char *t;
+  	    int flag = (*s == 'h' ? HT_HIDE : HT_MAGIC);
+  	    
++ 	    if (checkflag)
++ 		break;
+  	    s++;
+  	    len = strlen(s);
+  	    for (t=s; *t; t++)
+
+

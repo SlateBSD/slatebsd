@@ -1,0 +1,220 @@
+Patch #: 1
+Priority: MEDIUM
+Subject: backpage can confuse header parser resulting in bad reply address
+>From: pmontgom@sdcrdcf.UUCP (Peter Montgomery)
+
+Description:
+	If you use the 'b' backpage command to get back to the first page
+	of an article, the article header is reparsed wrong, and references
+	to %T, %t, %[relay-version], %[posting-version], %[path], and %[from]
+	will be incorrect.
+
+Repeat-By:
+	Go to an article more than one page long.  Go forward one page, then
+	use 'b' to back up.  Then type 'r' to mail a reply.  The address
+	passed to Rnmail will consist of all the lines from relay-version to
+	from, which needless to say will confuse any mailer ever written.
+
+Fix:	First of all, check to see if there is a "patchlevel" file in your
+	rn source directory.  If so, it probably indicates that some of
+	the patches have already been applied.
+
+	If there is no patchlevel file, then in order to start recording
+	revision levels for the entire rn kit, cd to the rn source
+	directory and give the command:
+
+	echo "Patch #: 0" >patchlevel
+
+	If this is done correctly, patch will automatically update the
+	patchlevel file to reflect the maximum applied patch number.
+	(See the first patch below.)
+
+	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	Warning: this patch is not reversed.  If the patch program says
+	it is, then this patch has already been applied, and you should
+	not apply it again.
+
+	If patch indicates that patchlevel is the wrong version the patch has
+	already been applied.  See the patchlevel file to find out what
+	has been applied.  Don't continue with the patch.
+
+Index: patchlevel
+Prereq: 0
+1c1
+< Patch #: 0
+---
+> Patch #: 1
+
+Index: art.c
+Prereq: 4.3
+*** art.c.old	Fri May 10 13:52:54 1985
+--- art.c	Fri May 10 13:52:59 1985
+***************
+*** 1,4
+! /* $Header: art.c,v 4.3 85/05/01 11:34:51 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3  85/05/01  11:34:51  lwall
+
+--- 1,4 -----
+! /* $Header: art.c,v 4.3.1.2 85/05/10 13:46:07 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3.1.2  85/05/10  13:46:07  lwall
+***************
+*** 1,6
+  /* $Header: art.c,v 4.3 85/05/01 11:34:51 lwall Exp $
+   *
+   * $Log:	art.c,v $
+   * Revision 4.3  85/05/01  11:34:51  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: art.c,v 4.3.1.2 85/05/10 13:46:07 lwall Exp $
+   *
+   * $Log:	art.c,v $
++  * Revision 4.3.1.2  85/05/10  13:46:07  lwall
++  * Fixed header reparse bug on backpage.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:30:56  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:34:51  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 104,109
+  	    artpos = vrdary(artline);
+  	    if (artpos < 0)
+  		artpos = -artpos;	/* labs(), anyone? */
+  	    fseek(artfp,artpos,0);
+  	    if (artpos < htype[PAST_HEADER].ht_minpos)
+  		in_header = SOME_LINE;
+
+--- 110,117 -----
+  	    artpos = vrdary(artline);
+  	    if (artpos < 0)
+  		artpos = -artpos;	/* labs(), anyone? */
++ 	    if (firstpage)
++ 		artpos = (ART_POS)0;
+  	    fseek(artfp,artpos,0);
+  	    if (artpos < htype[PAST_HEADER].ht_minpos)
+  		in_header = SOME_LINE;
+
+Index: head.c
+Prereq: 4.3
+*** head.c.old	Fri May 10 13:52:36 1985
+--- head.c	Fri May 10 13:52:39 1985
+***************
+*** 1,4
+! /* $Header: head.c,v 4.3 85/05/01 11:38:21 lwall Exp $
+   *
+   * $Log:	head.c,v $
+   * Revision 4.3  85/05/01  11:38:21  lwall
+
+--- 1,4 -----
+! /* $Header: head.c,v 4.3.1.2 85/05/10 13:47:25 lwall Exp $
+   *
+   * $Log:	head.c,v $
+   * Revision 4.3.1.2  85/05/10  13:47:25  lwall
+***************
+*** 1,6
+  /* $Header: head.c,v 4.3 85/05/01 11:38:21 lwall Exp $
+   *
+   * $Log:	head.c,v $
+   * Revision 4.3  85/05/01  11:38:21  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: head.c,v 4.3.1.2 85/05/10 13:47:25 lwall Exp $
+   *
+   * $Log:	head.c,v $
++  * Revision 4.3.1.2  85/05/10  13:47:25  lwall
++  * Added debugging stuff.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:32:30  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:38:21  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 28,33
+  	htypeix[*htype[i].ht_name - 'a'] = i;
+  }
+  
+  int
+  set_line_type(bufptr,colon)
+  char *bufptr;
+
+--- 34,56 -----
+  	htypeix[*htype[i].ht_name - 'a'] = i;
+  }
+  
++ #ifdef DEBUGGING
++ dumpheader(where)
++ char *where;
++ {
++     register int i;
++ 
++     printf("header: %d %s", parsed_art, where);
++ 
++     for (i=0; i<HEAD_LAST; i++) {
++ 	printf("%15s %4d %4d %03o\n",htype[i].ht_name,
++ 	    htype[i].ht_minpos,
++ 	    htype[i].ht_maxpos,
++ 	    htype[i].ht_flags) FLUSH;
++     }
++ }
++ #endif
++ 
+  int
+  set_line_type(bufptr,colon)
+  char *bufptr;
+***************
+*** 68,73
+  {
+      register int i;
+  
+      for (i=0; i<HEAD_LAST; i++) {
+  	htype[i].ht_minpos = -1;
+  	htype[i].ht_maxpos = 0;
+
+--- 91,100 -----
+  {
+      register int i;
+  
++ #ifdef DEBUGGING
++     if (debug & 4)
++ 	dumpheader("start_header\n");
++ #endif
+      for (i=0; i<HEAD_LAST; i++) {
+  	htype[i].ht_minpos = -1;
+  	htype[i].ht_maxpos = 0;
+***************
+*** 108,113
+  	    first_one = (htype[in_header].ht_minpos < 0);
+  	    if (first_one)
+  		htype[in_header].ht_minpos = artpos;
+  	    if (htype[in_header].ht_flags & HT_HIDE)
+  		return newhide;
+  	}
+
+--- 135,144 -----
+  	    first_one = (htype[in_header].ht_minpos < 0);
+  	    if (first_one)
+  		htype[in_header].ht_minpos = artpos;
++ #ifdef DEBUGGING
++ 	    if (debug & 4)
++ 		dumpheader(art_buf);
++ #endif
+  	    if (htype[in_header].ht_flags & HT_HIDE)
+  		return newhide;
+  	}
+
+

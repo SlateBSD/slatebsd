@@ -1,0 +1,53 @@
+PATH=/etc:/bin:/usr/ucb:/usr/bin
+
+# myname is my symbolic name
+# myhostid is my internet address in #.#.#.# format
+# my-netmask is specified in /etc/networks
+#
+hostname myname.my.domain
+#ifconfig imp0 netmask my-netmask `hostname`
+#ifconfig en0 netmask my-netmask `hostname`
+#ifconfig il0 netmask mynetmask `hostname` broadcast xcs-net up -trailers
+#ifconfig qe0 netmask ucb-netmask `hostname` broadcast xcs-net up -trailers
+#ifconfig lo0 localhost
+#ifconfig lo0 localhost up -trailers
+#route add `hostname` localhost 0
+#route add default csgw-xcs 1
+hostid `hostname`
+
+# SLIP driver; tty port should have soft carrier set
+#slattach tty00 19200
+#ifconfig sl0 128.32.140.11 128.32.140.10
+
+strings /unix | grep UNIX >/tmp/t1
+tail +2 /etc/motd >>/tmp/t1
+mv /tmp/t1 /etc/motd
+chmod 666 /etc/motd
+
+# syslogd doesn't belong here, but needs to be started before the others.
+#if [ -f /etc/syslogd ]; then
+#			echo 'starting system logger'	>/dev/console
+#	rm -f /dev/log
+#	/etc/syslogd
+#fi
+
+		echo -n 'checking for core dump... '	>/dev/console
+savecore /a/crash					>/dev/console 2>&1
+		echo ''					>/dev/console
+
+			echo -n starting local daemons:	>/dev/console
+#if [ -f /etc/routed ]; then
+#	/etc/routed;	 	echo -n ' routed'	>/dev/console
+#fi
+#if [ -f /etc/named ]; then
+#	/etc/named /etc/named.boot; echo -n ' named'	>/dev/console
+#fi
+#if [ -f /etc/timed ]; then
+#	/etc/timed -M;		echo -n ' timed'	>/dev/console
+#	/etc/timed -t;		echo -n ' timed'	>/dev/console
+#fi
+#if [ -f /usr/lib/sendmail ]; then
+#	(cd /usr/spool/mqueue; rm -f lf*)
+#	/usr/lib/sendmail -q30m; echo -n ' sendmail'>/dev/console
+#fi
+				echo '.'		>/dev/console

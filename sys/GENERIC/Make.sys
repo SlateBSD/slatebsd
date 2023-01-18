@@ -1,0 +1,49 @@
+# 2.10BSD machine independent Makefile
+
+S=	../sys
+VPATH=	../sys
+
+CFILES=	${S}/init_main.c ${S}/init_sysent.c ${S}/kern_acct.c		\
+	${S}/kern_clock.c ${S}/kern_descrip.c ${S}/kern_exec.c		\
+	${S}/kern_exit.c ${S}/kern_fork.c ${S}/kern_mman.c		\
+	${S}/kern_proc.c ${S}/kern_prot.c ${S}/kern_resrce.c		\
+	${S}/kern_rtp.c ${S}/kern_sig.c ${S}/kern_subr.c		\
+	${S}/kern_synch.c ${S}/kern_time.c ${S}/kern_xxx.c		\
+	${S}/mbuf11.c ${S}/quota_sys.c ${S}/sys_socket.c		\
+	${S}/uipc_socket2.c ${S}/subr_prf.c ${S}/subr_rmap.c		\
+	${S}/subr_xxx.c ${S}/sys_generic.c ${S}/sys_inode.c		\
+	${S}/sys_inode2.c ${S}/sys_pipe.c ${S}/sys_process.c		\
+	${S}/syscalls.c ${S}/tty.c ${S}/tty_conf.c ${S}/tty_pty.c	\
+	${S}/tty_subr.c ${S}/tty_tb.c ${S}/tty_tty.c ${S}/ufs_alloc.c	\
+	${S}/ufs_bio.c ${S}/ufs_bmap.c ${S}/ufs_dsort.c			\
+	${S}/ufs_fio.c ${S}/ufs_inode.c ${S}/ufs_mount.c		\
+	${S}/ufs_namei.c ${S}/ufs_subr.c ${S}/ufs_syscalls.c		\
+	${S}/uipc_domain.c ${S}/uipc_mbuf.c ${S}/uipc_socket.c		\
+	${S}/uipc_sys.c ${S}/uipc_usrreq.c ${S}/vm_proc.c		\
+	${S}/vm_sched.c ${S}/vm_swap.c ${S}/vm_swp.c ${S}/vm_text.c
+OBJS=	init_main.o init_sysent.o kern_acct.o kern_clock.o		\
+	kern_descrip.o kern_exec.o kern_exit.o kern_fork.o kern_mman.o	\
+	kern_proc.o kern_prot.o kern_resrce.o kern_rtp.o kern_sig.o	\
+	kern_subr.o kern_synch.o kern_time.o kern_xxx.o mbuf11.o	\
+	quota_sys.o sys_socket.o uipc_socket2.o subr_prf.o subr_rmap.o	\
+	subr_xxx.o sys_generic.o sys_inode.o sys_inode2.o sys_pipe.o	\
+	sys_process.o syscalls.o tty.o tty_conf.o tty_pty.o tty_subr.o	\
+	tty_tb.o tty_tty.o ufs_alloc.o ufs_bio.o ufs_bmap.o ufs_dsort.o	\
+	ufs_fio.o ufs_inode.o ufs_mount.o ufs_namei.o ufs_subr.o	\
+	ufs_syscalls.o uipc_domain.o uipc_mbuf.o uipc_socket.o		\
+	uipc_sys.o uipc_usrreq.o vm_proc.o vm_sched.o vm_swap.o		\
+	vm_swp.o vm_text.o
+
+.c.o:
+	${CC} ${CFLAGS} -S $*.c
+	${ED} - < SPLFIX $*.s
+	${AS} - -o $*.o $*.s
+	rm -f $*.s
+
+all: ${OBJS}
+
+depend: 
+	mkdep ${CFLAGS} ${CFILES}
+
+# DO NOT DELETE THIS LINE
+

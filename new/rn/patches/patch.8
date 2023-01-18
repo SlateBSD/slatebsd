@@ -1,0 +1,90 @@
+System: rn version 4.3
+Patch #: 8
+Priority: MEDIUM
+Subject: default doesn't work in normal vs mailbox question
+>From: lwall@sdcrdcf.UUCP (Larry Wall)
+
+Description:
+	Through a mental short circuit on the part of the author, the
+	default mechanism was munched on the question you are asked
+	when saving an article regarding whether you want it to be a
+	mailbox or a normal file.
+
+Repeat-By:
+	Save a file to a new name.  When it asks what kind of file you want
+	to create, type space.  It will get mad at you.
+
+Fix:	From rn, say "| patch -d DIR", where DIR is your rn source directory.
+	Outside of rn, say "cd DIR; patch <thisarticle".  If you don't have
+	the patch program, apply the following by hand, or get patch.
+
+	If patch indicates that patchlevel is the wrong version, you may need
+	to apply one or more previous patches, or the patch may already
+	have been applied.  See the patchlevel file to find out what has or
+	has not been applied.  In any event, don't continue with the patch.
+
+Index: patchlevel
+Prereq: 7
+1c1
+< Patch #: 7
+---
+> Patch #: 8
+
+Index: respond.c
+Prereq: 4.3
+*** respond.c.old	Tue May 14 08:57:20 1985
+--- respond.c	Tue May 14 08:57:24 1985
+***************
+*** 1,4
+! /* $Header: respond.c,v 4.3 85/05/01 11:47:04 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3  85/05/01  11:47:04  lwall
+
+--- 1,4 -----
+! /* $Header: respond.c,v 4.3.1.2 85/05/14 08:55:15 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3.1.2  85/05/14  08:55:15  lwall
+***************
+*** 1,6
+  /* $Header: respond.c,v 4.3 85/05/01 11:47:04 lwall Exp $
+   *
+   * $Log:	respond.c,v $
+   * Revision 4.3  85/05/01  11:47:04  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+
+--- 1,12 -----
+  /* $Header: respond.c,v 4.3.1.2 85/05/14 08:55:15 lwall Exp $
+   *
+   * $Log:	respond.c,v $
++  * Revision 4.3.1.2  85/05/14  08:55:15  lwall
++  * Default for normal/mailbox question was applied to wrong buffer.
++  * 
++  * Revision 4.3.1.1  85/05/10  11:37:33  lwall
++  * Branch for patches.
++  * 
+   * Revision 4.3  85/05/01  11:47:04  lwall
+   * Baseline for release with 4.3bsd.
+   * 
+***************
+*** 147,153
+  	      reask_save:
+  		in_char(cmd_buf);
+  		putchar('\n') FLUSH;
+! 		setdef(cmd_buf,dflt);
+  #ifdef VERIFY
+  		printcmd();
+  #endif
+
+--- 153,159 -----
+  	      reask_save:
+  		in_char(cmd_buf);
+  		putchar('\n') FLUSH;
+! 		setdef(buf,dflt);
+  #ifdef VERIFY
+  		printcmd();
+  #endif
+
+

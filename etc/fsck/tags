@@ -1,0 +1,76 @@
+Mfsck	/a/etc/fsck/fsck.c	/^main(argc,argv)$/
+adjust	/a/etc/fsck/fsck.c	/^adjust(lcnt)$/
+blkerr	/a/etc/fsck/fsck.c	/^blkerr(s,blk)$/
+blockcheck	/a/etc/fsck/fsck.c	/^blockcheck(name)$/
+bread	/a/etc/fsck/fsck.c	/^bread(fcp,buf,blk,size)$/
+bwrite	/a/etc/fsck/fsck.c	/^bwrite(fcp,buf,blk,size)$/
+catch	/a/etc/fsck/fsck.c	/^catch()$/
+check	/a/etc/fsck/fsck.c	/^check(dev)$/
+check1	/a/etc/fsck/fsck.c	/^check1(dev)$/
+chgdd	/a/etc/fsck/fsck.c	/^chgdd(dirp)$/
+ckfini	/a/etc/fsck/fsck.c	/^ckfini()$/
+ckinode	/a/etc/fsck/fsck.c	/^ckinode(dp,flg)$/
+clear	/a/etc/fsck/fsck.c	/^clear(p,cnt)$/
+closefils	/a/etc/fsck/fsck.c	/^closefils()$/
+clrbmap	/a/etc/fsck/fsck.c	/^#define clrbmap(x)	domap(x,2)$/
+clrfmap	/a/etc/fsck/fsck.c	/^#define clrfmap(x)	domap(x,2+4)$/
+clri	/a/etc/fsck/fsck.c	/^clri(s,flg)$/
+copy	/a/etc/fsck/fsck.c	/^copy(fp,tp,size)$/
+declncnt	/a/etc/fsck/fsck.c	/^#define declncnt()	dolncnt(0,2)$/
+descend	/a/etc/fsck/fsck.c	/^descend()$/
+direrr	/a/etc/fsck/fsck.c	/^direrr(s)$/
+dirscan	/a/etc/fsck/fsck.c	/^dirscan(blk)$/
+dirty	/a/etc/fsck/fsck.c	/^#define dirty(x)	(x)->b_dirty = 1$/
+dolncnt	/a/etc/fsck/fsck.c	/^dolncnt(val,flg)$/
+domap	/a/etc/fsck/fsck.c	/^domap(blk,flg)$/
+dostate	/a/etc/fsck/fsck.c	/^dostate(s,flg)$/
+errexit	/a/etc/fsck/fsck.c	/^errexit(s1,s2,s3,s4)$/
+error	/a/etc/fsck/fsck.c	/^error(s1,s2,s3,s4)$/
+fbdirty	/a/etc/fsck/fsck.c	/^#define fbdirty()	fileblk.b_dirty = 1$/
+findino	/a/etc/fsck/fsck.c	/^findino(dirp)$/
+flush	/a/etc/fsck/fsck.c	/^flush(fcp,bp)$/
+freechk	/a/etc/fsck/fsck.c	/^freechk()$/
+ftypeok	/a/etc/fsck/fsck.c	/^ftypeok(dp)$/
+getblk	/a/etc/fsck/fsck.c	/^getblk(bp,blk)$/
+getbmap	/a/etc/fsck/fsck.c	/^#define getbmap(x)	domap(x,1)$/
+getfmap	/a/etc/fsck/fsck.c	/^#define getfmap(x)	domap(x,1+4)$/
+getline	/a/etc/fsck/fsck.c	/^getline(fp,loc,maxlen)$/
+getlncnt	/a/etc/fsck/fsck.c	/^#define getlncnt()	dolncnt(0,1)$/
+getpasses	/a/etc/fsck/fsck.c	/^getpasses(s)$/
+getstate	/a/etc/fsck/fsck.c	/^#define getstate()	dostate(0,1)$/
+ginode	/a/etc/fsck/fsck.c	/^ginode()$/
+howmany	/a/etc/fsck/fsck.c	/^#define howmany(x,y)	(((x)+((y)-1))\/(y))$/
+iblock	/a/etc/fsck/fsck.c	/^iblock(blk,ilevel,flg)$/
+ifreechk	/a/etc/fsck/fsck.c	/^ifreechk() {$/
+initbarea	/a/etc/fsck/fsck.c	/^#define initbarea(x)	(x)->b_dirty = 0;(x)->b_bno =/
+inodirty	/a/etc/fsck/fsck.c	/^#define inodirty()	inoblk.b_dirty = 1$/
+linkup	/a/etc/fsck/fsck.c	/^linkup()$/
+makefree	/a/etc/fsck/fsck.c	/^makefree()$/
+mkentry	/a/etc/fsck/fsck.c	/^mkentry(dirp)$/
+namecheck	/a/etc/fsck/fsck.c	/^namecheck(name)$/
+outrange	/a/etc/fsck/fsck.c	/^#define outrange(x)	(x < fmin || x >= fmax)$/
+pass1	/a/etc/fsck/fsck.c	/^pass1(blk)$/
+pass1b	/a/etc/fsck/fsck.c	/^pass1b(blk)$/
+pass2	/a/etc/fsck/fsck.c	/^pass2(dirp)$/
+pass4	/a/etc/fsck/fsck.c	/^pass4(blk)$/
+pass5	/a/etc/fsck/fsck.c	/^pass5(blk)$/
+pfatal	/a/etc/fsck/fsck.c	/^pfatal(s,a1,a2,a3,a4)$/
+pinode	/a/etc/fsck/fsck.c	/^pinode()$/
+preendie	/a/etc/fsck/fsck.c	/^preendie()$/
+pwarn	/a/etc/fsck/fsck.c	/^pwarn(s,a1,a2,a3,a4,a5,a6)$/
+rawname	/a/etc/fsck/fsck.c	/^rawname(cp)$/
+reply	/a/etc/fsck/fsck.c	/^reply(s)$/
+roundup	/a/etc/fsck/fsck.c	/^#define roundup(x,y)	((((x)+((y)-1))\/(y))*(y))$/
+rwerr	/a/etc/fsck/fsck.c	/^rwerr(s,blk,name,fd)$/
+sbdirty	/a/etc/fsck/fsck.c	/^#define sbdirty()	sblk.b_dirty = 1$/
+search	/a/etc/fsck/fsck.c	/^search(blk)$/
+setbmap	/a/etc/fsck/fsck.c	/^#define setbmap(x)	domap(x,0)$/
+setfmap	/a/etc/fsck/fsck.c	/^#define setfmap(x)	domap(x,0+4)$/
+setlncnt	/a/etc/fsck/fsck.c	/^#define setlncnt(x)	dolncnt(x,0)$/
+setstate	/a/etc/fsck/fsck.c	/^#define setstate(x)	dostate(x,0)$/
+setup	/a/etc/fsck/fsck.c	/^setup(dev)$/
+signal	/a/etc/fsck/fsck.c	/^int	(*signal())();$/
+sizechk	/a/etc/fsck/fsck.c	/^sizechk(dp)$/
+stype	/a/etc/fsck/fsck.c	/^stype(p)$/
+unrawname	/a/etc/fsck/fsck.c	/^unrawname(cp)$/
+zapino	/a/etc/fsck/fsck.c	/^#define zapino(x)	clear((char *)(x),sizeof(DINODE)/

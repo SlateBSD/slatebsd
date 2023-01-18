@@ -1,0 +1,21 @@
+# 2.10BSD massbus devices Makefile
+
+U=	../pdpmba
+VPATH=	../pdpmba
+
+CFILES=
+OBJS=
+
+.c.o:
+	${CC} ${CFLAGS} -S $*.c
+	${ED} - < SPLFIX $*.s
+	${AS} - -o $*.o $*.s
+	rm -f $*.s
+
+all: ${OBJS}
+
+depend: 
+	mkdep ${CFLAGS} ${CFILES}
+
+# DO NOT DELETE THIS LINE
+

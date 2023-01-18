@@ -1,0 +1,658 @@
+  A short preface to this is in order.  We didn't include this fix because
+we do soft-carrier differently from 4.XBSD and we would have had to
+modify the drivers.  Basically  acucntrl is the wrong way to do this.  The
+kernel should be modified to provide the service which acucntrl is trying
+to provide out in user-land; perhaps a new flag value on open like
+O_OPEN_BUT_DONT_HANG (sic) ...  This unfortunately doesn't help 4.3BSD and
+2.10BSD people much.
+
+  Also, in addition to the dh, dz, dhu fixes mentioned below for the open
+routines in those drivers, the close routines will have to be modified to
+always pull the soft carrier flag off or the device will operate forever in
+soft carrier mode causing gettys to die every minute on the affected lines
+once they're converted over via acucntrl.
+
+  As above, we would far rather see a new flag added to the open mode set
+that specifies that the open is to complete without hanging (granting
+lack of any other problems.)  That would allow uucico, tip and any other
+programs to simply add that flag in to their opens on the outgoing
+modems.  The corresponding fixes to the various tty drivers would be
+trivial since the open mode word is passed to them (none currently use
+it.)  All that would be required in addition would be some simple way of
+disabling the line's corresponding getty without recourse to programs
+editing /etc/ttys, etc.  Perhaps a SIGSTOP to the getty might be
+appropriate ...  That's left as an exercise for the reader.
+
+From cr@dukempd Tue Aug 18 19:42:58 1987
+Received: from duke.cs.duke.edu by vangogh.berkeley.edu (5.58/1.25)
+	id AA25887; Tue, 18 Aug 87 19:42:42 PDT
+Received: by duke.cs.duke.edu (5.54/DUKE/2-1-87)
+	id AA08326; Tue, 18 Aug 87 22:38:24 EDT
+Received: by dukempd.UUCP (5.51/2.9)
+	id AA07440; Tue, 18 Aug 87 22:37:47 EDT
+Date: Tue, 18 Aug 87 22:37:47 EDT
+From: dukempd.uucp!cr@cs.duke.edu (Cyrus Rahman)
+Message-Id: <8708190237.AA07440@dukempd.UUCP>
+To: casey%vangogh.berkeley.edu@cs.duke.edu
+Subject: acucntrl fix
+Status: RO
+
+
+	I've thought for a while about the best way to implement acucntrl
+from usr.bin/uucp in 2.10.  I actually like the present method of keying
+on the minor device number rather than 4.3's method of compiling flags
+into the kernel, although I'd be willing to change things if compatibility
+seems like an issue here.
+
+	In order to implement things using the minor numbers, I've
+given the flags of uba_device a different meaning than what they have
+in 4.3.  In the present scheme, if the flag bit for a given tty is
+clear, the minor number of the device is used to decide upon modem
+control.  If the flag bit is set, the dhsoftCAR bit is left as it is.
+Acucntrl does two things: it sets the flag bit for a tty when it's
+used to enable/disable modem control for the tty, and it sets the
+dhsoftCAR bit to the appropriate value.
+
+	This scheme lets you specify a startup configuration (as
+the flags do in 4.3), but it lets you change it more easily.  Other
+than that, it's functionally identical.  Obviously machine independence
+is hard to come by for programs that patch the kernel, but if anyone
+feels strongly it wouldn't be hard to make 2.10's techniques more
+closely mimic 4.3.
+
+Here's a patch for dh.c:
+
+diff  -r1.1 dh.c
+602,605c602,606
+< 	if (dev & 0200)
+< 		dhsoftCAR[dm] |= (1<<(unit&0xf));
+< 	else
+< 		dhsoftCAR[dm] &= ~(1<<(unit&0xf));
+---
+> 	if (!(dhinfo[dm].ui_flags & (1<<unit)))
+> 		if (dev & 0200)
+> 			dhsoftCAR[dm] |= (1<<unit);
+> 		else
+> 			dhsoftCAR[dm] &= ~(1<<unit);
+
+Extremely similar patches can be put into dz.c's dzopen and dhu.c's
+dhuopen.  If you'd like I'll send you some.
+
+Acucntrl.c needed some more extensive work.  You should look over
+the following patches carefully, first to make sure I haven't missed
+something, and second because I put in a modification to check which
+files can be turned on and off by reading /etc/modems, rather than
+just giving everyone blanket authority over /dev/ttyd?.  I've left the
+modification in because it's a good idea and I'd like you to at least
+consider it, but feel free to throw it out.  There are some fixes to
+the 4.3 acucntrl here, which I'll eventually (after 2.10 isn't taking
+so much time) send in.  The present setup is working fine on our
+system now.
+
+*** /tmp/,RCSt1007432	Tue Aug 18 22:32:24 1987
+--- acucntrl.c	Fri Aug 14 22:54:59 1987
+***************
+*** 49,54
+  #include <sys/buf.h>
+  #include <signal.h>
+  #include <sys/conf.h>
+  #ifdef BSD4_2
+  #include <vaxuba/ubavar.h>
+  #else
+
+--- 49,57 -----
+  #include <sys/buf.h>
+  #include <signal.h>
+  #include <sys/conf.h>
++ /*
++  *	Unifdef requires the following mess
++  */
+  #ifdef BSD4_2
+  #ifndef BSD2_10
+  #include <vaxuba/ubavar.h>
+***************
+*** 50,55
+  #include <signal.h>
+  #include <sys/conf.h>
+  #ifdef BSD4_2
+  #include <vaxuba/ubavar.h>
+  #else
+  #include <sys/ubavar.h>
+
+--- 53,59 -----
+   *	Unifdef requires the following mess
+   */
+  #ifdef BSD4_2
++ #ifndef BSD2_10
+  #include <vaxuba/ubavar.h>
+  #else
+  #include <sys/ubavar.h>
+***************
+*** 54,59
+  #else
+  #include <sys/ubavar.h>
+  #endif
+  #include <sys/stat.h>
+  #include <nlist.h>
+  #include <sgtty.h>
+
+--- 58,66 -----
+  #else
+  #include <sys/ubavar.h>
+  #endif
++ #else
++ #include <sys/ubavar.h>
++ #endif
+  #include <sys/stat.h>
+  #include <nlist.h>
+  #include <sgtty.h>
+***************
+*** 109,114
+  #define ENABLE	1
+  #define DISABLE	0
+  
+  char Etcutmp[] = "/etc/utmp";
+  char Etcttys[] = "/etc/ttys";
+  #ifdef BSD4_3
+
+--- 116,126 -----
+  #define ENABLE	1
+  #define DISABLE	0
+  
++ #ifndef BSD2_10
++ char *NAMELIST = "/vmunix";
++ #else
++ char *NAMELIST = "/unix";
++ #endif
+  char Etcutmp[] = "/etc/utmp";
+  char Etcttys[] = "/etc/ttys";
+  #ifdef BSD4_3
+***************
+*** 125,130
+  int etcutmp;
+  off_t utmploc;
+  off_t ttyslnbeg;
+  
+  #define NAMSIZ	sizeof(utmp.ut_name)
+  #define	LINSIZ	sizeof(utmp.ut_line)
+
+--- 137,144 -----
+  int etcutmp;
+  off_t utmploc;
+  off_t ttyslnbeg;
++ extern int errno;
++ extern char *sys_errlist[];
+  
+  #define NAMSIZ	sizeof(utmp.ut_name)
+  #define	LINSIZ	sizeof(utmp.ut_line)
+***************
+*** 142,149
+  	off_t lseek();
+  	struct passwd *getpwuid();
+  	char *rindex();
+! 	extern int errno;
+! 	extern char *sys_errlist[];
+  
+  	/* check input arguments */
+  	if (argc!=3) {
+
+--- 156,162 -----
+  	off_t lseek();
+  	struct passwd *getpwuid();
+  	char *rindex();
+! 	FILE *mlist;
+  
+  	/* check input arguments */
+  	if (argc!=3) {
+***************
+*** 164,169
+  	device = rindex(argv[2], '/');
+  	device = (device == NULL) ? argv[2]: device+1;
+  
+  	/* only recognize devices of the form ttydX */
+  	if (strncmp(device, "ttyd", 4)!=0) {
+  		fprintf(stderr, "Bad Device Name %s", device);
+
+--- 177,201 -----
+  	device = rindex(argv[2], '/');
+  	device = (device == NULL) ? argv[2]: device+1;
+  
++ 	if ((mlist = fopen("/etc/modems", "r"))) {
++ 		char mbuf[BUFSIZ];
++ 
++ 		while (fgets(&mbuf, sizeof(mbuf), mlist)) {
++ 			if (mbuf[0] == '#')
++ 				continue;
++ 			if (mbuf[strlen(mbuf) - 1] == '\n')
++ 				mbuf[strlen(mbuf) - 1] = '\0';				
++ 			if (!strcmp(mbuf, device))
++ 				break;
++ 		}
++ 		if (feof(mlist) && getuid()) {
++ 			fprintf(stderr, "Bad Device Name %s\n", device);
++ 			exit(1);
++ 		}
++ 		fclose(mlist);
++ 	}
++ 	else
++ 
+  	/* only recognize devices of the form ttydX */
+  	if ((strncmp(device, "ttyd", 4)!=0) && getuid()) {
+  		fprintf(stderr, "Bad Device Name %s\n", device);
+***************
+*** 165,172
+  	device = (device == NULL) ? argv[2]: device+1;
+  
+  	/* only recognize devices of the form ttydX */
+! 	if (strncmp(device, "ttyd", 4)!=0) {
+! 		fprintf(stderr, "Bad Device Name %s", device);
+  		exit(1);
+  	}
+  
+
+--- 197,204 -----
+  	else
+  
+  	/* only recognize devices of the form ttydX */
+! 	if ((strncmp(device, "ttyd", 4)!=0) && getuid()) {
+! 		fprintf(stderr, "Bad Device Name %s\n", device);
+  		exit(1);
+  	}
+  
+***************
+*** 173,179
+  	opnttys(device);
+  
+  	/* Get nlist info */
+! 	nlist("/vmunix", nl);
+  
+  	/* Chdir to /dev */
+  	if(chdir(Devhome) < 0) {
+
+--- 205,211 -----
+  	opnttys(device);
+  
+  	/* Get nlist info */
+! 	nlist(NAMELIST, nl);
+  
+  	/* Chdir to /dev */
+  	if(chdir(Devhome) < 0) {
+***************
+*** 605,611
+  {
+  	dev_t dev;
+  	int kmem;
+! 	int unit, line, nlines, addr, tflags;
+  	int devtype=0;
+  	char cflags; short sflags;
+  #ifdef BSD4_2
+
+--- 637,645 -----
+  {
+  	dev_t dev;
+  	int kmem;
+! 	int unit, line, nlines;
+! 	unsigned tflags;
+! 	off_t addr;
+  	int devtype=0;
+  	char cflags;
+  	unsigned short sflags;
+***************
+*** 607,613
+  	int kmem;
+  	int unit, line, nlines, addr, tflags;
+  	int devtype=0;
+! 	char cflags; short sflags;
+  #ifdef BSD4_2
+  	int flags;
+  #else
+
+--- 641,648 -----
+  	unsigned tflags;
+  	off_t addr;
+  	int devtype=0;
+! 	char cflags;
+! 	unsigned short sflags;
+  #ifdef BSD4_2
+  #ifdef BSD2_10
+  	long flags;
+***************
+*** 609,614
+  	int devtype=0;
+  	char cflags; short sflags;
+  #ifdef BSD4_2
+  	int flags;
+  #else
+  	short flags;
+
+--- 644,652 -----
+  	char cflags;
+  	unsigned short sflags;
+  #ifdef BSD4_2
++ #ifdef BSD2_10
++ 	long flags;
++ #else
+  	int flags;
+  #endif BSD2_10
+  #else
+***************
+*** 610,615
+  	char cflags; short sflags;
+  #ifdef BSD4_2
+  	int flags;
+  #else
+  	short flags;
+  #endif
+
+--- 648,654 -----
+  	long flags;
+  #else
+  	int flags;
++ #endif BSD2_10
+  #else
+  	short flags;
+  #endif
+***************
+*** 646,651
+  		devtype = DZ11;
+  		unit = minor(dev) / NDZLINE;
+  		line = minor(dev) % NDZLINE;
+  		addr = (int) &(((int *)NLVALUE(DZINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDZ11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DHOPEN)) {
+
+--- 685,693 -----
+  		devtype = DZ11;
+  		unit = minor(dev) / NDZLINE;
+  		line = minor(dev) % NDZLINE;
++ #ifdef BSD2_10
++ 		addr = (off_t) &(((struct uba_device *)NLVALUE(DZINFO))[unit]);
++ #else
+  		addr = (int) &(((int *)NLVALUE(DZINFO))[unit]);
+  #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDZ11), 0);
+***************
+*** 647,652
+  		unit = minor(dev) / NDZLINE;
+  		line = minor(dev) % NDZLINE;
+  		addr = (int) &(((int *)NLVALUE(DZINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDZ11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DHOPEN)) {
+  		devtype = DH11;
+
+--- 689,695 -----
+  		addr = (off_t) &(((struct uba_device *)NLVALUE(DZINFO))[unit]);
+  #else
+  		addr = (int) &(((int *)NLVALUE(DZINFO))[unit]);
++ #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDZ11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DHOPEN)) {
+  		devtype = DH11;
+***************
+*** 652,657
+  		devtype = DH11;
+  		unit = minor(dev) / NDHLINE;
+  		line = minor(dev) % NDHLINE;
+  		addr = (int) &(((int *)NLVALUE(DHINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDH11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DMFOPEN)) {
+
+--- 695,703 -----
+  		devtype = DH11;
+  		unit = minor(dev) / NDHLINE;
+  		line = minor(dev) % NDHLINE;
++ #ifdef BSD2_10
++ 		addr = (off_t) &(((struct uba_device *)NLVALUE(DHINFO))[unit]);
++ #else
+  		addr = (int) &(((int *)NLVALUE(DHINFO))[unit]);
+  #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDH11), 0);
+***************
+*** 653,658
+  		unit = minor(dev) / NDHLINE;
+  		line = minor(dev) % NDHLINE;
+  		addr = (int) &(((int *)NLVALUE(DHINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDH11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DMFOPEN)) {
+  		devtype = DMF;
+
+--- 699,705 -----
+  		addr = (off_t) &(((struct uba_device *)NLVALUE(DHINFO))[unit]);
+  #else
+  		addr = (int) &(((int *)NLVALUE(DHINFO))[unit]);
++ #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDH11), 0);
+  	} else if((int)(cdevsw.d_open) == NLVALUE(DMFOPEN)) {
+  		devtype = DMF;
+***************
+*** 658,663
+  		devtype = DMF;
+  		unit = minor(dev) / NDMFLINE;
+  		line = minor(dev) % NDMFLINE;
+  		addr = (int) &(((int *)NLVALUE(DMFINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDMF), 0);
+  	} else {
+
+--- 705,713 -----
+  		devtype = DMF;
+  		unit = minor(dev) / NDMFLINE;
+  		line = minor(dev) % NDMFLINE;
++ #ifdef BSD2_10
++ 		addr = (off_t) &(((struct uba_device *)NLVALUE(DMFINFO))[unit]);
++ #else
+  		addr = (int) &(((int *)NLVALUE(DMFINFO))[unit]);
+  #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDMF), 0);
+***************
+*** 659,664
+  		unit = minor(dev) / NDMFLINE;
+  		line = minor(dev) % NDMFLINE;
+  		addr = (int) &(((int *)NLVALUE(DMFINFO))[unit]);
+  		(void)lseek(kmem, (off_t) NLVALUE(NDMF), 0);
+  	} else {
+  		fprintf(stderr, "Device %s (%d/%d) unknown.\n", ttyline,
+
+--- 709,715 -----
+  		addr = (off_t) &(((struct uba_device *)NLVALUE(DMFINFO))[unit]);
+  #else
+  		addr = (int) &(((int *)NLVALUE(DMFINFO))[unit]);
++ #endif
+  		(void)lseek(kmem, (off_t) NLVALUE(NDMF), 0);
+  	} else {
+  		fprintf(stderr, "Device %s (%d/%d) unknown.\n", ttyline,
+***************
+*** 673,678
+  		return(-1);
+  	}
+  
+  	(void)lseek(kmem, (off_t)addr, 0);
+  	(void)read(kmem, (char *) &ubinfo, sizeof ubinfo);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+
+--- 724,733 -----
+  		return(-1);
+  	}
+  
++ #ifdef BSD2_10
++ 	(void)lseek(kmem, (off_t)&(((struct uba_device *)addr)->ui_flags), 0);
++ 	(void)read(kmem, (char *) &flags, sizeof flags);
++ #else
+  	(void)lseek(kmem, (off_t)addr, 0);
+  	(void)read(kmem, (char *) &ubinfo, sizeof ubinfo);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+***************
+*** 677,682
+  	(void)read(kmem, (char *) &ubinfo, sizeof ubinfo);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+  	(void)read(kmem, (char *) &flags, sizeof flags);
+  
+  	tflags = 1<<line;
+  	resetmodem = ((flags&tflags) == 0);
+
+--- 732,738 -----
+  	(void)read(kmem, (char *) &ubinfo, sizeof ubinfo);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+  	(void)read(kmem, (char *) &flags, sizeof flags);
++ #endif
+  
+  	tflags = 1<<line;
+  #ifdef BSD2_10
+***************
+*** 679,684
+  	(void)read(kmem, (char *) &flags, sizeof flags);
+  
+  	tflags = 1<<line;
+  	resetmodem = ((flags&tflags) == 0);
+  	flags = enable ? (flags & ~tflags) : (flags | tflags);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+
+--- 735,745 -----
+  #endif
+  
+  	tflags = 1<<line;
++ #ifdef BSD2_10
++ 	flags |= tflags;
++ 	(void)lseek(kmem, (off_t)&(((struct uba_device *)addr)->ui_flags), 0);
++ 	(void)write(kmem, (char *) &flags, sizeof flags);
++ #else
+  	resetmodem = ((flags&tflags) == 0);
+  	flags = enable ? (flags & ~tflags) : (flags | tflags);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+***************
+*** 683,688
+  	flags = enable ? (flags & ~tflags) : (flags | tflags);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+  	(void)write(kmem, (char *) &flags, sizeof flags);
+  	switch(devtype) {
+  		case DZ11:
+  			if((addr = NLVALUE(DZSCAR)) == 0) {
+
+--- 744,750 -----
+  	flags = enable ? (flags & ~tflags) : (flags | tflags);
+  	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
+  	(void)write(kmem, (char *) &flags, sizeof flags);
++ #endif
+  	switch(devtype) {
+  		case DZ11:
+  			if((addr = NLVALUE(DZSCAR)) == 0) {
+***************
+*** 689,694
+  				fprintf(stderr, "No dzsoftCAR.\n");
+  				return(-1);
+  			}
+  			cflags = flags;
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &cflags, sizeof cflags);
+
+--- 751,763 -----
+  				fprintf(stderr, "No dzsoftCAR.\n");
+  				return(-1);
+  			}
++ #ifdef BSD2_10
++ 			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
++ 			(void)read(kmem, (char *) &cflags, sizeof cflags);
++ 			resetmodem = ((((unsigned)cflags)&tflags) == 0);
++ 			cflags = enable ? (((unsigned)cflags) & ~tflags)
++ 					 : (((unsigned)cflags) | tflags);
++ #else
+  			cflags = flags;
+  #endif
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+***************
+*** 690,695
+  				return(-1);
+  			}
+  			cflags = flags;
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &cflags, sizeof cflags);
+  			break;
+
+--- 759,765 -----
+  					 : (((unsigned)cflags) | tflags);
+  #else
+  			cflags = flags;
++ #endif
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &cflags, sizeof cflags);
+  			break;
+***************
+*** 698,703
+  				fprintf(stderr, "No dhsoftCAR.\n");
+  				return(-1);
+  			}
+  			sflags = flags;
+  			(void)lseek(kmem, (off_t) &(((short *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &sflags, sizeof sflags);
+
+--- 768,779 -----
+  				fprintf(stderr, "No dhsoftCAR.\n");
+  				return(-1);
+  			}
++ #ifdef BSD2_10
++ 			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
++ 			(void)read(kmem, (char *) &sflags, sizeof sflags);
++ 			resetmodem = ((sflags&tflags) == 0);
++ 			sflags = enable ? (sflags & ~tflags) : (sflags | tflags);
++ #else
+  			sflags = flags;
+  #endif
+  			(void)lseek(kmem, (off_t) &(((short *)addr)[unit]), 0);
+***************
+*** 699,704
+  				return(-1);
+  			}
+  			sflags = flags;
+  			(void)lseek(kmem, (off_t) &(((short *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &sflags, sizeof sflags);
+  			break;
+
+--- 775,781 -----
+  			sflags = enable ? (sflags & ~tflags) : (sflags | tflags);
+  #else
+  			sflags = flags;
++ #endif
+  			(void)lseek(kmem, (off_t) &(((short *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &sflags, sizeof sflags);
+  			break;
+***************
+*** 707,712
+  				fprintf(stderr, "No dmfsoftCAR.\n");
+  				return(-1);
+  			}
+  			cflags = flags;
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &flags, sizeof cflags);
+
+--- 784,796 -----
+  				fprintf(stderr, "No dmfsoftCAR.\n");
+  				return(-1);
+  			}
++ #ifdef BSD2_10
++ 			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
++ 			(void)read(kmem, (char *) &cflags, sizeof cflags);
++ 			resetmodem = ((((unsigned)cflags)&tflags) == 0);
++ 			cflags = enable ? (((unsigned)cflags) & ~tflags)
++ 					 : (((unsigned)cflags) | tflags);
++ #else
+  			cflags = flags;
+  #endif
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+***************
+*** 708,713
+  				return(-1);
+  			}
+  			cflags = flags;
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &flags, sizeof cflags);
+  			break;
+
+--- 792,798 -----
+  					 : (((unsigned)cflags) | tflags);
+  #else
+  			cflags = flags;
++ #endif
+  			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
+  			(void)write(kmem, (char *) &flags, sizeof cflags);
+  			break;
+
+

@@ -1,0 +1,211 @@
+.\" last modified by mab@riacs.arpa (9/23/85)
+.if n .ds La '
+.if n .ds Ra '
+.if t .ds La `
+.if t .ds Ra '
+.if n .ds Lq "
+.if n .ds Rq "
+.if t .ds Lq ``
+.if t .ds Rq ''
+.de Ch
+\\$3\\*(Lq\\$1\\*(Rq\\$2
+..
+.TH INEWS 1 "January 17, 1986"
+.ds ]W  Version B 2.10.3
+.SH NAME
+inews \- submit news articles
+.SH SYNOPSIS
+.BR inews " [ " \-h " ]"
+.BI \-t " title " \-n " newsgroups"
+[
+.BI \-e " expiration date"
+] [
+.BI \-f " sender name"
+] [
+.BI \-d " distribution"
+] [
+.BI \-F " references"
+] [
+.BI \-o " organization"
+] [
+.BI \-a " approvedby"
+]
+.PP
+.BI "inews \-p " filename
+.PP
+.BI "inews \-C " newsgroup
+.SH DESCRIPTION
+.I Inews
+submits news articles to the USENET news
+network.
+It is intended as a raw interface, not as a human user interface.
+Most people use
+.IR postnews (1)
+instead.
+.PP
+The first form is for submitting user articles.
+The body will be read from the standard input.  A
+.I title
+must be specified as there is no default.  Each article
+belongs to a list of newsgroups.  If the
+.B \-n
+flag is omitted, the list
+will default to something like 
+.BR general .
+If you wish to submit an article in multiple newsgroups, the
+.I newsgroups
+must be separated by commas and/or spaces.
+.PP
+The 
+.B \-e
+flag is used to override the default expiration date. This is seldom
+used.
+.PP
+The
+.B \-f
+flag specifies the article's sender.  Without this flag, the sender
+defaults to the user's name.
+If
+.B \-f
+is specified, the real sender's name will be included as a ``Sender:'' line.
+.PP
+The
+.B \-d
+flag allows you to specify the maximum distribution of your
+article.
+.PP
+The 
+.B \-F
+flags is used to attach a list of related articles that this
+message references.
+.PP
+The
+.B \-o
+is used to override the default organization.
+.PP
+The
+.B \-a
+flag is used to add an approved line to the article. This should
+only be used by the moderator of a
+.BI mod. all
+newsgroup.
+.PP
+The
+.B \-h
+flag specifies that headers are present at the beginning of the
+article, and these headers should be included with the article
+header instead of as text.
+(This mechanism can be used to edit headers and supply additional
+nondefault headers, but not to specify certain information,
+such as the sender and article ID, that
+.I inews
+itself generates.)
+.LP
+When posting an article, the environment is checked for
+information about the sender.
+If
+.B NAME
+is found, its value is used for the full name. If
+.B NAME
+is not present, the file 
+\kx\f2$HOME\fP\h'|\nxu+2u'\f2$HOME/.name\fP
+is checked and if it exists, the contents are used as the full name.
+Otherwise, the system value (often in
+.IR /etc/passwd )
+is used.
+This is useful if the system value cannot be set, or when
+more than one person uses the same login.
+If
+.B ORGANIZATION
+is found, the value overrides the system
+default organization. If the value begins with
+.Ch / ,
+it is assumed to be a file name and the contents of the file are
+used.
+This is useful when a person uses a guest login and is
+not primarily associated with the organization owning the machine.
+.LP
+The second form is used for receiving articles from other machines.
+If
+.I filename
+is given, the article will be read from the specified file; otherwise
+the article will be read from the standard input.  An expiration date
+need not be present and a reception date, if present, will be ignored.
+.LP
+After local installation,
+.I inews
+will transmit the article to all systems
+that subscribe to the newsgroups that the article belongs to.
+.LP
+The third form is for creating new newsgroups.  On some systems, this may
+be limited to specific users such as the super-user or news administrator.
+.LP
+If the file
+.I /usr/lib/news/recording
+is present, it is taken as a list of
+\&\*(Lqrecordings\*(Rq to be shown to users posting news.
+(This is analogous to the recording you hear when you dial information
+in some parts of the country, asking you if you really wanted to do this.)
+The file contains lines of the form:
+.PP
+	newsgroups \fB\s-2TAB\s0\fP filename
+.PP
+for example:
+.PP
+	net.all	net.recording
+.br
+.PP
+Any user posting an article to a newsgroup matching the pattern on
+the left will be shown the contents of the file on the right.
+The file is found in the
+.B LIB
+directory (often
+.IR /usr/lib/news ).
+The user is then told to hit \s-2DEL\s0 to abort or \s-2RETURN\s0 to proceed.
+The intent of this feature is to help companies keep proprietary
+information from accidently leaking out.
+.SH FILES
+.PD 0
+.TP 25
+/usr/spool/news/.sys.nnn
+temporary articles
+.TP 25
+.RI /usr/spool/news/ newsgroups / article_no.
+Articles
+.TP 25
+/usr/lib/news/active
+List of known newsgroups and highest local article numbers in each.
+.TP 25
+/usr/lib/news/seq
+Sequence number of last article
+.TP 25
+/usr/lib/news/history
+List of all articles ever seen
+.TP 25
+/usr/lib/news/sys
+System subscription list
+.PD
+.SH "SEE ALSO"
+Mail(1),
+binmail(1),
+mailx(1),
+checknews(1),
+msgs(1),
+postnews(1),
+readnews(1),
+vnews(1),
+getdate(3),
+news(5),
+newsrc(5),
+expire(8),
+recnews(8),
+sendnews(8),
+uurec(8)
+.SH AUTHORS
+Matt Glickman
+.br
+Mark Horton
+.br
+Stephen Daniel
+.br
+Tom R. Truscott

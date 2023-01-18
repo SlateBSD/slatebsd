@@ -1,0 +1,456 @@
+abort	/u1/2.10/usr/src/lib/libc/gen/abort.c	/^abort()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/abort.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+alarm	/u1/2.10/usr/src/lib/libc/gen/alarm.c	/^alarm(secs)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/alarm.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+atoi	/u1/2.10/usr/src/lib/libc/gen/atoi.c	/^atoi(p)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/atoi.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+atol	/u1/2.10/usr/src/lib/libc/gen/atol.c	/^atol(p)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/atol.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+calloc	/u1/2.10/usr/src/lib/libc/gen/calloc.c	/^calloc(num, size)$/
+cfree	/u1/2.10/usr/src/lib/libc/gen/calloc.c	/^cfree(p, num, size)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/calloc.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+closedir	/u1/2.10/usr/src/lib/libc/gen/closedir.c	/^closedir(dirp)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/closedir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+crypt	/u1/2.10/usr/src/lib/libc/gen/crypt.c	/^crypt(pw,salt)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/crypt.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+encrypt	/u1/2.10/usr/src/lib/libc/gen/crypt.c	/^encrypt(block, edflag)$/
+setkey	/u1/2.10/usr/src/lib/libc/gen/crypt.c	/^setkey(key)$/
+asctime	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^asctime(t)$/
+ct_numb	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^ct_numb(cp, n)$/
+ctime	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^ctime(t)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+dysize	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^dysize(y)$/
+gmtime	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^gmtime(tim)$/
+localtime	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^localtime(tim)$/
+sunday	/u1/2.10/usr/src/lib/libc/gen/ctime.c	/^sunday(t, d)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ctype_.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/errlst.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/execvp.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+execat	/u1/2.10/usr/src/lib/libc/gen/execvp.c	/^execat(s1, s2, si)$/
+execlp	/u1/2.10/usr/src/lib/libc/gen/execvp.c	/^execlp(name, argv)$/
+execvp	/u1/2.10/usr/src/lib/libc/gen/execvp.c	/^execvp(name, argv)$/
+_cleanup	/u1/2.10/usr/src/lib/libc/gen/fakcu.c	/^_cleanup()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/fakcu.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endfsent	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^endfsent()$/
+fsdigit	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^fsdigit(backp, string, end)$/
+fsskip	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^fsskip(p)$/
+fstabscan	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^fstabscan(fs)$/
+getfsent	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^getfsent()$/
+getfsfile	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^getfsfile(name)$/
+getfsspec	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^getfsspec(name)$/
+getfstype	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^getfstype(type)$/
+setfsent	/u1/2.10/usr/src/lib/libc/gen/fstab.c	/^setfsent()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/gcvt.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+gcvt	/u1/2.10/usr/src/lib/libc/gen/gcvt.c	/^gcvt(number, ndigit, buf)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getenv.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getenv	/u1/2.10/usr/src/lib/libc/gen/getenv.c	/^getenv(name)$/
+nvmatch	/u1/2.10/usr/src/lib/libc/gen/getenv.c	/^nvmatch(s1, s2)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getgrent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endgrent	/u1/2.10/usr/src/lib/libc/gen/getgrent.c	/^endgrent()$/
+getgrent	/u1/2.10/usr/src/lib/libc/gen/getgrent.c	/^getgrent()$/
+grskip	/u1/2.10/usr/src/lib/libc/gen/getgrent.c	/^grskip(p,c)$/
+setgrent	/u1/2.10/usr/src/lib/libc/gen/getgrent.c	/^setgrent()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getgrgid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getgrgid	/u1/2.10/usr/src/lib/libc/gen/getgrgid.c	/^getgrgid(gid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getgrnam.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getgrnam	/u1/2.10/usr/src/lib/libc/gen/getgrnam.c	/^getgrnam(name)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getlogin.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getlogin	/u1/2.10/usr/src/lib/libc/gen/getlogin.c	/^getlogin()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getpass.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getpass	/u1/2.10/usr/src/lib/libc/gen/getpass.c	/^getpass(prompt)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endpwent	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^endpwent()$/
+getpwent	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^getpwent()$/
+pwskip	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^pwskip(p)$/
+setpwent	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^setpwent()$/
+setpwfile	/u1/2.10/usr/src/lib/libc/gen/getpwent.c	/^setpwfile(file)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getpwnamuid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fetchpw	/u1/2.10/usr/src/lib/libc/gen/getpwnamuid.c	/^fetchpw(key)$/
+getpwnam	/u1/2.10/usr/src/lib/libc/gen/getpwnamuid.c	/^getpwnam(nam)$/
+getpwuid	/u1/2.10/usr/src/lib/libc/gen/getpwnamuid.c	/^getpwuid(uid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endttyent	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^endttyent()$/
+getttyent	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^getttyent()$/
+setttyent	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^setttyent()$/
+skip	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^skip(p)$/
+value	/u1/2.10/usr/src/lib/libc/gen/getttyent.c	/^value(p)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getttynam.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getttynam	/u1/2.10/usr/src/lib/libc/gen/getttynam.c	/^getttynam(tty)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getusershell.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endusershell	/u1/2.10/usr/src/lib/libc/gen/getusershell.c	/^endusershell()$/
+getusershell	/u1/2.10/usr/src/lib/libc/gen/getusershell.c	/^getusershell()$/
+initshells	/u1/2.10/usr/src/lib/libc/gen/getusershell.c	/^initshells()$/
+setusershell	/u1/2.10/usr/src/lib/libc/gen/getusershell.c	/^setusershell()$/
+GETWDERR	/u1/2.10/usr/src/lib/libc/gen/getwd.c	/^#define GETWDERR(s)	strcpy(pathname, (s));$/
+defined	/u1/2.10/usr/src/lib/libc/gen/getwd.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getwd	/u1/2.10/usr/src/lib/libc/gen/getwd.c	/^getwd(pathname)$/
+prepend	/u1/2.10/usr/src/lib/libc/gen/getwd.c	/^prepend(dirname, pathname)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/initgroups.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+initgroups	/u1/2.10/usr/src/lib/libc/gen/initgroups.c	/^initgroups(uname, agroup)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/isatty.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+isatty	/u1/2.10/usr/src/lib/libc/gen/isatty.c	/^isatty(f)$/
+ASSERT	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^#define ASSERT(p) if(!(p))botch("p");else$/
+allock	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^allock()$/
+botch	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^botch(s)$/
+clearbusy	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^#define clearbusy(p) (union store *)((INT)(p)&~BUS/
+free	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^free(ap)$/
+malloc	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^malloc(nbytes)$/
+realloc	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^realloc(p, nbytes)$/
+setbusy	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^#define setbusy(p) (union store *)((INT)(p)|BUSY)$/
+testbusy	/u1/2.10/usr/src/lib/libc/gen/malloc.c	/^#define testbusy(p) ((INT)(p)&BUSY)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/mkstemp.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+mkstemp	/u1/2.10/usr/src/lib/libc/gen/mkstemp.c	/^mkstemp(as)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/mktemp.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+mktemp	/u1/2.10/usr/src/lib/libc/gen/mktemp.c	/^mktemp(as)$/
+additem	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^additem(buf, item, item1)$/
+chkblk	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^chkblk(buf)$/
+dbm_access	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_access(db, hash)$/
+dbm_close	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_close(db)$/
+dbm_delete	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_delete(db, key)$/
+dbm_fetch	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_fetch(db, key)$/
+dbm_firstkey	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_firstkey(db)$/
+dbm_forder	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_forder(db, key)$/
+dbm_nextkey	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_nextkey(db)$/
+dbm_open	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_open(file, flags, mode)$/
+dbm_store	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dbm_store(db, key, dat, replace)$/
+dcalchash	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^dcalchash(item)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+delitem	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^delitem(buf, n)$/
+finddatum	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^finddatum(buf, item)$/
+getbit	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^getbit(db)$/
+hashinc	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^hashinc(db, hash)$/
+makdatum	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^makdatum(buf, n)$/
+setbit	/u1/2.10/usr/src/lib/libc/gen/ndbm.c	/^setbit(db)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/nlist.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+nlist	/u1/2.10/usr/src/lib/libc/gen/nlist.c	/^nlist(name, list)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/opendir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+opendir	/u1/2.10/usr/src/lib/libc/gen/opendir.c	/^opendir(name)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/perror.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+perror	/u1/2.10/usr/src/lib/libc/gen/perror.c	/^perror(s)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/popen.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+pclose	/u1/2.10/usr/src/lib/libc/gen/popen.c	/^pclose(ptr)$/
+popen	/u1/2.10/usr/src/lib/libc/gen/popen.c	/^popen(cmd,mode)$/
+tst	/u1/2.10/usr/src/lib/libc/gen/popen.c	/^#define	tst(a,b)	(*mode == 'r'? (b) : (a))$/
+defined	/u1/2.10/usr/src/lib/libc/gen/psignal.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+psignal	/u1/2.10/usr/src/lib/libc/gen/psignal.c	/^psignal(sig, s)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/qsort.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+qsort	/u1/2.10/usr/src/lib/libc/gen/qsort.c	/^qsort(base, n, size, compar)$/
+qst	/u1/2.10/usr/src/lib/libc/gen/qsort.c	/^qst(base, max)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/random.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+initstate	/u1/2.10/usr/src/lib/libc/gen/random.c	/^initstate( seed, arg_state, n )$/
+random	/u1/2.10/usr/src/lib/libc/gen/random.c	/^random()$/
+setstate	/u1/2.10/usr/src/lib/libc/gen/random.c	/^setstate( arg_state )$/
+srandom	/u1/2.10/usr/src/lib/libc/gen/random.c	/^srandom( x )$/
+defined	/u1/2.10/usr/src/lib/libc/gen/readdir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+readdir	/u1/2.10/usr/src/lib/libc/gen/readdir.c	/^readdir(dirp)$/
+advance	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^advance(lp, ep)$/
+backref	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^backref(i, lp)$/
+cclass	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^cclass(set, c, af)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+re_comp	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^re_comp(sp)$/
+re_exec	/u1/2.10/usr/src/lib/libc/gen/regex.c	/^re_exec(p1)$/
+alphasort	/u1/2.10/usr/src/lib/libc/gen/scandir.c	/^alphasort(d1, d2)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/scandir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+scandir	/u1/2.10/usr/src/lib/libc/gen/scandir.c	/^scandir(dirname, namelist, select, dcomp)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/seekdir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+seekdir	/u1/2.10/usr/src/lib/libc/gen/seekdir.c	/^seekdir(dirp, loc)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/setgid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setgid	/u1/2.10/usr/src/lib/libc/gen/setgid.c	/^setgid(gid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/setegid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setegid	/u1/2.10/usr/src/lib/libc/gen/setegid.c	/^setegid(egid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/setrgid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setrgid	/u1/2.10/usr/src/lib/libc/gen/setrgid.c	/^setrgid(rgid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/setuid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setuid	/u1/2.10/usr/src/lib/libc/gen/setuid.c	/^setuid(uid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/seteuid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+seteuid	/u1/2.10/usr/src/lib/libc/gen/seteuid.c	/^seteuid(euid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/setruid.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setruid	/u1/2.10/usr/src/lib/libc/gen/setruid.c	/^setruid(ruid)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/siglist.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/signal.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+signal	/u1/2.10/usr/src/lib/libc/gen/signal.c	/^signal(s, a))()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/siginterrupt.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+siginterrupt	/u1/2.10/usr/src/lib/libc/gen/siginterrupt.c	/^siginterrupt(sig, flag)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/sleep.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setvec	/u1/2.10/usr/src/lib/libc/gen/sleep.c	/^#define	setvec(vec, a) \\$/
+sleep	/u1/2.10/usr/src/lib/libc/gen/sleep.c	/^sleep(n)$/
+sleepx	/u1/2.10/usr/src/lib/libc/gen/sleep.c	/^sleepx()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/swab.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+swab	/u1/2.10/usr/src/lib/libc/gen/swab.c	/^swab(from, to, n)$/
+PRIFAC	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^#define PRIFAC(p)	(((p) & LOG_FACMASK) >> 3)$/
+PRIMASK	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^#define PRIMASK(p)	(1 << ((p) & LOG_PRIMASK))$/
+closelog	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^closelog()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+openlog	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^openlog(ident, logstat, logfac)$/
+setlogmask	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^setlogmask(pmask)$/
+syslog	/u1/2.10/usr/src/lib/libc/gen/syslog.c	/^syslog(pri, fmt, p0, p1, p2, p3, p4)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/system.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+system	/u1/2.10/usr/src/lib/libc/gen/system.c	/^system(s)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/telldir.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+telldir	/u1/2.10/usr/src/lib/libc/gen/telldir.c	/^telldir(dirp)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/time.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+time	/u1/2.10/usr/src/lib/libc/gen/time.c	/^time(t)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/timezone.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+timezone	/u1/2.10/usr/src/lib/libc/gen/timezone.c	/^char *timezone(zone, dst)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ttyname.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ttyname	/u1/2.10/usr/src/lib/libc/gen/ttyname.c	/^ttyname(f)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ttyslot.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ttyslot	/u1/2.10/usr/src/lib/libc/gen/ttyslot.c	/^ttyslot()$/
+defined	/u1/2.10/usr/src/lib/libc/gen/ualarm.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ualarm	/u1/2.10/usr/src/lib/libc/gen/ualarm.c	/^ualarm(usecs, reload)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/usleep.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setvec	/u1/2.10/usr/src/lib/libc/gen/usleep.c	/^#define	setvec(vec, a) \\$/
+sleepx	/u1/2.10/usr/src/lib/libc/gen/usleep.c	/^sleepx()$/
+usleep	/u1/2.10/usr/src/lib/libc/gen/usleep.c	/^usleep(n)$/
+defined	/u1/2.10/usr/src/lib/libc/gen/valloc.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+valloc	/u1/2.10/usr/src/lib/libc/gen/valloc.c	/^valloc(i)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_addr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_addr	/u1/2.10/usr/src/lib/libc/inet/inet_addr.c	/^inet_addr(cp)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_network.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_network	/u1/2.10/usr/src/lib/libc/inet/inet_network.c	/^inet_network(cp)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_netof.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_netof	/u1/2.10/usr/src/lib/libc/inet/inet_netof.c	/^inet_netof(in)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_ntoa.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_ntoa	/u1/2.10/usr/src/lib/libc/inet/inet_ntoa.c	/^inet_ntoa(in)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_lnaof.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_lnaof	/u1/2.10/usr/src/lib/libc/inet/inet_lnaof.c	/^inet_lnaof(in)$/
+defined	/u1/2.10/usr/src/lib/libc/inet/inet_maddr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+inet_makeaddr	/u1/2.10/usr/src/lib/libc/inet/inet_maddr.c	/^inet_makeaddr(net, host)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getnbyaddr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getnetbyaddr	/u1/2.10/usr/src/lib/libc/net/getnbyaddr.c	/^getnetbyaddr(net, type)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getnbyname.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getnetbyname	/u1/2.10/usr/src/lib/libc/net/getnbyname.c	/^getnetbyname(name)$/
+any	/u1/2.10/usr/src/lib/libc/net/getnent.c	/^any(cp, match)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getnent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endnetent	/u1/2.10/usr/src/lib/libc/net/getnent.c	/^endnetent()$/
+getnetent	/u1/2.10/usr/src/lib/libc/net/getnent.c	/^getnetent()$/
+setnetent	/u1/2.10/usr/src/lib/libc/net/getnent.c	/^setnetent(f)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getpbyname.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getprotobyname	/u1/2.10/usr/src/lib/libc/net/getpbyname.c	/^getprotobyname(name)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getpbynumber.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getprotobynumber	/u1/2.10/usr/src/lib/libc/net/getpbynumber.c	/^getprotobynumber(proto)$/
+any	/u1/2.10/usr/src/lib/libc/net/getpent.c	/^any(cp, match)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getpent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endprotoent	/u1/2.10/usr/src/lib/libc/net/getpent.c	/^endprotoent()$/
+getprotoent	/u1/2.10/usr/src/lib/libc/net/getpent.c	/^getprotoent()$/
+setprotoent	/u1/2.10/usr/src/lib/libc/net/getpent.c	/^setprotoent(f)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getsbyname.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getservbyname	/u1/2.10/usr/src/lib/libc/net/getsbyname.c	/^getservbyname(name, proto)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getsbyport.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getservbyport	/u1/2.10/usr/src/lib/libc/net/getsbyport.c	/^getservbyport(port, proto)$/
+any	/u1/2.10/usr/src/lib/libc/net/getsent.c	/^any(cp, match)$/
+defined	/u1/2.10/usr/src/lib/libc/net/getsent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endservent	/u1/2.10/usr/src/lib/libc/net/getsent.c	/^endservent()$/
+getservent	/u1/2.10/usr/src/lib/libc/net/getsent.c	/^getservent()$/
+setservent	/u1/2.10/usr/src/lib/libc/net/getsent.c	/^setservent(f)$/
+_checkhost	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^_checkhost(rhost, lhost, len)$/
+_validuser	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^_validuser(hostf, rhost, luser, ruser, baselen)$/
+defined	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+rcmd	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^rcmd(ahost, rport, locuser, remuser, cmd, fd2p)$/
+rresvport	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^rresvport(alport)$/
+ruserok	/u1/2.10/usr/src/lib/libc/net/rcmd.c	/^ruserok(rhost, superuser, ruser, luser)$/
+defined	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+dn_comp	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^dn_comp(exp_dn, comp_dn, length, dnptrs, lastdnptr/
+dn_expand	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^dn_expand(msg, eomorig, comp_dn, exp_dn, length)$/
+dn_find	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^dn_find(exp_dn, msg, dnptrs, lastdnptr)$/
+dn_skip	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^dn_skip(comp_dn)$/
+getlong	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^getlong(msgp)$/
+getshort	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^getshort(msgp)$/
+putlong	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^putlong(l, msgp)$/
+putshort	/u1/2.10/usr/src/lib/libc/net/res_comp.c	/^putshort(s, msgp)$/
+defined	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fp_query	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^fp_query(msg,file)$/
+p_cdname	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^p_cdname(cp, msg, file)$/
+p_class	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^p_class(class)$/
+p_query	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^p_query(msg)$/
+p_rr	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^p_rr(cp, msg, file)$/
+p_type	/u1/2.10/usr/src/lib/libc/net/res_debug.c	/^p_type(type)$/
+defined	/u1/2.10/usr/src/lib/libc/net/res_init.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+res_init	/u1/2.10/usr/src/lib/libc/net/res_init.c	/^res_init()$/
+defined	/u1/2.10/usr/src/lib/libc/net/res_mkquery.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+res_mkquery	/u1/2.10/usr/src/lib/libc/net/res_mkquery.c	/^res_mkquery(op, dname, class, type, data, datalen,/
+_res_close	/u1/2.10/usr/src/lib/libc/net/res_send.c	/^_res_close()$/
+defined	/u1/2.10/usr/src/lib/libc/net/res_send.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+res_send	/u1/2.10/usr/src/lib/libc/net/res_send.c	/^res_send(buf, buflen, answer, anslen)$/
+defined	/u1/2.10/usr/src/lib/libc/net/rexec.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+rexec	/u1/2.10/usr/src/lib/libc/net/rexec.c	/^rexec(ahost, rport, name, pass, cmd, fd2p)$/
+blkencrypt	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^blkencrypt(block, edflag)$/
+deblkclr	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *deblkclr(blk)$/
+deblknot	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *deblknot(blk)$/
+defined	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+enblkclr	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^enblkclr(blk,str)		\/* ignores top bit of chars in /
+enblknot	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^enblknot(blk,crp)$/
+getutmp	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^struct utmp *getutmp(sttyname)$/
+mkenvkey	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *mkenvkey(mch)$/
+mkpwclear	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^mkpwclear(sencpasswd,mch,spasswd)$/
+mkpwunclear	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^mkpwunclear(spasswd,mch,sencpasswd)$/
+nbs8decrypt	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *nbs8decrypt(crp,key)$/
+nbs8encrypt	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *nbs8encrypt(str,key)$/
+nbsdecrypt	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *nbsdecrypt(cpt,key,result)$/
+nbsencrypt	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^char *nbsencrypt(str,key,result)$/
+nbssetkey	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^nbssetkey(key)$/
+renv	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^renv(host, aname, apass)$/
+renvlook	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^renvlook(host)$/
+rnetrc	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^rnetrc(host, aname, apass)$/
+ruserpass	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^ruserpass(host, aname, apass)$/
+sreverse	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^sreverse(sto, sfrom)$/
+token	/u1/2.10/usr/src/lib/libc/net/ruserpass.c	/^token()$/
+Field	/u1/2.10/usr/src/lib/libc/ns/ns_addr.c	/^Field(buf, out, len)$/
+cvtbase	/u1/2.10/usr/src/lib/libc/ns/ns_addr.c	/^cvtbase(oldbase,newbase,input,inlen,result,reslen)/
+defined	/u1/2.10/usr/src/lib/libc/ns/ns_addr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ns_addr	/u1/2.10/usr/src/lib/libc/ns/ns_addr.c	/^struct ns_addr $/
+defined	/u1/2.10/usr/src/lib/libc/ns/ns_ntoa.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ns_ntoa	/u1/2.10/usr/src/lib/libc/ns/ns_ntoa.c	/^ns_ntoa(addr)$/
+spectHex	/u1/2.10/usr/src/lib/libc/ns/ns_ntoa.c	/^spectHex(p0)$/
+clearerr	/u1/2.10/usr/src/lib/libc/stdio/clrerr.c	/^clearerr(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/clrerr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+_doscan	/u1/2.10/usr/src/lib/libc/stdio/doscan.c	/^_doscan(iop, fmt, argp)$/
+_getccl	/u1/2.10/usr/src/lib/libc/stdio/doscan.c	/^_getccl(s)$/
+_innum	/u1/2.10/usr/src/lib/libc/stdio/doscan.c	/^_innum(ptr, type, len, size, iop, eofptr)$/
+_instr	/u1/2.10/usr/src/lib/libc/stdio/doscan.c	/^_instr(ptr, type, len, iop, eofptr)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/doscan.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/exit.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+exit	/u1/2.10/usr/src/lib/libc/stdio/exit.c	/^exit(code)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fdopen.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fdopen	/u1/2.10/usr/src/lib/libc/stdio/fdopen.c	/^fdopen(fd, mode)$/
+_filbuf	/u1/2.10/usr/src/lib/libc/stdio/filbuf.c	/^_filbuf(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/filbuf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+_cleanup	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^_cleanup()$/
+_f_morefiles	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^_f_morefiles()$/
+_findiop	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^_findiop()$/
+_fwalk	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^_fwalk(function)$/
+active	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^#define active(iop)	((iop)->_flag & (_IOREAD|_IOWR/
+defined	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+f_prealloc	/u1/2.10/usr/src/lib/libc/stdio/findiop.c	/^f_prealloc()$/
+_flsbuf	/u1/2.10/usr/src/lib/libc/stdio/flsbuf.c	/^_flsbuf(c, iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/flsbuf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fclose	/u1/2.10/usr/src/lib/libc/stdio/flsbuf.c	/^fclose(iop)$/
+fflush	/u1/2.10/usr/src/lib/libc/stdio/flsbuf.c	/^fflush(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fopen.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fopen	/u1/2.10/usr/src/lib/libc/stdio/fopen.c	/^fopen(file, mode)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fprintf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fprintf	/u1/2.10/usr/src/lib/libc/stdio/fprintf.c	/^fprintf(iop, fmt, args)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fread.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fread	/u1/2.10/usr/src/lib/libc/stdio/fread.c	/^fread(ptr, size, count, iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/freopen.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+freopen	/u1/2.10/usr/src/lib/libc/stdio/freopen.c	/^freopen(file, mode, iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fseek.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fseek	/u1/2.10/usr/src/lib/libc/stdio/fseek.c	/^fseek(iop, offset, ptrname)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/ftell.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ftell	/u1/2.10/usr/src/lib/libc/stdio/ftell.c	/^long ftell(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/fwrite.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fwrite	/u1/2.10/usr/src/lib/libc/stdio/fwrite.c	/^fwrite(ptr, size, count, iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/getchar.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getchar	/u1/2.10/usr/src/lib/libc/stdio/getchar.c	/^getchar()$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/getw.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getlw	/u1/2.10/usr/src/lib/libc/stdio/getw.c	/^getlw(iop)$/
+getw	/u1/2.10/usr/src/lib/libc/stdio/getw.c	/^getw(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/printf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+printf	/u1/2.10/usr/src/lib/libc/stdio/printf.c	/^printf(fmt, args)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/putchar.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+putchar	/u1/2.10/usr/src/lib/libc/stdio/putchar.c	/^putchar(c)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/putw.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+putlw	/u1/2.10/usr/src/lib/libc/stdio/putw.c	/^putlw(w, iop)$/
+putw	/u1/2.10/usr/src/lib/libc/stdio/putw.c	/^putw(w, iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/rew.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+rewind	/u1/2.10/usr/src/lib/libc/stdio/rew.c	/^rewind(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/scanf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fscanf	/u1/2.10/usr/src/lib/libc/stdio/scanf.c	/^fscanf(iop, fmt, args)$/
+scanf	/u1/2.10/usr/src/lib/libc/stdio/scanf.c	/^scanf(fmt, args)$/
+sscanf	/u1/2.10/usr/src/lib/libc/stdio/scanf.c	/^sscanf(str, fmt, args)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/setbuf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setbuf	/u1/2.10/usr/src/lib/libc/stdio/setbuf.c	/^setbuf(iop, buf)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/setbuffer.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+setbuffer	/u1/2.10/usr/src/lib/libc/stdio/setbuffer.c	/^setbuffer(iop, buf, size)$/
+setlinebuf	/u1/2.10/usr/src/lib/libc/stdio/setbuffer.c	/^setlinebuf(iop)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/sibuf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/sobuf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/sprintf.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+sprintf	/u1/2.10/usr/src/lib/libc/stdio/sprintf.c	/^char *sprintf(str, fmt, args)$/
+_strout	/u1/2.10/usr/src/lib/libc/stdio/strout.c	/^_strout(count, string, adjust, file, fillch)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/strout.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+defined	/u1/2.10/usr/src/lib/libc/stdio/ungetc.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ungetc	/u1/2.10/usr/src/lib/libc/stdio/ungetc.c	/^ungetc(c, iop)$/
+atof	/u1/2.10/usr/src/lib/libc/pdp/gen/atof.c	/^atof(p)$/
+defined	/u1/2.10/usr/src/lib/libc/pdp/gen/atof.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ddecode	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^ddecode(str, area)$/
+defined	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+dgetent	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dgetent(bp, name)$/
+dgetflag	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dgetflag(id)$/
+dgetnum	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dgetnum(id)$/
+dgetstr	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dgetstr(id, area)$/
+dnamatch	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dnamatch(np)$/
+dskip	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^dskip(bp)$/
+getdiskbyname	/u1/2.10/usr/src/lib/libc/pdp/gen/disktab.c	/^getdiskbyname(name)$/
+cvt	/u1/2.10/usr/src/lib/libc/pdp/gen/ecvt.c	/^cvt(arg, ndigits, decpt, sign, eflag)$/
+defined	/u1/2.10/usr/src/lib/libc/pdp/gen/ecvt.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ecvt	/u1/2.10/usr/src/lib/libc/pdp/gen/ecvt.c	/^ecvt(arg, ndigits, decpt, sign)$/
+fcvt	/u1/2.10/usr/src/lib/libc/pdp/gen/ecvt.c	/^fcvt(arg, ndigits, decpt, sign)$/
+defined	/u1/2.10/usr/src/lib/libc/pdp/com-4.3/rdwrv.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+rdwrv	/u1/2.10/usr/src/lib/libc/pdp/com-4.3/rdwrv.c	/^rdwrv(rdwr, d, iov, iovcnt)$/
+readv	/u1/2.10/usr/src/lib/libc/pdp/com-4.3/rdwrv.c	/^readv(d, iov, iovcnt)$/
+writev	/u1/2.10/usr/src/lib/libc/pdp/com-4.3/rdwrv.c	/^writev(d, iov, iovcnt)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/ftime.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+ftime	/u1/2.10/usr/src/lib/libc/com-4.1/ftime.c	/^ftime(tp)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/gtty.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+gtty	/u1/2.10/usr/src/lib/libc/com-4.1/gtty.c	/^gtty(fd, ap)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/nice.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+nice	/u1/2.10/usr/src/lib/libc/com-4.1/nice.c	/^nice(incr)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/pause.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+pause	/u1/2.10/usr/src/lib/libc/com-4.1/pause.c	/^pause()$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/rand.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+rand	/u1/2.10/usr/src/lib/libc/com-4.1/rand.c	/^rand()$/
+srand	/u1/2.10/usr/src/lib/libc/com-4.1/rand.c	/^srand(x)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/stty.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+stty	/u1/2.10/usr/src/lib/libc/com-4.1/stty.c	/^stty(fd, ap)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/tell.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+tell	/u1/2.10/usr/src/lib/libc/com-4.1/tell.c	/^long tell(f)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/times.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+scale60	/u1/2.10/usr/src/lib/libc/com-4.1/times.c	/^scale60(tvp)$/
+times	/u1/2.10/usr/src/lib/libc/com-4.1/times.c	/^times(tmsp)$/
+defined	/u1/2.10/usr/src/lib/libc/com-4.1/utime.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+utime	/u1/2.10/usr/src/lib/libc/com-4.1/utime.c	/^utime(name, otv)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/getopt.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+getopt	/u1/2.10/usr/src/lib/libc/com-sys5/getopt.c	/^getopt(nargc,nargv,ostr)$/
+tell	/u1/2.10/usr/src/lib/libc/com-sys5/getopt.c	/^#define tell(s)	if (opterr) {fputs(*nargv,stderr);/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/memccpy.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+memccpy	/u1/2.10/usr/src/lib/libc/com-sys5/memccpy.c	/^memccpy(t, f, c, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/memchr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+memchr	/u1/2.10/usr/src/lib/libc/com-sys5/memchr.c	/^memchr(s, c, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/memcmp.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+memcmp	/u1/2.10/usr/src/lib/libc/com-sys5/memcmp.c	/^memcmp(s1, s2, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/memcpy.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+memcpy	/u1/2.10/usr/src/lib/libc/com-sys5/memcpy.c	/^memcpy(t, f, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/memset.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+memset	/u1/2.10/usr/src/lib/libc/com-sys5/memset.c	/^memset(s, c, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strcatn.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strcatn	/u1/2.10/usr/src/lib/libc/com-sys5/strcatn.c	/^strcatn(s1, s2, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strchr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strchr	/u1/2.10/usr/src/lib/libc/com-sys5/strchr.c	/^strchr(sp, c)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strcmpn.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strcmpn	/u1/2.10/usr/src/lib/libc/com-sys5/strcmpn.c	/^strcmpn(s1, s2, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strcpyn.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strcpyn	/u1/2.10/usr/src/lib/libc/com-sys5/strcpyn.c	/^strcpyn(s1, s2, n)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strcspn.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strcspn	/u1/2.10/usr/src/lib/libc/com-sys5/strcspn.c	/^strcspn(s, set)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strpbrk.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strpbrk	/u1/2.10/usr/src/lib/libc/com-sys5/strpbrk.c	/^strpbrk(s, brk)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strrchr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strrchr	/u1/2.10/usr/src/lib/libc/com-sys5/strrchr.c	/^strrchr(sp, c)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strspn.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strspn	/u1/2.10/usr/src/lib/libc/com-sys5/strspn.c	/^strspn(s, set)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/strtok.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+strtok	/u1/2.10/usr/src/lib/libc/com-sys5/strtok.c	/^strtok(s, sep)$/
+defined	/u1/2.10/usr/src/lib/libc/com-sys5/tmpnam.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+tmpnam	/u1/2.10/usr/src/lib/libc/com-sys5/tmpnam.c	/^char *tmpnam(s)$/
+defined	/u1/2.10/usr/src/lib/libc/net/hosttable/gethnamadr.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+fetchhost	/u1/2.10/usr/src/lib/libc/net/hosttable/gethnamadr.c	/^fetchhost(key)$/
+gethostbyaddr	/u1/2.10/usr/src/lib/libc/net/hosttable/gethnamadr.c	/^gethostbyaddr(addr, length, type)$/
+gethostbyname	/u1/2.10/usr/src/lib/libc/net/hosttable/gethnamadr.c	/^gethostbyname(nam)$/
+any	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^any(cp, match)$/
+defined	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^#if defined(LIBC_SCCS) && !defined(lint)$/
+endhostent	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^endhostent()$/
+gethostent	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^gethostent()$/
+sethostent	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^sethostent(f)$/
+sethostfile	/u1/2.10/usr/src/lib/libc/net/hosttable/gethostent.c	/^sethostfile(file)$/
