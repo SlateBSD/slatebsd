@@ -2,29 +2,23 @@
  * Copyright (c) 1986 Regents of the University of California.
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
- *
- *	@(#)init_main.c	1.1 (2.10BSD Berkeley) 12/1/86
  */
 
-#include "param.h"
-#include "../machine/seg.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <sys/fs.h>
+#include <sys/mount.h>
+#include <sys/map.h>
+#include <sys/proc.h>
+#include <sys/inode.h>
+#include <sys/conf.h>
+#include <sys/buf.h>
+#include <sys/vm.h>
+#include <sys/clist.h>
+#include <sys/reboot.h>
+#include <sys/systm.h>
+#include <sys/kernel.h>
 
-#include "user.h"
-#include "fs.h"
-#include "mount.h"
-#include "map.h"
-#include "proc.h"
-#include "inode.h"
-#include "conf.h"
-#include "buf.h"
-#include "vm.h"
-#include "clist.h"
-#include "uba.h"
-#include "reboot.h"
-#include "systm.h"
-#include "kernel.h"
-
-int	cmask = CMASK;
 /*
  * Initialization code.
  * Called from cold start routine as
@@ -38,6 +32,7 @@ int	cmask = CMASK;
  *	fork - process 0 to schedule
  *	     - process 1 execute bootstrap
  */
+int
 main()
 {
 	register struct proc *p;
@@ -56,7 +51,6 @@ main()
 
 	u.u_procp = p;			/* init user structure */
 	u.u_ap = u.u_arg;
-	u.u_cmask = cmask;
 	u.u_lastfile = -1;
 	for (i = 1; i < NGROUPS; i++)
 		u.u_groups[i] = NOGROUP;
@@ -108,7 +102,7 @@ main()
 		 * return goes to location 0 of user init code
 		 * just copied out.
 		 */
-		return;
+		return 0;
 	}
 	else
 		sched();
@@ -117,7 +111,7 @@ main()
 /*
  * Initialize hash links for buffers.
  */
-static
+static void
 bhinit()
 {
 	register int i;
@@ -127,17 +121,16 @@ bhinit()
 		bp->b_forw = bp->b_back = (struct buf *)bp;
 }
 
-memaddr	bpaddr;		/* physical click-address of buffers */
 /*
  * Initialize the buffer I/O system by freeing
  * all buffers and setting all device buffer lists to empty.
  */
-static
+static void
 binit()
 {
 	register struct buf *bp;
 	register int i;
-	long paddr;
+	caddr_t paddr;
 
 	for (bp = bfreelist; bp < &bfreelist[BQUEUES]; bp++)
 		bp->b_forw = bp->b_back = bp->av_forw = bp->av_back = bp;
@@ -158,7 +151,7 @@ binit()
  * Initialize clist by freeing all character blocks, then count
  * number of character devices. (Once-only routine)
  */
-static
+static void
 cinit()
 {
 	register int ccp;
@@ -188,7 +181,7 @@ cinit()
  * panic: iinit -- cannot read the super block
  * (usually because of an IO error).
  */
-static
+static void
 iinit()
 {
 	register struct bdevsw *bdp;
@@ -217,44 +210,3 @@ iinit()
 	time.tv_sec = fp->fs_time;
 	boottime = time;
 }
-
-#ifdef UCB_NET
-#include "mbuf.h"
-#include "../pdpuba/ubavar.h"
-
-static
-netinit()
-{
-	extern struct uba_device ubdinit[];
-	register struct uba_driver *udp;
-	register struct uba_device *ui;
-	register int s;
-
-	MAPSAVE();
-	for (ui = ubdinit; udp = ui->ui_driver; ui++) {
-		/*
-		 * next line probably meaningless -- KB
-		 * entry should be ripped out of vaxif/ubavar.h?
-		 */
-		ui->ui_alive = 1;
-		(*udp->ud_attach)(ui);
-	}
-#include "sl.h"
-#if NSL > 0
-	slattach();			/* XXX */
-#endif
-#include "loop.h"
-#if NLOOP > 0
-	loattach();			/* XXX */
-#endif
-	/*
-	 * Block reception of incoming packets
-	 * until protocols have been initialized.
-	 */
-	s = splimp();
-	ifinit();
-	domaininit();
-	splx(s);
-	MAPREST();
-}
-#endif
