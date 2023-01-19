@@ -2,21 +2,17 @@
  * Copyright (c) 1986 Regents of the University of California.
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
- *
- *	@(#)kern_acct.c	1.1 (2.10BSD Berkeley) 12/1/86
  */
 
-#include "param.h"
-#include "../machine/seg.h"
-
-#include "systm.h"
-#include "fs.h"
-#include "inode.h"
-#include "user.h"
-#include "proc.h"
-#include "acct.h"
-#include "namei.h"
-#include "kernel.h"
+#include <sys/param.h>
+#include <sys/systm.h>
+#include <sys/fs.h>
+#include <sys/inode.h>
+#include <sys/user.h>
+#include <sys/proc.h>
+#include <sys/acct.h>
+#include <sys/namei.h>
+#include <sys/kernel.h>
 
 /*
  * SHOULD REPLACE THIS WITH A DRIVER THAT CAN BE READ TO SIMPLIFY.
@@ -26,6 +22,7 @@ struct	inode *acctp;
 /*
  * Perform process accounting functions.
  */
+int
 sysacct()
 {
 	register struct inode *ip;
@@ -68,6 +65,7 @@ struct	acct acctbuf;
 /*
  * On exit, write a record on the accounting file.
  */
+int
 acct()
 {
 	register struct inode *ip;
@@ -105,8 +103,8 @@ acct()
  * Produce a pseudo-floating point representation
  * with 3 bits base-8 exponent, 13 bits fraction.
  */
-compress(t)
-register time_t t;
+int
+compress(register time_t t)
 {
 	register exp = 0, round = 0;
 

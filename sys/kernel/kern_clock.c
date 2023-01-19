@@ -2,21 +2,15 @@
  * Copyright (c) 1986 Regents of the University of California.
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
- *
- *	@(#)kern_clock.c	1.1 (2.10BSD Berkeley) 12/1/86
  */
 
-#include "param.h"
-#include "../machine/psl.h"
-#include "../machine/reg.h"
-#include "../machine/seg.h"
-
-#include "user.h"
-#include "proc.h"
-#include "callout.h"
-#include "dk.h"
-#include "kernel.h"
-#include "systm.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <sys/proc.h>
+#include <sys/callout.h>
+#include <sys/dk.h>
+#include <sys/kernel.h>
+#include <sys/systm.h>
 
 /*
  * The hz hardware interval timer.
@@ -29,11 +23,8 @@
  *	maintain date
  *	profile
  */
-/*ARGSUSED*/
-hardclock(dev,sp,r1,ov,nps,r0,pc,ps)
-	dev_t dev;
-	caddr_t sp, pc;
-	int r1, ov, nps, r0, ps;
+void
+hardclock(caddr_t pc, int ps)
 {
 	register struct callout *p1;
 	register struct proc *p;
@@ -152,10 +143,8 @@ int	dk_ndrive = DK_NDRIVE;
  * or idle state) for the entire last time interval, and
  * update statistics accordingly.
  */
-/*ARGSUSED*/
-gatherstats(pc, ps)
-	caddr_t pc;
-	int ps;
+void
+gatherstats(caddr_t pc, int ps)
 {
 	register int cpstate, s;
 
@@ -202,9 +191,8 @@ gatherstats(pc, ps)
  * Software priority level clock interrupt.
  * Run periodic events from timeout queue.
  */
-softclock(pc, ps)
-	caddr_t pc;
-	int ps;
+void
+softclock(caddr_t pc, int ps)
 {
 	for (;;) {
 		register struct callout *p1;
@@ -253,8 +241,9 @@ softclock(pc, ps)
 /*
  * Arrange that (*fun)(arg) is called in t/hz seconds.
  */
+void
 timeout(fun, arg, t)
-	int (*fun)();
+	int (*fun) (caddr_t);
 	caddr_t arg;
 	register int t;
 {
@@ -284,8 +273,9 @@ timeout(fun, arg, t)
  * untimeout is called to remove a function timeout call
  * from the callout structure.
  */
+void
 untimeout(fun, arg)
-	int (*fun)();
+	int (*fun)(caddr_t);
 	caddr_t arg;
 {
 	register struct callout *p1, *p2;
@@ -305,6 +295,7 @@ untimeout(fun, arg)
 	splx(s);
 }
 
+void
 profil()
 {
 	register struct a {
@@ -326,8 +317,8 @@ profil()
  * Used to compute third argument to timeout() from an
  * absolute time.
  */
-hzto(tv)
-	register struct timeval *tv;
+int
+hzto(register struct timeval *tv)
 {
 	long ticks;
 	long sec;
