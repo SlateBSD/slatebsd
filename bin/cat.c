@@ -4,15 +4,12 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)cat.c	5.2 (Berkeley) 12/6/85";
-#endif not lint
-
 /*
  * Concatenate files.
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -21,8 +18,8 @@ static char sccsid[] = "@(#)cat.c	5.2 (Berkeley) 12/6/85";
 int	bflg, eflg, nflg, sflg, tflg, uflg, vflg;
 int	spaced, col, lno, inline, ibsize, obsize;
 
-main(argc, argv)
-char **argv;
+void
+main(int argc, char **argv)
 {
 	int fflg = 0;
 	register FILE *fi;
@@ -125,8 +122,8 @@ char **argv;
 	exit(retval);
 }
 
-copyopt(f)
-	register FILE *f;
+void
+copyopt(register FILE *f)
 {
 	register int c;
 
@@ -172,8 +169,8 @@ top:
 	goto top;
 }
 
-fastcat(fd)
-register int fd;
+int
+fastcat(register int fd)
 {
 	register int	buffsize, n, nwritten, offset;
 	register char	*buff;
@@ -193,7 +190,7 @@ register int fd;
 
 	if ((buff = malloc(buffsize)) == NULL) {
 		perror("cat: no memory");
-		return (1);
+		return(1);
 	}
 
 	/*
