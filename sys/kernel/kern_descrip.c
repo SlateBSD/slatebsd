@@ -2,22 +2,21 @@
  * Copyright (c) 1986 Regents of the University of California.
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
- *
- *	@(#)kern_descrip.c	1.1 (2.10BSD Berkeley) 12/1/86
  */
 
-#include "param.h"
-#include "user.h"
-#include "proc.h"
-#include "file.h"
-#include "systm.h"
-#include "inode.h"
-#include "ioctl.h"
-#include "stat.h"
-#include "conf.h"
-#ifdef UCB_NET
-#include "socket.h"
-#include "socketvar.h"
+#include <sys/param.h>
+#include <sys/user.h>
+#include <sys/proc.h>
+#include <sys/file.h>
+#include <sys/systm.h>
+#include <sys/inode.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/conf.h>
+
+#ifdef INET
+#include <sys/socket.h>
+#include <sys/socketvar.h>
 #endif
 
 /*
@@ -25,24 +24,46 @@
  */
 
 /*
+ * Allocate a user file descriptor.
+ */
+static int
+ufalloc(register int i)
+{
+
+	for (; i < NOFILE; i++)
+		if (u.u_ofile[i] == NULL) {
+			u.u_r.r_val1 = i;
+			u.u_pofile[i] = 0;
+			if (i > u.u_lastfile)
+				u.u_lastfile = i;
+			return (i);
+		}
+	u.u_error = EMFILE;
+	return (-1);
+}
+
+/*
  * System calls on descriptors.
  */
+void
 getdtablesize()
 {
 
 	u.u_r.r_val1 = NOFILE;
 }
 
-getdopt()
+static void
+dupit(register int fd, register struct file *fp, register int flags)
 {
 
+	u.u_ofile[fd] = fp;
+	u.u_pofile[fd] = flags;
+	fp->f_count++;
+	if (fd > u.u_lastfile)
+		u.u_lastfile = fd;
 }
 
-setdopt()
-{
-
-}
-
+void
 dup()
 {
 	register struct a {
@@ -60,6 +81,7 @@ dup()
 	dupit(j, fp, u.u_pofile[uap->i] &~ UF_EXCLOSE);
 }
 
+void
 dup2()
 {
 	register struct a {
@@ -83,22 +105,10 @@ dup2()
 	dupit(uap->j, fp, u.u_pofile[uap->i] &~ UF_EXCLOSE);
 }
 
-dupit(fd, fp, flags)
-	register int fd;
-	register struct file *fp;
-	register int flags;
-{
-
-	u.u_ofile[fd] = fp;
-	u.u_pofile[fd] = flags;
-	fp->f_count++;
-	if (fd > u.u_lastfile)
-		u.u_lastfile = fd;
-}
-
 /*
  * The file control system call.
  */
+void
 fcntl()
 {
 	register struct file *fp;
@@ -161,9 +171,8 @@ fcntl()
 	}
 }
 
-fset(fp, bit, value)
-	register struct file *fp;
-	int bit, value;
+int
+fset(register struct file *fp, int bit, int value)
 {
 
 	if (value)
@@ -174,9 +183,8 @@ fset(fp, bit, value)
 	    (caddr_t)&value));
 }
 
-fgetown(fp, valuep)
-	register struct file *fp;
-	register int *valuep;
+int
+fgetown(register struct file *fp, register int *valuep)
 {
 	register int error;
 
@@ -195,15 +203,14 @@ fgetown(fp, valuep)
 	}
 }
 
-fsetown(fp, value)
-	register struct file *fp;
-	int value;
+int
+fsetown(register struct file *fp, int value)
 {
 
 #ifdef UCB_NET
 	if (fp->f_type == DTYPE_SOCKET) {
 		((struct socket *)fp->f_data)->so_pgrp = value;
-		return (0);
+		return 0;
 	}
 #endif UCB_NET
 	if (value > 0) {
@@ -213,9 +220,10 @@ fsetown(fp, value)
 		value = p->p_pgrp;
 	} else
 		value = -value;
-	return (ino_ioctl(fp, (u_int)TIOCSPGRP, (caddr_t)&value));
+	return(ino_ioctl(fp, (u_int)TIOCSPGRP, (caddr_t)&value));
 }
 
+void
 close()
 {
 	struct a {
@@ -232,6 +240,7 @@ close()
 	/* WHAT IF u.u_error ? */
 }
 
+void
 fstat()
 {
 	register struct file *fp;
@@ -266,38 +275,8 @@ fstat()
 		    sizeof (ub));
 }
 
-/*
- * Allocate a user file descriptor.
- */
-ufalloc(i)
-	register int i;
-{
-
-	for (; i < NOFILE; i++)
-		if (u.u_ofile[i] == NULL) {
-			u.u_r.r_val1 = i;
-			u.u_pofile[i] = 0;
-			if (i > u.u_lastfile)
-				u.u_lastfile = i;
-			return (i);
-		}
-	u.u_error = EMFILE;
-	return (-1);
-}
-
-#ifdef UCB_NET
-ufavail()
-{
-	register int i, avail = 0;
-
-	for (i = 0; i < NOFILE; i++)
-		if (u.u_ofile[i] == NULL)
-			avail++;
-	return (avail);
-}
-#endif
-
 struct	file *lastf;
+
 /*
  * Allocate a user file descriptor
  * and a file structure.
@@ -339,8 +318,7 @@ slot:
  * Critical paths should use the GETF macro.
  */
 struct file *
-getf(f)
-	register int f;
+getf(register int f)
 {
 	register struct file *fp;
 
@@ -355,9 +333,8 @@ getf(f)
  * Internal form of close.
  * Decrement reference count on file structure.
  */
-closef(fp,nouser)
-	register struct file *fp;
-	int nouser;
+void
+closef(register struct file *fp, int nouser)
 {
 
 	if (fp == NULL)
@@ -388,6 +365,7 @@ closef(fp,nouser)
 /*
  * Apply an advisory lock on a file descriptor.
  */
+void
 flock()
 {
 	register struct a {
